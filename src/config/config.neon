@@ -38,6 +38,7 @@ services:
 	    class: Crm\ProductsModule\Ebook\EbookProvider
 
 	- Crm\ProductsModule\Events\PaymentStatusChangeHandler
+	- Crm\ProductsModule\Events\PaymentStatusChangeNotifyHandler
 
 	checkoutFormFactory:
 		class: Crm\ProductsModule\Forms\CheckoutFormFactory

@@ -14,8 +14,11 @@ use Crm\ApplicationModule\Menu\MenuItem;
 use Crm\ApplicationModule\SeederManager;
 use Crm\ApplicationModule\User\UserDataRegistrator;
 use Crm\ApplicationModule\Widget\WidgetManagerInterface;
+use Crm\PaymentsModule\Events\PaymentChangeStatusEvent;
 use Crm\ProductsModule\DataProvider\PaymentFormDataProvider;
 use Crm\ProductsModule\DataProvider\PaymentsAdminFilterFormDataProvider;
+use Crm\ProductsModule\Events\PaymentStatusChangeHandler;
+use Crm\ProductsModule\Events\PaymentStatusChangeNotifyHandler;
 use Crm\ProductsModule\Repository\ProductsRepository;
 use Crm\ProductsModule\Seeders\AddressTypesSeeder;
 use Crm\ProductsModule\Seeders\ConfigsSeeder;
@@ -112,8 +115,13 @@ class ProductsModule extends CrmModule
     public function registerEventHandlers(Emitter $emitter)
     {
         $emitter->addListener(
-            \Crm\PaymentsModule\Events\PaymentChangeStatusEvent::class,
-            $this->getInstance(\Crm\ProductsModule\Events\PaymentStatusChangeHandler::class)
+            PaymentChangeStatusEvent::class,
+            $this->getInstance(PaymentStatusChangeHandler::class)
+        );
+
+        $emitter->addListener(
+            PaymentChangeStatusEvent::class,
+            $this->getInstance(PaymentStatusChangeNotifyHandler::class)
         );
     }
 
