@@ -3,7 +3,7 @@
 namespace Crm\ProductsModule\PostalFeeCondition;
 
 use Crm\SegmentModule\Repository\SegmentsRepository;
-use Crm\SegmentModule\SegmentFactory;
+use Crm\SegmentModule\SegmentFactoryInterface;
 use Kdyby\Translation\Translator;
 use Nette\ComponentModel\IComponent;
 use Nette\Forms\Controls\SelectBox;
@@ -20,7 +20,7 @@ class UserSegmentCondition implements PostalFeeConditionInterface, PostalFeeMess
 
     public function __construct(
         Translator $translator,
-        SegmentFactory $segmentFactory,
+        SegmentFactoryInterface $segmentFactory,
         SegmentsRepository $segmentsRepository
     ) {
         $this->translator = $translator;
