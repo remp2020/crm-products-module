@@ -44,7 +44,7 @@
             </div>
         </div>
         <div n:if="!empty($product->images)" class="product-gallery">
-            {var gallery = preg_split('/[\r\n\s]+/', $product->images, -1, PREG_SPLIT_NO_EMPTY)}
+            {var $gallery = preg_split('/[\r\n\s]+/', $product->images, -1, PREG_SPLIT_NO_EMPTY)}
             <a n:foreach="$gallery as $image" href="{$image}" data-lightbox="image-gallery" data-title="{$product->name}"><img src="{$image}" /></a>
         </div>
         <div n:if="$product->stock > 0" class="price-row">

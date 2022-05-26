@@ -130,7 +130,7 @@
                     <b>{_products.data.products.fields.og_image_url}:</b> <a href="{$product->og_image_url}">{$product->og_image_url}</a>
                 </li>
                 <li class="list-group-item" n:if="!empty($product->images)">
-                    {var gallery = preg_split('/[\r\n\s]+/', $product->images, -1, PREG_SPLIT_NO_EMPTY)}
+                    {var $gallery = preg_split('/[\r\n\s]+/', $product->images, -1, PREG_SPLIT_NO_EMPTY)}
                     <b>{_products.data.products.fields.images}:</b><br />
                     <div n:foreach="$gallery as $image"><a href="{$image}">{$image}</a></div>
                 </li>
