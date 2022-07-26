@@ -2,6 +2,7 @@
 
 namespace Crm\ProductsModule\Repository;
 
+use Crm\ApplicationModule\Cache\CacheRepository;
 use Crm\ApplicationModule\Hermes\HermesMessage;
 use Crm\ApplicationModule\Repository;
 use Crm\ApplicationModule\Repository\AuditLogRepository;
@@ -28,6 +29,8 @@ class OrdersRepository extends Repository
 
     protected $tableName = 'orders';
 
+    private $cacheRepository;
+
     private $emitter;
 
     private $hermesEmitter;
@@ -35,12 +38,14 @@ class OrdersRepository extends Repository
     public function __construct(
         Context $database,
         AuditLogRepository $auditLogRepository,
+        CacheRepository $cacheRepository,
         Emitter $emitter,
         \Tomaj\Hermes\Emitter $hermesEmitter
     ) {
         parent::__construct($database);
         $this->auditLogRepository = $auditLogRepository;
         $this->database = $database;
+        $this->cacheRepository = $cacheRepository;
         $this->emitter = $emitter;
         $this->hermesEmitter = $hermesEmitter;
     }
@@ -137,5 +142,21 @@ class OrdersRepository extends Repository
                     'orders.created_at > ?' => $after,
                 ])
                 ->count('*') > 0;
+    }
+
+    final public function totalCount($allowCached = false, $forceCacheUpdate = false)
+    {
+        $callable = function () {
+            return parent::totalCount();
+        };
+        if ($allowCached) {
+            return $this->cacheRepository->loadAndUpdate(
+                'orders_count',
+                $callable,
+                \Nette\Utils\DateTime::from(CacheRepository::REFRESH_TIME_5_MINUTES),
+                $forceCacheUpdate
+            );
+        }
+        return $callable();
     }
 }

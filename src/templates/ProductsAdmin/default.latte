@@ -9,10 +9,8 @@
       {_products.admin.products.default.header}
       <small>
         / {_system.total} {$allProductsCount}
-        {if $allProductsCount != $filteredProductsCount}
-          , {_system.filtered} {$filteredProductsCount}
-        {/if}
       </small>
+
       <a n:href="new" class="btn btn-success btn-lg pull-right"><i
                 class="fa fa-sliders-h"></i> {_products.admin.products.default.new}</a>
     </h1>
@@ -64,7 +62,7 @@
       </tbody>
     </table>
 
-    {control products_vp}
+    {control paginator}
   </div>
 
 </div>

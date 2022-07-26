@@ -2,6 +2,7 @@
 
 namespace Crm\ProductsModule\Repository;
 
+use Crm\ApplicationModule\Cache\CacheRepository;
 use Crm\ApplicationModule\Repository;
 use Crm\ApplicationModule\Repository\AuditLogRepository;
 use Crm\PaymentsModule\Repository\PaymentsRepository;
@@ -27,13 +28,16 @@ class ProductsRepository extends Repository
 
     private $productShopCountsDistribution;
 
+    private $cacheRepository;
+
     public function __construct(
         Context $database,
         AuditLogRepository $auditLogRepository,
         AmountSpentDistribution $amountSpentDistribution,
         PaymentCountsDistribution $paymentCountDistribution,
         ProductDaysFromLastOrderDistribution $productDaysFromLastOrderDistribution,
-        ProductShopCountsDistribution $productShopCountsDistribution
+        ProductShopCountsDistribution $productShopCountsDistribution,
+        CacheRepository $cacheRepository
     ) {
         parent::__construct($database);
         $this->auditLogRepository = $auditLogRepository;
@@ -41,6 +45,7 @@ class ProductsRepository extends Repository
         $this->paymentCountDistribution = $paymentCountDistribution;
         $this->productDaysFromLastOrderDistribution = $productDaysFromLastOrderDistribution;
         $this->productShopCountsDistribution = $productShopCountsDistribution;
+        $this->cacheRepository = $cacheRepository;
     }
 
     final public function find($id)
@@ -231,5 +236,21 @@ class ProductsRepository extends Repository
             'deleted_at' => new \DateTime(),
             'modified_at' => new \DateTime(),
         ]);
+    }
+
+    final public function totalCount($allowCached = false, $forceCacheUpdate = false)
+    {
+        $callable = function () {
+            return parent::totalCount();
+        };
+        if ($allowCached) {
+            return $this->cacheRepository->loadAndUpdate(
+                'products_count',
+                $callable,
+                \Nette\Utils\DateTime::from(CacheRepository::REFRESH_TIME_5_MINUTES),
+                $forceCacheUpdate
+            );
+        }
+        return $callable();
     }
 }

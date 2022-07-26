@@ -4,7 +4,7 @@ namespace Crm\ProductsModule\Presenters;
 
 use Crm\AdminModule\Presenters\AdminPresenter;
 use Crm\ApplicationModule\Components\Graphs\GoogleLineGraphGroupControlFactoryInterface;
-use Crm\ApplicationModule\Components\VisualPaginator;
+use Crm\ApplicationModule\Components\PreviousNextPaginator;
 use Crm\ApplicationModule\Config\Repository\ConfigsRepository;
 use Crm\ApplicationModule\Graphs\Criteria;
 use Crm\ApplicationModule\Graphs\GraphDataItem;
@@ -80,19 +80,17 @@ class ProductsAdminPresenter extends AdminPresenter
     public function renderDefault()
     {
         $products = $this->productsRepository->all($this->text, $this->tags);
-        $filteredCount  = $products->count();
 
-        $vp = new VisualPaginator();
-        $this->addComponent($vp, 'products_vp');
-        $paginator = $vp->getPaginator();
-        $paginator->setItemCount($filteredCount);
+        $pnp = new PreviousNextPaginator();
+        $this->addComponent($pnp, 'paginator');
+        $paginator = $pnp->getPaginator();
         $paginator->setItemsPerPage($this->onPage);
 
-        $this->template->vp = $vp;
-        $this->template->products = $products->limit($paginator->getLength(), $paginator->getOffset());
+        $products = $products->limit($paginator->getLength(), $paginator->getOffset())->fetchAll();
+        $pnp->setActualItemCount(count($products));
 
-        $this->template->allProductsCount = $this->productsRepository->all()->count();
-        $this->template->filteredProductsCount = $filteredCount;
+        $this->template->allProductsCount = $this->productsRepository->totalCount(true);
+        $this->template->products = $products;
     }
 
     /**
