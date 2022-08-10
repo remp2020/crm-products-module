@@ -30,14 +30,7 @@
                     {/if}
                     <br>
                 </div>
-                <fieldset id="payment-methods">
-                    <legend>{_products.frontend.shop.checkout.payment_method}</legend>
-                    {foreach $form['payment_gateway']->items as $id => $gatewayCode}
-                        <div class="form-group">
-                            <label class="radio-inline payment-type {$gatewayCode}"><input required type="radio" name="payment_gateway" value="{$id}" {if $iterator->first}checked{/if}><span>{$gatewayLabel($gatewayCode)}</span></label>
-                        </div>
-                    {/foreach}
-                </fieldset>
+
                 <fieldset id="user">
                     <legend>{_products.frontend.shop.checkout.contact_information}</legend>
                     {formContainer user}
@@ -46,7 +39,7 @@
                                 {$user->getIdentity()->email}<br/>
                                 <a style="font-size: 0.8em; font-weight: normal" href="{link :Users:Sign:out back => $back}">({_products.frontend.shop.checkout.sign_under_different_account})</a>
                             </h2>
-                            {input email}
+                        {input email}
                             <input type="hidden" name="user[password]" value="" />
                         {else}
                             <div class="form-group">
@@ -62,14 +55,14 @@
                                     <span class="error password-error" n:ifcontent>{$form['user']['password']->error}</span>
                                 </div>
                                 <div class="form-group">
-                                    <input type="submit" value="{_products.frontend.shop.checkout.login}" class="btn btn-primary">
+                                    {input login_submit, 'class' => 'btn btn-primary'}
                                 </div>
                             </div>
                         {/if}
                     {/formContainer}
                     {ifset $control['checkoutForm']['contact']}
                         {formContainer contact}
-                            <div class="form-group" id="phone-number">
+                            <div class="form-group login-hide" id="phone-number">
                                 {label phone_number /}
                                 {input phone_number}
                             </div>
@@ -77,8 +70,19 @@
                     {/ifset}
                 </fieldset>
 
+                {ifset $control['checkoutForm']['payment_gateway']}
+                <fieldset id="payment-methods" class="login-hide">
+                    <legend>{_products.frontend.shop.checkout.payment_method}</legend>
+                    {foreach $form['payment_gateway']->items as $id => $gatewayCode}
+                        <div class="form-group">
+                            <label class="radio-inline payment-type {$gatewayCode}"><input required type="radio" name="payment_gateway" value="{$id}" {if $iterator->first}checked{/if}><span>{$gatewayLabel($gatewayCode)}</span></label>
+                        </div>
+                    {/foreach}
+                </fieldset>
+                {/ifset}
+
                 {ifset $control['checkoutForm']['shipping_country_id']}
-                <fieldset id="delivery-country">
+                <fieldset id="delivery-country" class="login-hide">
                     <legend>{_products.frontend.shop.checkout.shipping_method}</legend>
                     <div class="form-group">
                         {label shipping_country_id /}
@@ -89,7 +93,7 @@
 
                 {snippet postalFees}
                 {if isset($control['checkoutForm']['postal_fee']->items)}
-                <fieldset id="postal-fees" style="margin-top: 0">
+                <fieldset id="postal-fees" class="login-hide" style="margin-top: 0">
                     <div class="form-group" n:foreach="$control['checkoutForm']['postal_fee']->items as $id => $fee">
                         <label class="radio-inline shipping-type">
                             <input
@@ -108,112 +112,116 @@
                 {/if}
                 {/snippet}
 
-                {control simpleWidget 'products.checkout_form.address_form', $control['checkoutForm']}
+                <div id="delivery-container" class="login-hide">
+                    {control simpleWidget 'products.checkout_form.address_form', $control['checkoutForm']}
 
-                {ifset $control['checkoutForm']['shipping_address']}
-                <fieldset id="shipping-address" data-postalfeeformcode="shipping-address">
-                    <legend>{_products.frontend.shop.checkout.shipping_address}</legend>
-                    {formContainer shipping_address}
-                        <div class="form-group">
-                            {label first_name /}
-                            {input first_name}
-                        </div>
-                        <div class="form-group">
-                            {label last_name /}
-                            {input last_name}
-                        </div>
-                        <div class="form-group">
-                            {label address /}
-                            {input address}
-                        </div>
-                        <div class="form-group">
-                            {label number /}
-                            {input number}
-                        </div>
-                        <div class="form-group">
-                            {label city /}
-                            {input city}
-                        </div>
-                        <div class="form-group">
-                            {label zip /}
-                            {input zip}
-                        </div>
-                    {/formContainer}
-                </fieldset>
-                {/ifset}
+                    {ifset $control['checkoutForm']['shipping_address']}
+                    <fieldset id="shipping-address" data-postalfeeformcode="shipping-address">
+                        <legend>{_products.frontend.shop.checkout.shipping_address}</legend>
+                        {formContainer shipping_address}
+                            <div class="form-group">
+                                {label first_name /}
+                                {input first_name}
+                            </div>
+                            <div class="form-group">
+                                {label last_name /}
+                                {input last_name}
+                            </div>
+                            <div class="form-group">
+                                {label address /}
+                                {input address}
+                            </div>
+                            <div class="form-group">
+                                {label number /}
+                                {input number}
+                            </div>
+                            <div class="form-group">
+                                {label city /}
+                                {input city}
+                            </div>
+                            <div class="form-group">
+                                {label zip /}
+                                {input zip}
+                            </div>
+                        {/formContainer}
+                    </fieldset>
+                    {/ifset}
 
-                {ifset $control['checkoutForm']['licence_address']}
-                <fieldset id="licence-address">
-                    <legend>{_products.frontend.shop.checkout.license_address}</legend>
-                    {formContainer licence_address}
-                        <div class="form-group">
-                            {label first_name /}
-                            {input first_name}
-                        </div>
-                        <div class="form-group">
-                            {label last_name /}
-                            {input last_name}
-                        </div>
-                    {/formContainer}
-                </fieldset>
-                {/ifset}
+                    {ifset $control['checkoutForm']['licence_address']}
+                    <fieldset id="licence-address">
+                        <legend>{_products.frontend.shop.checkout.license_address}</legend>
+                        {formContainer licence_address}
+                            <div class="form-group">
+                                {label first_name /}
+                                {input first_name}
+                            </div>
+                            <div class="form-group">
+                                {label last_name /}
+                                {input last_name}
+                            </div>
+                        {/formContainer}
+                    </fieldset>
+                    {/ifset}
 
-                {control simpleWidget 'products.checkout_form.delivery_data', ['form' => $control['checkoutForm'], 'products' => $products]}
-
-                {snippet billing}
-                <div id="invoice">
-                    {formContainer invoice}
-                        <div class="form-group">
-                            {input add_invoice}
-                            {input same_shipping}
-                        </div>
-                    {/formContainer}
+                    {control simpleWidget 'products.checkout_form.delivery_data', ['form' => $control['checkoutForm'], 'products' => $products]}
                 </div>
 
-                <fieldset id="billing-address">
-                    <legend>{_products.frontend.shop.checkout.billing_address}</legend>
-                    {formContainer billing_address}
-                        <div class="form-group">
-                            {label company_name /}
-                            {input company_name}
-                        </div>
-                        <div class="form-group">
-                            {label address /}
-                            {input address}
-                        </div>
-                        <div class="form-group">
-                            {label number /}
-                            {input number}
-                        </div>
-                        <div class="form-group">
-                            {label city /}
-                            {input city}
-                        </div>
-                        <div class="form-group">
-                            {label zip /}
-                            {input zip}
-                        </div>
-                        <div class="form-group">
-                            {label country_id /}
-                            {input country_id}
-                        </div>
-                        <div class="form-group">
-                            {label company_id /}
-                            {input company_id}
-                            {$control['checkoutForm']['billing_address']['company_id']->getOption('description')}
-                        </div>
-                        <div class="form-group">
-                            {label company_tax_id /}
-                            {input company_tax_id}
-                            {$control['checkoutForm']['billing_address']['company_tax_id']->getOption('description')}
-                        </div>
-                        <div class="form-group">
-                            {label company_vat_id /}
-                            {input company_vat_id}
-                            {$control['checkoutForm']['billing_address']['company_vat_id']->getOption('description')}
-                        </div>
-                    {/formContainer}
-                </fieldset>
+                {snippet billing}
+                <div id="billing-container" class="login-hide">
+                    <div id="invoice">
+                        {formContainer invoice}
+                            <div class="form-group">
+                                {input add_invoice}
+                                {input same_shipping}
+                            </div>
+                        {/formContainer}
+                    </div>
+
+                    <fieldset id="billing-address">
+                        <legend>{_products.frontend.shop.checkout.billing_address}</legend>
+                        {formContainer billing_address}
+                            <div class="form-group">
+                                {label company_name /}
+                                {input company_name}
+                            </div>
+                            <div class="form-group">
+                                {label address /}
+                                {input address}
+                            </div>
+                            <div class="form-group">
+                                {label number /}
+                                {input number}
+                            </div>
+                            <div class="form-group">
+                                {label city /}
+                                {input city}
+                            </div>
+                            <div class="form-group">
+                                {label zip /}
+                                {input zip}
+                            </div>
+                            <div class="form-group">
+                                {label country_id /}
+                                {input country_id}
+                            </div>
+                            <div class="form-group">
+                                {label company_id /}
+                                {input company_id}
+                                {$control['checkoutForm']['billing_address']['company_id']->getOption('description')}
+                            </div>
+                            <div class="form-group">
+                                {label company_tax_id /}
+                                {input company_tax_id}
+                                {$control['checkoutForm']['billing_address']['company_tax_id']->getOption('description')}
+                            </div>
+                            <div class="form-group">
+                                {label company_vat_id /}
+                                {input company_vat_id}
+                                {$control['checkoutForm']['billing_address']['company_vat_id']->getOption('description')}
+                            </div>
+                        {/formContainer}
+                    </fieldset>
+                </div>
                 {/snippet}
             </div>
         </div>
@@ -278,24 +286,24 @@
 
         <div class="row button-row">
             <div class="col-sm-12 col-md-4 left"><a n:href="default" class="btn">{_products.frontend.shop.cart.continue_with_shopping}</a></div>
-            <div class="col-sm-12 col-md-8 right text-right">
+            <div class="col-sm-12 col-md-8 right text-right login-hide">
                 <span n:if="$form->offsetExists('toc1')">
                     {input toc1}
                 </span>
-                <input type="submit" value="{_products.frontend.shop.cart.confirm_order}" id="complete-order" class="btn"></div>
+                {input finish, 'class' => 'btn', 'id' => 'complete-order'}
         </div>
     </div>
 {/form}
 
-{block script}
     <script>
         $(document).ready(function () {
+            {ifset $form['user']['password']}
             if ($('#{$form['user']['password']->getHtmlId()|noescape}').hasClass('error')) {
                 $('#password').show();
                 $('#{$form['user']['password']->getHtmlId()|noescape}').focus();
-                $('#phone-number, #postal-fees, #licence-address, #coupon, #invoice, #billing-address, #delivery-country, .button-row .right').hide();
-                $('[data-postalfeeformcode]').hide();
+                $('.login-hide').hide();
             }
+            {/ifset}
 
             function checkEmail(callback) {
                 $('#preloader').css('visibility', 'visible');
@@ -336,29 +344,19 @@
                         $('#email-help-block').hide().closest('.form-group').removeClass('has-error');
                     }
 
-                    $('[data-postalfeeformcode]').hide();
-
                     if (response.status && response.status === 'taken') {
-                        $('input[name="_action"]').val('login');
                         $('#password').show();
+                        $('.login-hide').hide();
                         $('#frm-checkoutForm-user-password').focus();
-                        $('#phone-number, #postal-fees, #licence-address, #coupon, #invoice, #billing-address, #delivery-country, .button-row .right').hide();
-                        getShippingElement().hide();
                     } else {
-                        $('input[name="_action"]').val('checkout');
                         $('#password').hide();
-                        $('#phone-number, #postal-fees, #licence-address, #coupon, #invoice, #delivery-country, .button-row .right').show();
-                        if (!$('#frm-checkoutForm-invoice-same_shipping').is(':checked')) {
-                            $('#billing-address').show();
-                        }
-                        getShippingElement().show();
+                        $('.login-hide').show();
                     }
                 });
             }).change();
 
             $('form').on('submit', function(e) {
                 if (Nette.validateForm(e.target, true)) {
-                    $(this).find('input[type="submit"]').prop("disabled", true);
                     return true;
                 }
                 if (e && e.stopPropagation) {
@@ -368,7 +366,8 @@
             });
 
             {ifset $control['checkoutForm']['shipping_address']}
-            $('#{$form['shipping_country_id']->getHtmlId()|noescape}').on('change', function () {
+            var shippingCountry = $('#{$form['shipping_country_id']->getHtmlId()|noescape}');
+            shippingCountry.on('change', function () {
                 $.nette.ext('loader', null);
                 $.nette.ajax({
                     type: 'GET',
@@ -377,7 +376,10 @@
                         'value': $(this).val()
                     }
                 });
-            }).change();
+            });
+            if (shippingCountry.is(':visible')) {
+                shippingCountry.change();
+            }
             {/ifset}
 
             $('body').on('change', '#postal-fees input[type="radio"]', function () {
@@ -391,9 +393,13 @@
                 });
             });
 
-            $('[name=postal_fee]').change();
+            var postalFee = $('[name=postal_fee]');
+            if (postalFee.is(':visible')) {
+                postalFee.change();
+            }
         });
     </script>
+    {block script}
 {/block}
 
 {/snippetArea}

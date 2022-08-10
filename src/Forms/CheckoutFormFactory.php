@@ -28,6 +28,7 @@ use Crm\UsersModule\Repository\UsersRepository;
 use Kdyby\Translation\Translator;
 use Nette\Application\UI\Form;
 use Nette\Database\Table\ActiveRow;
+use Nette\Forms\Controls\TextInput;
 use Nette\Http\Request;
 use Nette\Security\AuthenticationException;
 use Nette\Security\User;
@@ -202,17 +203,25 @@ class CheckoutFormFactory
             $email->setHtmlAttribute('placeholder', '@');
             $email->setRequired('products.frontend.shop.checkout.fields.email_required');
 
-            $emailUsable = function ($field, $args) {
-                $user = $this->usersRepository->findBy('email', $field->getValue());
+            $emailUsable = function (TextInput $emailField, ?string $password) {
+                if (strlen($password)) {
+                    // User is trying to log in, formSucceeded will validate the credentials.
+                    return true;
+                }
+                $user = $this->usersRepository->findBy('email', $emailField->getValue());
                 return !$user;
             };
-            $email->addConditionOn($action, Form::NOT_EQUAL, 'login')
-                ->addRule($emailUsable, 'products.frontend.shop.checkout.fields.account_exists');
-        }
 
-        $user->addPassword('password', 'Heslo')
-            ->addConditionOn($action, Form::EQUAL, 'login')
-            ->addRule(Form::FILLED, 'products.frontend.shop.checkout.fields.pass_required');
+            $password = $user->addPassword('password', 'Heslo');
+            $password
+                ->addConditionOn($action, Form::EQUAL, 'login')
+                ->addRule(Form::FILLED, 'products.frontend.shop.checkout.fields.pass_required');
+            $email->addConditionOn($action, Form::NOT_EQUAL, 'login')
+                ->addRule($emailUsable, 'products.frontend.shop.checkout.fields.account_exists', $password);
+
+            $user->addSubmit('login_submit', 'products.frontend.shop.checkout.login')
+                ->setValidationScope([$form['user']]);
+        }
 
         if ($hasDelivery) {
             $contact = $form->addContainer('contact');
@@ -373,7 +382,7 @@ class CheckoutFormFactory
             }
         }
 
-        $form->addSubmit('finish', 'products.frontend.shop.checkout.fields.login');
+        $form->addSubmit('finish', 'products.frontend.shop.cart.confirm_order');
         $form->addProtection();
 
         $form->setDefaults($defaults);
@@ -403,13 +412,13 @@ class CheckoutFormFactory
 
     public function formSucceeded($form, $values)
     {
-        if ($values['action'] == 'login') {
+        if (isset($form['user']['login_submit']) && $form['user']['login_submit']->isSubmittedBy()) {
             $this->user->setExpiration('14 days');
             try {
                 $this->user->login(['username' => $values['user']['email'], 'password' => $values['user']['password']]);
                 $this->user->setAuthorizator($this->authorizator);
 
-                $cart = Json::decode($values['cart'], Json::FORCE_ARRAY);
+                $cart = Json::decode($this->request->getPost('cart'), Json::FORCE_ARRAY);
                 $products = $this->productsRepository->findByIds(array_keys($cart));
                 $removeProducts = [];
                 foreach ($products as $product) {
