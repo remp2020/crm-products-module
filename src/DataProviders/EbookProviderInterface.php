@@ -20,8 +20,8 @@ interface EbookProviderInterface
      *
      * @param ActiveRow $product
      * @param ActiveRow $user
-     * @param ActiveRow $address
+     * @param ActiveRow|null $address
      * @return mixed
      */
-    public function getDownloadLinks(ActiveRow $product, ActiveRow $user, ActiveRow $address);
+    public function getDownloadLinks(ActiveRow $product, ActiveRow $user, ?ActiveRow $address);
 }

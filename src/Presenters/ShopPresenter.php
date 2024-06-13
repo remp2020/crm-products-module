@@ -387,20 +387,18 @@ class ShopPresenter extends FrontendPresenter
 
         $ebooks = [];
 
-        if ($address) {
-            $this->paymentItemHelper->unBundleProducts($order->payment, function ($product) use ($address, &$ebooks) {
-                if (!isset($ebooks[$product->id])) {
-                    $user = $this->usersRepository->find($this->user->getIdentity()->getId());
-                    $links = $this->ebookProvider->getDownloadLinks($product, $user, $address);
-                    if (!empty($links)) {
-                        $ebooks[$product->id] = [
-                            'product' => $product,
-                            'links' => $links,
-                        ];
-                    }
+        $this->paymentItemHelper->unBundleProducts($order->payment, function ($product) use ($address, &$ebooks) {
+            if (!isset($ebooks[$product->id])) {
+                $user = $this->usersRepository->find($this->user->getIdentity()->getId());
+                $links = $this->ebookProvider->getDownloadLinks($product, $user, $address);
+                if (!empty($links)) {
+                    $ebooks[$product->id] = [
+                        'product' => $product,
+                        'links' => $links,
+                    ];
                 }
-            });
-        }
+            }
+        });
 
         $fileFormatMap = $this->ebookProvider->getFileTypes();
 

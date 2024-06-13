@@ -3,6 +3,7 @@
 namespace Crm\ProductsModule\DataProviders;
 
 use Nette\Database\Table\ActiveRow;
+use Tracy\Debugger;
 
 class EbookProvider
 {
@@ -24,11 +25,20 @@ class EbookProvider
         return $fileTypes;
     }
 
-    public function getDownloadLinks(ActiveRow $product, ActiveRow $user, ActiveRow $address): array
+    public function getDownloadLinks(ActiveRow $product, ActiveRow $user, ?ActiveRow $address): array
     {
         $downloadLinks = [];
         foreach ($this->providers as $provider) {
-            $links = $provider->getDownloadLinks($product, $user, $address);
+            try {
+                $links = $provider->getDownloadLinks($product, $user, $address);
+            } catch (\Exception $e) {
+                Debugger::log(
+                    "Ebook provider [{$provider::identifier()}] returned exception: " . $e->getMessage(),
+                    Debugger::EXCEPTION
+                );
+                continue;
+            }
+
             if ($links !== null) {
                 $downloadLinks[$provider::identifier()] = $links;
             }
