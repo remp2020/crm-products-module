@@ -6,21 +6,22 @@ use Crm\PaymentsModule\Models\PaymentItem\PaymentItemInterface;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemTrait;
 use Nette\Database\Table\ActiveRow;
 
-class ProductPaymentItem implements PaymentItemInterface
+final class ProductPaymentItem implements PaymentItemInterface
 {
     use PaymentItemTrait;
 
     public const TYPE = 'product';
 
-    private ActiveRow $product;
-
-    public function __construct(ActiveRow $product, int $count)
-    {
-        $this->product = $product;
-        $this->count = $count;
+    public function __construct(
+        readonly private ActiveRow $product,
+        int $count,
+        array $meta = [],
+    ) {
         $this->name = $product->name;
         $this->price = $product->price;
         $this->vat = $product->vat;
+        $this->count = $count;
+        $this->meta = $meta;
     }
 
     public function forcePrice(float $price): self
@@ -29,13 +30,7 @@ class ProductPaymentItem implements PaymentItemInterface
         return $this;
     }
 
-    public function forceVat(int $vat): static
-    {
-        $this->vat = $vat;
-        return $this;
-    }
-
-    public function forceName(string $name): self
+    public function forceName($name): self
     {
         $this->name = $name;
         return $this;
@@ -48,8 +43,19 @@ class ProductPaymentItem implements PaymentItemInterface
         ];
     }
 
-    public function meta(): array
+    public static function fromPaymentItem(ActiveRow $paymentItem): static
     {
-        return [];
+        if ($paymentItem->type !== self::TYPE) {
+            throw new \RuntimeException("Invalid type of payment item [{$paymentItem->type}], must be [" . self::TYPE . "]");
+        }
+        if (!$paymentItem->product) {
+            throw new \RuntimeException("No associated product for payment_item #[{$paymentItem->id}], product is required for given type");
+        }
+
+        return new ProductPaymentItem(
+            $paymentItem->product,
+            $paymentItem->count,
+            self::loadMeta($paymentItem),
+        );
     }
 }

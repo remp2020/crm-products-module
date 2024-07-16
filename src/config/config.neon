@@ -87,6 +87,11 @@ services:
 			- registerCondition('products_sum', Crm\ProductsModule\Models\PostalFeeCondition\ProductSumCondition())
 			- registerCondition('user_segment', Crm\ProductsModule\Models\PostalFeeCondition\UserSegmentCondition())
 
+	paymentItemContainerFactory:
+		setup:
+			- registerPaymentItemType(Crm\ProductsModule\Models\PaymentItem\PostalFeePaymentItem)
+			- registerPaymentItemType(Crm\ProductsModule\Models\PaymentItem\ProductPaymentItem)
+
 	productsPreNotificationEventHandler:
 		factory: Crm\ProductsModule\Events\PreNotificationEventHandler
 		setup:

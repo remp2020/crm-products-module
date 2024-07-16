@@ -4,6 +4,7 @@ namespace Crm\ProductsModule\Tests;
 
 use Crm\ApplicationModule\Models\Criteria\ScenariosCriteriaStorage;
 use Crm\ApplicationModule\Models\Scenario\TriggerManager;
+use Crm\PaymentsModule\Models\GatewayFactory;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Repositories\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
@@ -24,6 +25,8 @@ use Crm\UsersModule\Repositories\UsersRepository;
 
 class OrderStatusOnScenarioEnterCriteriaTest extends BaseTestCase
 {
+    public const TEST_GATEWAY_CODE = 'my_pay';
+
     /** @var OrdersRepository */
     private $ordersRepository;
 
@@ -47,6 +50,9 @@ class OrderStatusOnScenarioEnterCriteriaTest extends BaseTestCase
         );
 
         $this->ordersRepository = $this->getRepository(OrdersRepository::class);
+
+        $gatewayFactory = $this->inject(GatewayFactory::class);
+        $gatewayFactory->registerGateway(self::TEST_GATEWAY_CODE);
     }
 
     public function requiredRepositories(): array
@@ -227,7 +233,7 @@ class OrderStatusOnScenarioEnterCriteriaTest extends BaseTestCase
         }
         if (!$this->paymentGateway) {
             $paymentGatewaysRepository = $this->container->getByType(PaymentGatewaysRepository::class);
-            $this->paymentGateway = $paymentGatewaysRepository->add('MyPay', 'my_pay');
+            $this->paymentGateway = $paymentGatewaysRepository->add('MyPay', self::TEST_GATEWAY_CODE);
         }
         return $this->paymentGateway;
     }
