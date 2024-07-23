@@ -522,7 +522,7 @@ class CheckoutFormFactory
             paymentItemContainer: $paymentItemsContainer,
             referer: $this->request->getUrl()->getBaseUrl(),
             amount: $amount,
-            paymentCountry: $countryResolution ? $this->countriesRepository->findByIsoCode($countryResolution->countryCode) : null,
+            paymentCountry: $countryResolution?->country,
             paymentCountryResolutionReason: $countryResolution?->getReasonValue(),
         );
         $additionalColumns = [];

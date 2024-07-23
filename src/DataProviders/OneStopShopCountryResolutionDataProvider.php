@@ -41,10 +41,10 @@ final class OneStopShopCountryResolutionDataProvider implements OneStopShopCount
         }
 
         if ($invoiceCountry) {
-            return new CountryResolution($invoiceCountry->iso_code, CountryResolutionType::INVOICE_ADDRESS);
+            return new CountryResolution($invoiceCountry, CountryResolutionType::INVOICE_ADDRESS);
         }
         if ($shippingCountry) {
-            return new CountryResolution($shippingCountry->iso_code, CountryResolutionType::USER_SELECTED);
+            return new CountryResolution($shippingCountry, CountryResolutionType::USER_SELECTED);
         }
 
         return null;
