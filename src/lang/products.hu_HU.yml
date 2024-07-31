@@ -111,6 +111,9 @@ frontend:
         search:
             results_title: Keresés eredménye
             no_results: Nincs találat.
+        download:
+            presale: "Ez a könyv jelenleg elővételben van."
+            presale_available: "Elérhető lesz"
 
     orders:
         my_orders: Rendeléseim

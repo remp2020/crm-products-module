@@ -454,6 +454,9 @@ frontend:
         search:
             results_title: Search results
             no_results: No results found.
+        download:
+            presale: "This book is currently on pre-sale."
+            presale_available: "It will be available"
 
     orders:
         my_orders: My orders

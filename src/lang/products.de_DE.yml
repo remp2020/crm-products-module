@@ -97,6 +97,9 @@ frontend:
         search:
             results_title: Suchergebnisse
             no_results: Keine Ergebnisse gefunden.
+        download:
+            presale: "Dieses Buch ist derzeit im Vorverkauf."
+            presale_available: "Es wird verfügbar sein"
 
     orders:
         my_orders: Meine Bestellungen

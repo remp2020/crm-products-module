@@ -27,7 +27,16 @@
                         <strong>{$ebook['product']->name}</strong>
                     </td>
                     <td n:inner-foreach="$ebook['links'][$ebook['product']->distribution_center] as $format => $link" align="right" class="ebooks">
-                        <a href="{$link|noescape}" class="btn btn-primary download-link"><i class="fa fa-download"></i> {$fileFormatMap[$ebook['product']->distribution_center][$format]}</a>
+                        {if $format === 'presale'}
+                            <span>
+                                {_products.frontend.shop.download.presale}
+                                {if $ebook['product']->available_at}
+                                    {_products.frontend.shop.download.presale_available}: {$ebook['product']->available_at|userDate}
+                                {/if}
+                            </span>
+                        {else}
+                            <a href="{$link|noescape}" class="btn btn-primary download-link"><i class="fa fa-download"></i> {$fileFormatMap[$ebook['product']->distribution_center][$format]}</a>
+                        {/if}
                     </td>
                 </tr>
             {/foreach}

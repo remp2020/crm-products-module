@@ -451,6 +451,10 @@ frontend:
         search:
             results_title: Výsledky vyhledávání
             no_results: Nebyly nalezeny žádné výsledky.
+        download:
+            presale: "Tato kniha je momentálně v předprodeji."
+            presale_available: "Dostupná bude"
+
     orders:
         my_orders: Moje objednávky
         my_books: Moje knihy
