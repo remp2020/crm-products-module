@@ -5,7 +5,6 @@ namespace Crm\ProductsModule\Forms;
 use Contributte\Translation\Translator;
 use Crm\ApplicationModule\Models\Config\ApplicationConfig;
 use Crm\ApplicationModule\Models\DataProvider\DataProviderManager;
-use Crm\PaymentsModule\Models\GeoIp\GeoIpException;
 use Crm\PaymentsModule\Models\OneStopShop\OneStopShop;
 use Crm\PaymentsModule\Models\OneStopShop\OneStopShopCountryConflictException;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
@@ -433,7 +432,7 @@ class CheckoutFormFactory
                 user: $user,
                 formParams: (array) $values,
             );
-        } catch (OneStopShopCountryConflictException|GeoIpException $e) {
+        } catch (OneStopShopCountryConflictException $e) {
             Debugger::log("Shop checkout - OSS conflict: " . $e->getMessage(), ILogger::WARNING);
             $this->userActionsLogRepository->add($user->id, 'funnel.one_stop_shop.conflict', ['exception' => $e->getMessage()]);
             $form->addError('products.frontend.shop.checkout.warnings.unable_to_create_payment_one_stop_shop');
@@ -508,7 +507,7 @@ class CheckoutFormFactory
                 paymentItemContainer: $paymentItemsContainer,
                 formParams: (array) $values,
             );
-        } catch (OneStopShopCountryConflictException|GeoIpException $e) {
+        } catch (OneStopShopCountryConflictException $e) {
             Debugger::log("Shop checkout - OSS conflict: " . $e->getMessage(), ILogger::WARNING);
             $this->userActionsLogRepository->add($user->id, 'funnel.one_stop_shop.conflict', ['exception' => $e->getMessage()]);
             $form->addError('products.frontend.shop.checkout.warnings.unable_to_create_payment_one_stop_shop');

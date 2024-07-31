@@ -5,7 +5,7 @@ namespace Crm\ProductsModule\DataProviders;
 
 use Crm\PaymentsModule\DataProviders\OneStopShopCountryResolutionDataProviderInterface;
 use Crm\PaymentsModule\Models\OneStopShop\CountryResolution;
-use Crm\PaymentsModule\Models\OneStopShop\CountryResolutionType;
+use Crm\PaymentsModule\Models\OneStopShop\CountryResolutionTypeEnum;
 use Crm\PaymentsModule\Models\OneStopShop\OneStopShopCountryConflictException;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\UsersModule\Repositories\CountriesRepository;
@@ -41,10 +41,10 @@ final class OneStopShopCountryResolutionDataProvider implements OneStopShopCount
         }
 
         if ($invoiceCountry) {
-            return new CountryResolution($invoiceCountry, CountryResolutionType::INVOICE_ADDRESS);
+            return new CountryResolution($invoiceCountry, CountryResolutionTypeEnum::InvoiceAddress);
         }
         if ($shippingCountry) {
-            return new CountryResolution($shippingCountry, CountryResolutionType::USER_SELECTED);
+            return new CountryResolution($shippingCountry, CountryResolutionTypeEnum::UserSelected);
         }
 
         return null;
