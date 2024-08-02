@@ -3,6 +3,7 @@
 namespace Crm\ProductsModule\Forms;
 
 use Contributte\Translation\Translator;
+use Crm\ApplicationModule\Forms\Controls\CountriesSelectItemsBuilder;
 use Crm\ApplicationModule\Models\Config\ApplicationConfig;
 use Crm\ApplicationModule\Models\DataProvider\DataProviderManager;
 use Crm\PaymentsModule\Models\OneStopShop\OneStopShop;
@@ -54,27 +55,28 @@ class CheckoutFormFactory
     private $cartFree;
 
     public function __construct(
-        private ApplicationConfig $applicationConfig,
-        private PaymentsRepository $paymentsRepository,
-        private PaymentGatewaysRepository $paymentGatewaysRepository,
-        private ProductsRepository $productsRepository,
-        private User $user,
-        private UsersRepository $usersRepository,
-        private UserManager $userManager,
-        private AddressesRepository $addressesRepository,
-        private AddressChangeRequestsRepository $addressChangeRequestsRepository,
-        private CountriesRepository $countriesRepository,
-        private OrdersRepository $ordersRepository,
-        private PostalFeesRepository $postalFeesRepository,
-        private Request $request,
-        private Authorizator $authorizator,
-        private Translator $translator,
-        private PaymentItemHelper $paymentItemHelper,
-        private DataProviderManager $dataProviderManager,
-        private CountryPostalFeesRepository $countryPostalFeesRepository,
-        private PostalFeeService $postalFeeService,
-        private OneStopShop $oneStopShop,
-        private UserActionsLogRepository $userActionsLogRepository,
+        private readonly ApplicationConfig $applicationConfig,
+        private readonly PaymentsRepository $paymentsRepository,
+        private readonly PaymentGatewaysRepository $paymentGatewaysRepository,
+        private readonly ProductsRepository $productsRepository,
+        private readonly User $user,
+        private readonly UsersRepository $usersRepository,
+        private readonly UserManager $userManager,
+        private readonly AddressesRepository $addressesRepository,
+        private readonly AddressChangeRequestsRepository $addressChangeRequestsRepository,
+        private readonly CountriesRepository $countriesRepository,
+        private readonly OrdersRepository $ordersRepository,
+        private readonly PostalFeesRepository $postalFeesRepository,
+        private readonly Request $request,
+        private readonly Authorizator $authorizator,
+        private readonly Translator $translator,
+        private readonly PaymentItemHelper $paymentItemHelper,
+        private readonly DataProviderManager $dataProviderManager,
+        private readonly CountryPostalFeesRepository $countryPostalFeesRepository,
+        private readonly PostalFeeService $postalFeeService,
+        private readonly OneStopShop $oneStopShop,
+        private readonly UserActionsLogRepository $userActionsLogRepository,
+        private readonly CountriesSelectItemsBuilder $countriesSelectItemsBuilder,
     ) {
     }
 
@@ -285,7 +287,7 @@ class CheckoutFormFactory
         $country = $billingAddress->addSelect(
             'country_id',
             'products.frontend.shop.checkout.fields.country',
-            $this->countriesRepository->getAllPairs()
+            $this->countriesSelectItemsBuilder->getAllPairs()
         );
 
         $validateCountryIds = $this->getIdsOfCountriesByIsoCode(['CZ', 'SK']);
