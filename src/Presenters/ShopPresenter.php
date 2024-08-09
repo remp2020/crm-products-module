@@ -415,12 +415,6 @@ class ShopPresenter extends FrontendPresenter
         $this->template->contactEmail = $this->applicationConfig->get('contact_email');
     }
 
-    private function buildSession()
-    {
-        $this->buildCartSession();
-        $this->buildTrackingParamsSession();
-    }
-
     protected function getTrackerParams()
     {
         $trackerParams = [];

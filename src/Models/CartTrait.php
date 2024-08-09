@@ -15,6 +15,12 @@ trait CartTrait
 
     private $cartProductSum;
 
+    private function buildSession(): void
+    {
+        $this->buildCartSession();
+        $this->buildTrackingParamsSession();
+    }
+
     private function buildCartSession()
     {
         $this->cartSession = $this->getSession('cart');
@@ -98,10 +104,6 @@ trait CartTrait
 
     public function handleRemoveCart($id)
     {
-        if ($this->request->isMethod('GET')) {
-            $this->redirect('default');
-        }
-
         $product = $this->productsRepository->find($id);
         if (!$product || !$product->shop) {
             throw new BadRequestException('Product not found.', 404);
@@ -128,10 +130,6 @@ trait CartTrait
 
     public function handleRemoveProductCart($id)
     {
-        if ($this->request->isMethod('GET')) {
-            $this->redirect('default');
-        }
-
         $product = $this->productsRepository->find($id);
         if (!$product || !$product->shop) {
             throw new BadRequestException('Product not found.', 404);
