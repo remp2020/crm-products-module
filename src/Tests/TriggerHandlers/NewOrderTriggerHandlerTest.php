@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Crm\ProductsModule\Tests\TriggerHandlers;
 
-use Crm\DenniknModule\Seeders\AddressTypesSeeder;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
 use Crm\PaymentsModule\Repositories\PaymentGatewaysRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
@@ -32,14 +31,6 @@ class NewOrderTriggerHandlerTest extends BaseTestCase
             ...parent::requiredRepositories(),
             AddressesRepository::class,
             OrdersRepository::class,
-        ];
-    }
-
-    protected function requiredSeeders(): array
-    {
-        return [
-            ...parent::requiredSeeders(),
-            AddressTypesSeeder::class,
         ];
     }
 
