@@ -1,4 +1,4 @@
-<li class="list-group-item"><b>{_products.admin.component.avg_product_payment_widget.avg_product_payment}:</b> {$avgProductPayments|price}
+<li class="list-group-item"><b>{_products.admin.component.avg_product_payment_widget.avg_product_payment}:</b> {$avgProductPayments|number:2}
   {if $updatedAt}
     <span class="text-muted">({$updatedAt|userDate})</span>
   {/if}
