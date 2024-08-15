@@ -8,12 +8,14 @@ use Crm\PaymentsModule\Models\OneStopShop\CountryResolution;
 use Crm\PaymentsModule\Models\OneStopShop\CountryResolutionTypeEnum;
 use Crm\PaymentsModule\Models\OneStopShop\OneStopShopCountryConflictException;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
+use Crm\ProductsModule\Repositories\OrdersRepository;
 use Crm\UsersModule\Repositories\CountriesRepository;
 
 final class OneStopShopCountryResolutionDataProvider implements OneStopShopCountryResolutionDataProviderInterface
 {
     public function __construct(
         private CountriesRepository $countriesRepository,
+        private OrdersRepository $ordersRepository,
     ) {
     }
 
@@ -25,14 +27,24 @@ final class OneStopShopCountryResolutionDataProvider implements OneStopShopCount
         /** @var ?PaymentItemContainer $paymentItemContainer */
         $paymentItemContainer = $params['paymentItemContainer'] ?? null;
         $formParams = $params['formParams'] ?? [];
+        $payment = $params['payment'] ?? [];
 
         $shippingCountry = null;
-        if (isset($formParams['shipping_country_id'])) {
+        $invoiceCountry = null;
+
+        if ($payment) {
+            $order = $this->ordersRepository->findByPayment($payment);
+            if ($order) {
+                $shippingCountry = $order->shipping_address?->country;
+                $invoiceCountry = $order->billing_address?->country;
+            }
+        }
+
+        if (!$shippingCountry && isset($formParams['shipping_country_id'])) {
             $shippingCountry = $this->countriesRepository->find($formParams['shipping_country_id']);
         }
 
-        $invoiceCountry = null;
-        if (isset($formParams['billing_address']['country_id'])) {
+        if (!$invoiceCountry && isset($formParams['billing_address']['country_id'])) {
             $invoiceCountry = $this->countriesRepository->find($formParams['billing_address']['country_id']);
         }
 
@@ -44,7 +56,7 @@ final class OneStopShopCountryResolutionDataProvider implements OneStopShopCount
             return new CountryResolution($invoiceCountry, CountryResolutionTypeEnum::InvoiceAddress);
         }
         if ($shippingCountry) {
-            return new CountryResolution($shippingCountry, CountryResolutionTypeEnum::UserSelected);
+            return new CountryResolution($shippingCountry, CountryResolutionTypeEnum::PaymentAddress);
         }
 
         return null;
