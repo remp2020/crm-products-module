@@ -18,7 +18,7 @@ services:
 
 	- Crm\ProductsModule\Models\Builder\ProductBuilder
 
-	- Crm\ProductsModule\Commands\CalculateAveragesCommand
+	productsCalculateAveragesCommand: Crm\ProductsModule\Commands\CalculateAveragesCommand
 
 	- Crm\ProductsModule\Components\ProductItemsListWidget\ProductItemsListWidget
 	- Crm\ProductsModule\Components\ProductStats\ProductStatsFactory
