@@ -28,7 +28,7 @@ final class PostalFeePaymentItem implements PaymentItemInterface
 
     public function __construct(
         private readonly ActiveRow $postalFee,
-        int $vat,
+        float $vat,
         int $count = 1,
         array $meta = [],
     ) {
