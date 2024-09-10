@@ -52,4 +52,12 @@ class ProductPropertiesRepository extends Repository
         }
         return null;
     }
+
+    final public function getProductByPropertyCodeAndValue(string $propertyCode, string $propertyValue)
+    {
+        return $this->getTable()->where([
+            'product_template_property.code' => $propertyCode,
+            'product_properties.value' => $propertyValue
+        ])->fetch()?->product;
+    }
 }
