@@ -420,6 +420,8 @@ class CheckoutFormFactory
                 return;
             }
 
+            $this->user->login(['user' => $user, 'autoLogin' => true]);
+
             if (!$user) {
                 $form['user']['email']->addError('products.frontend.shop.checkout.warnings.unable_to_create_user');
                 return;
