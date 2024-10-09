@@ -43,10 +43,13 @@
             </tbody>
         </table>
 
+        {if $shopHost}
         <p>
             {_products.frontend.orders.visit_eshop_ebooks, [shop_url => $shopUrl]|noescape}
         </p>
-        {else}
+        {/if}
+
+        {elseif $shopHost}
         <blockquote>
             <p class="lead">
                 {_products.frontend.orders.visit_eshop_ebooks, [shop_url => $shopUrl]|noescape}
