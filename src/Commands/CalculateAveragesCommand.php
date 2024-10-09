@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Crm\ProductsModule\Commands;
 
 use Crm\ApplicationModule\Commands\DecoratedCommandTrait;
@@ -175,6 +177,9 @@ class CalculateAveragesCommand extends Command
                 $this->computeProductPaymentAmounts(interval: $interval);
             }
         }
+
+        $this->line('**** ' . self::getCommandName() . ' (end date: ' . (new DateTime())->format(DATE_RFC3339) . ') ****', 'info');
+        $this->line('All done.');
 
         return Command::SUCCESS;
     }
