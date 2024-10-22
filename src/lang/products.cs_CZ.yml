@@ -19,7 +19,7 @@ data:
             vat: DPH
             user_label: Veřejný popis
             shop: Prodávat v obchodě
-            sorting: Produkt zařadit na
+            sorting: Produkt zařadit za
             tags: Tagy
             description: Popis
             ean: EAN kód
