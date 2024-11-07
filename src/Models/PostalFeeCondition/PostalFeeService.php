@@ -56,13 +56,13 @@ class PostalFeeService
                     /** @var PostalFeeConditionInterface $resolver */
                     $resolver = $this->conditions[$condition->code];
                     if ($resolver->isReached($cart, $condition->value, $userId)) {
-                        unset($result[$countryPostalFee->postal_fee->code]);
                         $result[$countryPostalFee->postal_fee->code] = $countryPostalFee->postal_fee;
                     }
                 }
             } else {
-                unset($result[$countryPostalFee->postal_fee->code]);
-                $result[$countryPostalFee->postal_fee->code] = $countryPostalFee->postal_fee;
+                if (!isset($result[$countryPostalFee->postal_fee->code]) || $result[$countryPostalFee->postal_fee->code]->amount > $countryPostalFee->postal_fee->amount) {
+                    $result[$countryPostalFee->postal_fee->code] = $countryPostalFee->postal_fee;
+                }
             }
         }
 

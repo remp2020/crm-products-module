@@ -51,4 +51,9 @@ final class PostalFeePaymentItem implements PaymentItemInterface
             'postal_fee_id' => $this->postalFee->id,
         ];
     }
+
+    public function getPostalFee(): ActiveRow
+    {
+        return $this->postalFee;
+    }
 }
