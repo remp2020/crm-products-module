@@ -28,7 +28,7 @@ class UserSegmentCondition implements PostalFeeConditionInterface, PostalFeeMess
         $this->segmentsRepository = $segmentsRepository;
     }
 
-    public function isReached(array $products, string $value, int $userId = null): bool
+    public function isReached(array $products, ?string $value, int $userId = null): bool
     {
         if ($userId === null) {
             return false;

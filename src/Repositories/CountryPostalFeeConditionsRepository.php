@@ -16,7 +16,7 @@ class CountryPostalFeeConditionsRepository extends Repository
      *
      * @return bool|int|ActiveRow
      */
-    final public function add(ActiveRow $countryPostalFeeRow, string $code, string $value)
+    final public function add(ActiveRow $countryPostalFeeRow, string $code, ?string $value = null)
     {
         return $this->insert([
             'country_postal_fee_id' => $countryPostalFeeRow->id,

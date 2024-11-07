@@ -108,10 +108,13 @@ class CountryPostalFeesFormFactory
                 ->fetch();
             if ($relatedCondition) {
                 $condition = $this->postalFeeService->getRegisteredConditionByCode($relatedCondition->code);
-                $form['condition_value'] = $condition->getInputControl();
-
                 $defaults['condition'] = $relatedCondition->code;
-                $defaults['condition_value'] = $relatedCondition->value;
+
+                $inputControl = $condition->getInputControl();
+                if ($inputControl) {
+                    $form['condition_value'] = $inputControl;
+                    $defaults['condition_value'] = $relatedCondition->value;
+                }
             }
             $form->setDefaults($defaults);
         }
@@ -195,7 +198,7 @@ class CountryPostalFeesFormFactory
                 $this->countryPostalFeeConditionsRepository->add(
                     $countryPostalFeeRow,
                     $values['condition'],
-                    $values['condition_value']
+                    $values['condition_value'] ?? null,
                 );
             }
         } catch (\Exception $exception) {

@@ -128,10 +128,13 @@ class CountryPostalFeesPresenter extends AdminPresenter
         }
 
         $condition = $this->postalFeeService->getRegisteredConditionByCode($condition);
-        $this['countryPostalFeeForm']->addComponent(
-            $condition->getInputControl(),
-            'condition_value'
-        );
+        $conditionValueComponent = $condition->getInputControl();
+        if ($conditionValueComponent) {
+            $this['countryPostalFeeForm']->addComponent(
+                $condition->getInputControl(),
+                'condition_value'
+            );
+        }
 
         $this->redrawControl('conditionSnippet');
     }

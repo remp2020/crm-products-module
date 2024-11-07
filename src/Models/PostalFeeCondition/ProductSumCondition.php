@@ -29,7 +29,7 @@ class ProductSumCondition implements PostalFeeConditionInterface, PostalFeeNumer
         return $this->translator->translate('products.admin.country_postal_fees.conditions.products_sum.label');
     }
 
-    public function isReached(array $products, string $value, int $userId = null): bool
+    public function isReached(array $products, ?string $value, int $userId = null): bool
     {
         return $this->sumProductsFromCart($products) >= (float)$value;
     }
