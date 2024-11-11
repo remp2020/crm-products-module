@@ -39,12 +39,6 @@ final class PostalFeePaymentItem implements PaymentItemInterface
         $this->meta = $meta;
     }
 
-    public function forcePrice(float $price): self
-    {
-        $this->price = $price;
-        return $this;
-    }
-
     public function forceName(string $name): self
     {
         $this->name = $name;

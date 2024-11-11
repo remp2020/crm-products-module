@@ -24,12 +24,6 @@ final class ProductPaymentItem implements PaymentItemInterface
         $this->meta = $meta;
     }
 
-    public function forcePrice(float $price): self
-    {
-        $this->price = $price;
-        return $this;
-    }
-
     public function forceName($name): self
     {
         $this->name = $name;
@@ -41,6 +35,11 @@ final class ProductPaymentItem implements PaymentItemInterface
         return [
             'product_id' => $this->product->id,
         ];
+    }
+
+    public function getProduct(): ActiveRow
+    {
+        return $this->product;
     }
 
     public static function fromPaymentItem(ActiveRow $paymentItem): static
