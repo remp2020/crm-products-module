@@ -7,7 +7,6 @@ use Crm\ApplicationModule\Repositories\ConfigsRepository;
 use Crm\ProductsModule\Models\Config;
 use Crm\ProductsModule\Models\PaymentItem\ProductPaymentItem;
 use Crm\ProductsModule\Repositories\OrdersRepository;
-use Crm\SubscriptionsModule\Repositories\SubscriptionsRepository;
 use Crm\UsersModule\DataProviders\AddressesUserDataProvider;
 use Nette\Localization\Translator;
 use Nette\Utils\DateTime;
@@ -17,18 +16,15 @@ class OrdersUserDataProvider implements UserDataProviderInterface
 {
     private $ordersRepository;
     private $configsRepository;
-    private $subscriptionsRepository;
     private $translator;
 
     public function __construct(
         OrdersRepository $ordersRepository,
         ConfigsRepository $configsRepository,
-        SubscriptionsRepository $subscriptionsRepository,
         Translator $translator
     ) {
         $this->ordersRepository = $ordersRepository;
         $this->configsRepository = $configsRepository;
-        $this->subscriptionsRepository = $subscriptionsRepository;
         $this->translator = $translator;
     }
 

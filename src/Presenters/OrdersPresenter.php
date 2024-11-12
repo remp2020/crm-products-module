@@ -11,20 +11,17 @@ use Crm\ProductsModule\Repositories\OrdersRepository;
 class OrdersPresenter extends FrontendPresenter
 {
     private $ordersRepository;
-    private $paymentsRepository;
     private $paymentItemHelper;
     private $ebookProvider;
 
     public function __construct(
         OrdersRepository $ordersRepository,
-        PaymentsRepository $paymentsRepository,
         PaymentItemHelper $paymentItemHelper,
         EbookProvider $ebookProvider
     ) {
         parent::__construct();
 
         $this->ordersRepository = $ordersRepository;
-        $this->paymentsRepository = $paymentsRepository;
         $this->paymentItemHelper = $paymentItemHelper;
         $this->ebookProvider = $ebookProvider;
     }

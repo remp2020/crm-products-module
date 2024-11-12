@@ -4,8 +4,6 @@ namespace Crm\ProductsModule\DataProviders;
 
 use Crm\ApplicationModule\Models\DataProvider\DataProviderException;
 use Crm\PaymentsModule\DataProviders\PaymentFormDataProviderInterface;
-use Crm\PaymentsModule\Repositories\PaymentItemsRepository;
-use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\ProductsModule\Events\CartItemAddedEvent;
 use Crm\ProductsModule\Models\PaymentItem\PostalFeePaymentItem;
 use Crm\ProductsModule\Models\PaymentItem\ProductPaymentItem;
@@ -21,10 +19,6 @@ class PaymentFormDataProvider implements PaymentFormDataProviderInterface
 {
     private $productsRepository;
 
-    private $paymentItemsRepository;
-
-    private $paymentsRepository;
-
     private $postalFeesRepository;
 
     private $emitter;
@@ -33,15 +27,11 @@ class PaymentFormDataProvider implements PaymentFormDataProviderInterface
 
     public function __construct(
         ProductsRepository $productsRepository,
-        PaymentItemsRepository $paymentItemsRepository,
-        PaymentsRepository $paymentsRepository,
         PostalFeesRepository $postalFeesRepository,
         Emitter $emitter,
         Translator $translator
     ) {
         $this->productsRepository = $productsRepository;
-        $this->paymentItemsRepository = $paymentItemsRepository;
-        $this->paymentsRepository = $paymentsRepository;
         $this->postalFeesRepository = $postalFeesRepository;
         $this->emitter = $emitter;
         $this->translator = $translator;

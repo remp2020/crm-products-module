@@ -4,8 +4,6 @@ namespace Crm\ProductsModule\Events;
 
 use Crm\PaymentsModule\Events\PaymentChangeStatusEvent;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
-use Crm\ProductsModule\Models\Manager\ProductManager;
-use Crm\ProductsModule\Models\PaymentItem\PaymentItemHelper;
 use Crm\ProductsModule\Repositories\OrdersRepository;
 use League\Event\AbstractListener;
 use League\Event\EventInterface;
@@ -16,18 +14,10 @@ class PaymentStatusChangeHandler extends AbstractListener
 {
     private $ordersRepository;
 
-    private $paymentItemHelper;
-
-    private $productManager;
-
     public function __construct(
         OrdersRepository $ordersRepository,
-        PaymentItemHelper $paymentItemHelper,
-        ProductManager $productManager
     ) {
         $this->ordersRepository = $ordersRepository;
-        $this->paymentItemHelper = $paymentItemHelper;
-        $this->productManager = $productManager;
     }
 
     public function handle(EventInterface $event)

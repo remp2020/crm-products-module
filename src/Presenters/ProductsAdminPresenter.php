@@ -7,7 +7,6 @@ use Crm\ApplicationModule\Components\Graphs\GoogleLineGraphGroup\GoogleLineGraph
 use Crm\ApplicationModule\Components\PreviousNextPaginator\PreviousNextPaginator;
 use Crm\ApplicationModule\Models\Graphs\Criteria;
 use Crm\ApplicationModule\Models\Graphs\GraphDataItem;
-use Crm\ApplicationModule\Repositories\ConfigsRepository;
 use Crm\PaymentsModule\Repositories\PaymentItemsRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\ProductsModule\Forms\ProductsFormFactory;
@@ -33,8 +32,6 @@ class ProductsAdminPresenter extends AdminPresenter
 
     private $tagsRepository;
 
-    private $configRepository;
-
     private $distributionConfiguration;
 
     #[Persistent]
@@ -48,7 +45,6 @@ class ProductsAdminPresenter extends AdminPresenter
         SortShopProductsFormFactory $sortShopProductsFormFactory,
         PaymentItemsRepository $paymentItemsRepository,
         TagsRepository $tagsRepository,
-        ConfigsRepository $configRepository,
         ProductManager $productManager
     ) {
         parent::__construct();
@@ -57,7 +53,6 @@ class ProductsAdminPresenter extends AdminPresenter
         $this->sortShopProductsFormFactory = $sortShopProductsFormFactory;
         $this->paymentItemsRepository = $paymentItemsRepository;
         $this->tagsRepository = $tagsRepository;
-        $this->configRepository = $configRepository;
         $this->productManager = $productManager;
     }
 
