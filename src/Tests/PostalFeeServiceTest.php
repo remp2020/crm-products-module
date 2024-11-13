@@ -130,7 +130,7 @@ class PostalFeeServiceTest extends DatabaseTestCase
 
         $postalFees = $postalFeeService->getAvailablePostalFeesOptions($this->countriesRepository->findByIsoCode('SK')->id, []);
         $this->assertCount(3, $postalFees);
-        $this->assertEquals([1.99, 1.99, 0], array_column($postalFees, 'amount'));
+        $this->assertEquals([1.99, 1.99, 0.0], array_column($postalFees, 'amount'));
     }
 
     public function testGetDefaultPostalFee()
