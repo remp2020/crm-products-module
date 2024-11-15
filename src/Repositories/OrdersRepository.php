@@ -44,7 +44,6 @@ class OrdersRepository extends Repository
     ) {
         parent::__construct($database);
         $this->auditLogRepository = $auditLogRepository;
-        $this->database = $database;
         $this->cacheRepository = $cacheRepository;
         $this->emitter = $emitter;
         $this->hermesEmitter = $hermesEmitter;

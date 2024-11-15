@@ -11,43 +11,23 @@ use Crm\ProductsModule\Repositories\CountryPostalFeesRepository;
 use Crm\ProductsModule\Repositories\PostalFeesRepository;
 use Crm\UsersModule\Repositories\CountriesRepository;
 use Nette\Application\UI\Form;
+use Nette\Database\Table\ActiveRow;
 
 class CountryPostalFeesFormFactory
 {
-    private $countriesRepository;
-
-    private $countryPostalFeesRepository;
-
-    private $countryPostalFeeConditionsRepository;
-
-    private $postalFeesRepository;
-
-    private $postalFeeService;
-
-    private $translator;
-
-    private $priceHelper;
-
     public $onAlreadyExist;
 
     public $onSave;
 
     public function __construct(
-        CountriesRepository $countriesRepository,
-        CountryPostalFeesRepository $countryPostalFeesRepository,
-        CountryPostalFeeConditionsRepository $countryPostalFeeConditionsRepository,
-        PostalFeesRepository $postalFeesRepository,
-        PostalFeeService $postalFeeService,
-        Translator $translator,
-        PriceHelper $priceHelper
+        private readonly CountriesRepository $countriesRepository,
+        private readonly CountryPostalFeesRepository $countryPostalFeesRepository,
+        private readonly CountryPostalFeeConditionsRepository $countryPostalFeeConditionsRepository,
+        private readonly PostalFeesRepository $postalFeesRepository,
+        private readonly PostalFeeService $postalFeeService,
+        private readonly Translator $translator,
+        private readonly PriceHelper $priceHelper,
     ) {
-        $this->countriesRepository = $countriesRepository;
-        $this->countryPostalFeesRepository = $countryPostalFeesRepository;
-        $this->countryPostalFeeConditionsRepository = $countryPostalFeeConditionsRepository;
-        $this->postalFeesRepository = $postalFeesRepository;
-        $this->postalFeeService = $postalFeeService;
-        $this->translator = $translator;
-        $this->priceHelper = $priceHelper;
     }
 
     public function create(int $id = null)
@@ -162,33 +142,30 @@ class CountryPostalFeesFormFactory
             $this->onAlreadyExist->__invoke($countryPostalFeeRow);
         }
 
-        $databaseContext = $this->countryPostalFeesRepository->getDatabase();
-        $databaseContext->beginTransaction();
+        $countryPostalFeeRow = $this->countryPostalFeesRepository->getTransaction()->wrap(function () use ($values): ActiveRow {
+            if ($values['id']) {
+                $countryPostalFeeRow = $this->countryPostalFeesRepository->find($values['id']);
+                if (!$countryPostalFeeRow) {
+                    throw new \UnexpectedValueException("Missing country postal fee with id: {$values['id']}");
+                }
 
-        if ($values['id']) {
-            $countryPostalFeeRow = $this->countryPostalFeesRepository->find($values['id']);
-            if (!$countryPostalFeeRow) {
-                throw new \UnexpectedValueException("Missing country postal fee with id: {$values['id']}");
+                $this->countryPostalFeesRepository->update($countryPostalFeeRow, [
+                    'country_id' => $values['country_id'],
+                    'postal_fee_id' => $values['postal_fee_id'],
+                    'sorting' => $values['sorting'],
+                    'default' => $values['default'],
+                    'active' => $values['active']
+                ]);
+            } else {
+                $countryPostalFeeRow = $this->countryPostalFeesRepository->add(
+                    $values['country_id'],
+                    $values['postal_fee_id'],
+                    $values['sorting'],
+                    $values['default'],
+                    $values['active']
+                );
             }
 
-            $this->countryPostalFeesRepository->update($countryPostalFeeRow, [
-                'country_id' => $values['country_id'],
-                'postal_fee_id' => $values['postal_fee_id'],
-                'sorting' => $values['sorting'],
-                'default' => $values['default'],
-                'active' => $values['active']
-            ]);
-        } else {
-            $countryPostalFeeRow = $this->countryPostalFeesRepository->add(
-                $values['country_id'],
-                $values['postal_fee_id'],
-                $values['sorting'],
-                $values['default'],
-                $values['active']
-            );
-        }
-
-        try {
             $relatedConditions = $countryPostalFeeRow->related('country_postal_fee_conditions');
             foreach ($relatedConditions as $relatedCondition) {
                 $this->countryPostalFeeConditionsRepository->delete($relatedCondition);
@@ -201,13 +178,9 @@ class CountryPostalFeesFormFactory
                     $values['condition_value'] ?? null,
                 );
             }
-        } catch (\Exception $exception) {
-            $databaseContext->rollBack();
 
-            throw $exception;
-        }
-
-        $databaseContext->commit();
+            return $countryPostalFeeRow;
+        });
 
         $this->onSave->__invoke($countryPostalFeeRow);
     }
