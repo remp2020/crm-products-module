@@ -444,7 +444,6 @@ frontend:
             title: Platba nezúčtována
             message: "Platba zatím nebyla potvrzena a čekáme na potvrzení od banky. Vaše objednávka bude zpracována hned, jak nám banka platbu potvrdí."
         show:
-            title: '%product_name% : Obchod Deníku N - prodáváme jen to, co sami čteme'
             available_at: 'Produkt bude dostupný až %available_at%, odesíláme ho následující den.'
             add_to_cart: vložit do košíku
             sold_out: vyprodáno
@@ -505,7 +504,7 @@ config:
     shop_title:
         name: Název obchodu
         description: 'Název obchodu zobrazený v záhlaví titulky obchodu'
-        value: 'Prodáváme jen to, co se nám nejvíce líbí.'
+        value: 'Obchod | Prodáváme jen to, co sami čteme'
     users:
         category: Uživatelé
         prevent_anonymization:
