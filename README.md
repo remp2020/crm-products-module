@@ -55,6 +55,13 @@ public function registerFrontendMenuItems(MenuContainerInterface $menuContainer)
 
 ![Books library link](docs/books-library-link.png "Books library link")
 
+## Change of VAT rates
+
+If the VAT rate changes in your country, there is a command that helps you update the system. Schedule it to be executed on the date of VAT change.
+
+- `products:change_vat --original-vat=X --target-vat=Y`
+  - Command changes all existing products and each affected (`type=product`) payment item. You can test the command before the VAT change date by using `--dry-run` and `--verbose` options.
+
 ## Components
 
 **DonatedSubscriptionListingWidget**

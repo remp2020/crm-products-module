@@ -23,6 +23,7 @@ use Crm\PaymentsModule\DataProviders\OneStopShopCountryResolutionDataProviderInt
 use Crm\PaymentsModule\DataProviders\PaymentItemVatDataProviderInterface;
 use Crm\PaymentsModule\Events\PaymentChangeStatusEvent;
 use Crm\ProductsModule\Commands\CalculateAveragesCommand;
+use Crm\ProductsModule\Commands\ChangeVatCommand;
 use Crm\ProductsModule\Components\AvgProductsPaymentWidget\AvgProductsPaymentWidget;
 use Crm\ProductsModule\Components\FreeShippingProgressBarWidget\FreeShippingProgressBarWidget;
 use Crm\ProductsModule\Components\ProductItemsListWidget\ProductItemsListWidget;
@@ -145,6 +146,7 @@ class ProductsModule extends CrmModule
     public function registerCommands(CommandsContainerInterface $commandsContainer)
     {
         $commandsContainer->registerCommand($this->getInstance(CalculateAveragesCommand::class));
+        $commandsContainer->registerCommand($this->getInstance(ChangeVatCommand::class));
     }
 
     public function registerFrontendMenuItems(MenuContainerInterface $menuContainer)
