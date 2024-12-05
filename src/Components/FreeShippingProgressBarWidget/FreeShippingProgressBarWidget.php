@@ -8,6 +8,7 @@ use Crm\ProductsModule\Models\PostalFeeCondition\PostalFeeMessageConditionInterf
 use Crm\ProductsModule\Models\PostalFeeCondition\PostalFeeNumericConditionInterface;
 use Crm\ProductsModule\Models\PostalFeeCondition\PostalFeeService;
 use Crm\ProductsModule\Models\ProductsTrait;
+use Crm\ProductsModule\Repositories\DistributionCentersRepository;
 use Crm\ProductsModule\Repositories\ProductsRepository;
 use Crm\UsersModule\Repositories\CountriesRepository;
 
@@ -17,23 +18,14 @@ class FreeShippingProgressBarWidget extends BaseLazyWidget
 
     private $templateName = 'free_shipping_progress_bar.latte';
 
-    private $postalFeeService;
-
-    private $countriesRepository;
-
-    private $productsRepository;
-
     public function __construct(
         LazyWidgetManager $lazyWidgetManager,
-        PostalFeeService $postalFeeService,
-        CountriesRepository $countriesRepository,
-        ProductsRepository $productsRepository
+        private readonly PostalFeeService $postalFeeService,
+        private readonly CountriesRepository $countriesRepository,
+        private readonly ProductsRepository $productsRepository,
+        private readonly DistributionCentersRepository $distributionCentersRepository,
     ) {
         parent::__construct($lazyWidgetManager);
-
-        $this->postalFeeService = $postalFeeService;
-        $this->countriesRepository = $countriesRepository;
-        $this->productsRepository = $productsRepository;
     }
 
     public function identifier()

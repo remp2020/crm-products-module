@@ -18,6 +18,7 @@ use Crm\ProductsModule\Models\PaymentItem\ProductPaymentItem;
 use Crm\ProductsModule\Models\PostalFeeCondition\PostalFeeService;
 use Crm\ProductsModule\Models\ProductsTrait;
 use Crm\ProductsModule\Repositories\CountryPostalFeesRepository;
+use Crm\ProductsModule\Repositories\DistributionCentersRepository;
 use Crm\ProductsModule\Repositories\OrdersRepository;
 use Crm\ProductsModule\Repositories\PostalFeesRepository;
 use Crm\ProductsModule\Repositories\ProductsRepository;
@@ -77,6 +78,7 @@ class CheckoutFormFactory
         private readonly OneStopShop $oneStopShop,
         private readonly UserActionsLogRepository $userActionsLogRepository,
         private readonly CountriesSelectItemsBuilder $countriesSelectItemsBuilder,
+        private readonly DistributionCentersRepository $distributionCentersRepository,
     ) {
     }
 

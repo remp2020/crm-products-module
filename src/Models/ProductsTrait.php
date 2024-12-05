@@ -4,6 +4,9 @@ namespace Crm\ProductsModule\Models;
 
 use Crm\ProductsModule\Repositories\DistributionCentersRepository;
 
+/**
+ * @property DistributionCentersRepository $distributionCentersRepository
+ */
 trait ProductsTrait
 {
     public function hasDelivery(array $products): bool
@@ -28,12 +31,16 @@ trait ProductsTrait
         foreach ($products as $product) {
             if ($product->bundle) {
                 foreach ($product->related('product_bundles') as $productBundle) {
-                    if ($productBundle->item->distribution_center === DistributionCentersRepository::DISTRIBUTION_CENTER_DIBUK) {
+                    $distributionCenter = $this->distributionCentersRepository->findByCode($product->distribution_center);
+                    if ($distributionCenter->require_licence) {
                         return true;
                     }
                 }
-            } elseif ($product->distribution_center === DistributionCentersRepository::DISTRIBUTION_CENTER_DIBUK) {
-                return true;
+            } else {
+                $distributionCenter = $this->distributionCentersRepository->findByCode($product->distribution_center);
+                if ($distributionCenter->require_licence) {
+                    return true;
+                }
             }
         }
 

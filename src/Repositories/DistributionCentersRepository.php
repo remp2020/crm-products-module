@@ -18,11 +18,17 @@ class DistributionCentersRepository extends Repository
         return $this->getTable();
     }
 
-    final public function add($code, $name)
+    final public function add(string $code, string $name, bool $requireLicence = false)
     {
         return $this->insert([
             'code' => $code,
-            'name' => $name
+            'name' => $name,
+            'require_licence' => $requireLicence,
         ]);
+    }
+
+    final public function findByCode(string $code)
+    {
+        return $this->getTable()->where(['code' => $code])->fetch();
     }
 }
