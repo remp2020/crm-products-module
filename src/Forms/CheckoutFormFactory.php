@@ -290,7 +290,7 @@ class CheckoutFormFactory
             'country_id',
             'products.frontend.shop.checkout.fields.country',
             $this->countriesSelectItemsBuilder->getAllPairs()
-        )->addRule(Form::FILLED, 'products.frontend.shop.checkout.fields.country_required');;
+        )->addRule(Form::FILLED, 'products.frontend.shop.checkout.fields.country_required');
 
         $validateCountryIds = $this->getIdsOfCountriesByIsoCode(['CZ', 'SK']);
         $zip->addConditionOn($country, Form::IS_IN, $validateCountryIds)
