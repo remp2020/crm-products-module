@@ -67,6 +67,7 @@ frontend:
                 street_min_length: Az utcanévnek legalább 3 betűből kell állnia.
                 number: Házszám
                 country: Ország
+                country_required: Az Ország kitöltése kötelező.
                 company_name: Név / A cég neve
                 company_name_required: A Név / A cég neve tétel kitöltése kötelező.
                 phone_number: Telefonszám (a kézbesítés során lesz segítségünkre)

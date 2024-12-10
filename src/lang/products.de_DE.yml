@@ -60,6 +60,7 @@ frontend:
                 zip_code_required: 'Postleitzahl wird benötigt'
                 zip_code_invalid: 'Die Postleitzahl muss genau 5 Ziffern enthalten.'
                 country: Land
+                country_required: 'Land wird benötigt'
                 company_name: 'Firmenname'
                 company_name_required: 'Firmenname wird benötigt'
                 company_id: 'Firmen ID'

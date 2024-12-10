@@ -410,6 +410,7 @@ frontend:
                 zip_code_required: 'Položka PSČ je povinná.'
                 zip_code_invalid: 'Položka PSČ má obsahovat přesně 5 čísel a má být ve formátu: XXX XX (např. 193 00).'
                 country: 'Stát (země)'
+                country_required: 'Položka Stát (země) je povinná.'
                 company_name: 'Jméno / Název společnosti'
                 company_name_required: 'Položka Jméno / Název společnosti je povinná.'
                 company_id: 'IČO'
