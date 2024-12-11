@@ -226,7 +226,7 @@ admin:
                 actions: Actions
                 filter: Filter
                 cancel_filter: Cancel filter
-                order_id_vs: 'OrderID / VS'
+                text: 'OrderID / VS / Email'
                 payment_state: Payment State
             warnings:
                 order_for_payment_exists: 'Order assigned to payment already exists, we have redirected you to the order.'

@@ -98,7 +98,7 @@ class OrdersAdminPresenter extends AdminPresenter
     {
         $form = new Form;
         $form->setRenderer(new BootstrapInlineRenderer());
-        $form->addText('text', $this->translator->translate('products.admin.orders.default.fields.order_id_vs') . ':')
+        $form->addText('text', $this->translator->translate('products.admin.orders.default.fields.text') . ':')
             ->setHtmlAttribute('autofocus');
 
         $products = $this->productsRepository->getTable()->fetchPairs('id', 'name');
@@ -187,7 +187,12 @@ class OrdersAdminPresenter extends AdminPresenter
         }
 
         if (isset($this->params['text'])) {
-            $orders->where('payment.variable_symbol LIKE ? OR orders.id LIKE ?', "%{$this->params['text']}%", "%{$this->params['text']}%");
+            $orders->where(
+                'payment.variable_symbol LIKE ? OR orders.id LIKE ? OR payment.user.email LIKE ?',
+                "%{$this->params['text']}%",
+                "{$this->params['text']}",
+                "{$this->params['text']}%",
+            );
         }
 
         if ($this->getParameter('products')) {

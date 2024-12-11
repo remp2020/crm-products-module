@@ -226,7 +226,7 @@ admin:
                 actions: Akcie
                 filter: Filter
                 cancel_filter: Zruš filter
-                order_id_vs: 'OrderID / VS'
+                text: 'OrderID / VS / Email'
                 payment_state: Stav Platby
             warnings:
                 order_for_payment_exists: 'Objednávka k platbe už existuje, presmerovali sme Vás na objednávku.'
