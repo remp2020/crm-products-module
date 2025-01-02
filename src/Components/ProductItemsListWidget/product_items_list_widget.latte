@@ -2,10 +2,10 @@
 
     {if !$paymentItem->product->deleted_at}
         <a href="{plink :Products:ProductsAdmin:Show $paymentItem->product_id}">
-            {$paymentItem->name} <small>({$paymentItem->count} x {$paymentItem->amount|price})</small>
+            {$paymentItem->name} <small>({$paymentItem->count} x {$paymentItem->amount|price}, <span class="text-muted">{$paymentItem->vat}% {_"system.vat"}</span>)</small>
         </a>
     {else}
-        {$paymentItem->name} <small>({$paymentItem->count} x {$paymentItem->amount|price})</small>
+        {$paymentItem->name} <small>({$paymentItem->count} x {$paymentItem->amount|price}, <span class="text-muted">{$paymentItem->vat}% {_"system.vat"}</span>)</small>
         <span class="glyphicon glyphicon-question-sign" aria-hidden="true" data-toggle="tooltip" title="{_products.admin.component.payment_items_list_widget.product_deleted}"></span>
     {/if}
 

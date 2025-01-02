@@ -447,21 +447,13 @@ class CheckoutFormFactory
 
         $paymentGateway = $this->paymentGatewaysRepository->find($values['payment_gateway']);
 
-        $amount = 0;
-
         // add products
         $cart = Json::decode($values['cart'], Json::FORCE_ARRAY);
         $products = $this->productsRepository->findByIds(array_keys($cart));
-        foreach ($products as $product) {
-            $amount += $product->price * $cart[$product->id];
-        }
 
         // add postal fee
         $postalFee = $this->handlePostalFee($values);
         $postalFeeVat = null;
-        if (!is_null($postalFee)) {
-            $amount += $postalFee->amount;
-        }
 
         // populate payment item container
         $paymentItemsContainer = new PaymentItemContainer();
@@ -521,12 +513,11 @@ class CheckoutFormFactory
         }
 
         $payment = $this->paymentsRepository->add(
-            null,
+            subscriptionType: null,
             paymentGateway: $paymentGateway,
             user: $user,
             paymentItemContainer: $paymentItemsContainer,
             referer: $this->request->getUrl()->getBaseUrl(),
-            amount: $amount,
             paymentCountry: $countryResolution?->country,
             paymentCountryResolutionReason: $countryResolution?->getReasonValue(),
         );
