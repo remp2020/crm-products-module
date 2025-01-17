@@ -27,7 +27,11 @@ class PaymentItemHelper
 
     public function unBundleProducts(ActiveRow $payment, callable $callback)
     {
-        foreach ($payment->related('payment_items')->where('type = ?', ProductPaymentItem::TYPE) as $paymentItem) {
+        $items = $payment->related('payment_items')
+            ->where('type = ?', ProductPaymentItem::TYPE)
+            ->where('product_id IS NOT NULL');
+
+        foreach ($items as $paymentItem) {
             $product = $paymentItem->product;
             if ($product->bundle) {
                 foreach ($product->related('product_bundles') as $productBundle) {
