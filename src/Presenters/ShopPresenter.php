@@ -387,10 +387,10 @@ class ShopPresenter extends FrontendPresenter
 
         $ebooks = [];
 
-        $this->paymentItemHelper->unBundleProducts($order->payment, function ($product) use ($address, &$ebooks) {
+        $this->paymentItemHelper->unBundleProducts($order->payment, function ($product) use ($address, &$ebooks, $order) {
             if (!isset($ebooks[$product->id])) {
                 $user = $this->usersRepository->find($this->user->getIdentity()->getId());
-                $links = $this->ebookProvider->getDownloadLinks($product, $user, $address);
+                $links = $this->ebookProvider->getDownloadLinks($product, $user, $address, $order->payment);
                 if (!empty($links)) {
                     $ebooks[$product->id] = [
                         'product' => $product,

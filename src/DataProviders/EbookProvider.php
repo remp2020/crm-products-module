@@ -25,12 +25,12 @@ class EbookProvider
         return $fileTypes;
     }
 
-    public function getDownloadLinks(ActiveRow $product, ActiveRow $user, ?ActiveRow $address): array
+    public function getDownloadLinks(ActiveRow $product, ActiveRow $user, ?ActiveRow $address, ?ActiveRow $payment = null): array
     {
         $downloadLinks = [];
         foreach ($this->providers as $provider) {
             try {
-                $links = $provider->getDownloadLinks($product, $user, $address);
+                $links = $provider->getDownloadLinks($product, $user, $address, $payment);
             } catch (\Exception $e) {
                 Debugger::log(
                     "Ebook provider [{$provider::identifier()}] returned exception: " . $e->getMessage(),
