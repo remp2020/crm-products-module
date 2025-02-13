@@ -3,6 +3,7 @@
 namespace Crm\ProductsModule\DataProviders;
 
 use Crm\ApplicationModule\Models\DataProvider\DataProviderException;
+use Crm\ApplicationModule\UI\Form;
 use Crm\PaymentsModule\DataProviders\PaymentFormDataProviderInterface;
 use Crm\ProductsModule\Events\CartItemAddedEvent;
 use Crm\ProductsModule\Models\PaymentItem\PostalFeePaymentItem;
@@ -10,7 +11,6 @@ use Crm\ProductsModule\Models\PaymentItem\ProductPaymentItem;
 use Crm\ProductsModule\Repositories\PostalFeesRepository;
 use Crm\ProductsModule\Repositories\ProductsRepository;
 use League\Event\Emitter;
-use Nette\Application\UI\Form;
 use Nette\Database\Table\ActiveRow;
 use Nette\Localization\Translator;
 use Nette\Utils\Json;

@@ -4,6 +4,7 @@ namespace Crm\ProductsModule\Presenters;
 
 use Crm\AdminModule\Presenters\AdminPresenter;
 use Crm\ApplicationModule\Components\PreviousNextPaginator\PreviousNextPaginator;
+use Crm\ApplicationModule\UI\Form;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\ProductsModule\Forms\CheckoutFormFactory;
 use Crm\ProductsModule\Models\PaymentItem\ProductPaymentItem;
@@ -11,7 +12,6 @@ use Crm\ProductsModule\Models\PostalFeeCondition\PostalFeeService;
 use Crm\ProductsModule\Repositories\OrdersRepository;
 use Crm\ProductsModule\Repositories\ProductsRepository;
 use Nette\Application\Attributes\Persistent;
-use Nette\Application\UI\Form;
 use Nette\Forms\Controls\RadioList;
 use Tomaj\Form\Renderer\BootstrapInlineRenderer;
 use Tomaj\Form\Renderer\BootstrapRenderer;

@@ -4,13 +4,13 @@ namespace Crm\ProductsModule\Forms;
 
 use Contributte\Translation\Translator;
 use Crm\ApplicationModule\Helpers\PriceHelper;
+use Crm\ApplicationModule\UI\Form;
 use Crm\ProductsModule\Models\PostalFeeCondition\PostalFeeConditionInterface;
 use Crm\ProductsModule\Models\PostalFeeCondition\PostalFeeService;
 use Crm\ProductsModule\Repositories\CountryPostalFeeConditionsRepository;
 use Crm\ProductsModule\Repositories\CountryPostalFeesRepository;
 use Crm\ProductsModule\Repositories\PostalFeesRepository;
 use Crm\UsersModule\Repositories\CountriesRepository;
-use Nette\Application\UI\Form;
 use Nette\Database\Table\ActiveRow;
 
 class CountryPostalFeesFormFactory

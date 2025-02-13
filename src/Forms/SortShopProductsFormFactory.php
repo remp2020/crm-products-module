@@ -3,9 +3,9 @@
 namespace Crm\ProductsModule\Forms;
 
 use Crm\ApplicationModule\Models\DataProvider\DataProviderManager;
+use Crm\ApplicationModule\UI\Form;
 use Crm\ProductsModule\DataProviders\SortShopProductsFormValidationDataProviderInterface;
 use Crm\ProductsModule\Repositories\ProductsRepository;
-use Nette\Application\UI\Form;
 use Nette\Localization\Translator;
 
 class SortShopProductsFormFactory

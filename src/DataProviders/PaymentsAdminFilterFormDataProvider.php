@@ -3,10 +3,10 @@
 namespace Crm\ProductsModule\DataProviders;
 
 use Crm\ApplicationModule\Models\DataProvider\DataProviderException;
+use Crm\ApplicationModule\UI\Form;
 use Crm\PaymentsModule\DataProviders\AdminFilterFormDataProviderInterface;
 use Crm\ProductsModule\Models\PaymentItem\ProductPaymentItem;
 use Crm\ProductsModule\Repositories\ProductsRepository;
-use Nette\Application\UI\Form;
 use Nette\Database\Table\Selection;
 
 class PaymentsAdminFilterFormDataProvider implements AdminFilterFormDataProviderInterface

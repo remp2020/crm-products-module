@@ -7,6 +7,7 @@ use Crm\ApplicationModule\Components\Graphs\GoogleLineGraphGroup\GoogleLineGraph
 use Crm\ApplicationModule\Components\PreviousNextPaginator\PreviousNextPaginator;
 use Crm\ApplicationModule\Models\Graphs\Criteria;
 use Crm\ApplicationModule\Models\Graphs\GraphDataItem;
+use Crm\ApplicationModule\UI\Form;
 use Crm\PaymentsModule\Repositories\PaymentItemsRepository;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\ProductsModule\Forms\ProductsFormFactory;
@@ -16,7 +17,6 @@ use Crm\ProductsModule\Models\PaymentItem\ProductPaymentItem;
 use Crm\ProductsModule\Repositories\ProductsRepository;
 use Crm\ProductsModule\Repositories\TagsRepository;
 use Nette\Application\Attributes\Persistent;
-use Nette\Application\UI\Form;
 use Nette\Database\Table\ActiveRow;
 use Tomaj\Form\Renderer\BootstrapInlineRenderer;
 
