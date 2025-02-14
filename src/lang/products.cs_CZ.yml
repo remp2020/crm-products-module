@@ -423,7 +423,7 @@ frontend:
                 toc_required: 'Musíte souhlasit s podmínkami používání'
                 login: Přihlásit
             warnings:
-                unable_to_login_with_password: 'Nepodařilo se přihlásit s zadaným heslem'
+                unable_to_login_with_password: 'Nepodařilo se přihlásit se zadaným heslem'
                 unable_to_create_user: 'Nelze vytvořit uživatele.'
                 invalid_email: "Tento email není platný."
                 email_registered: "E-mail už je zaregistrován, prosím, zadejte heslo."
