@@ -54,6 +54,7 @@ services:
 	- Crm\ProductsModule\Forms\TagsFormFactory
 	- Crm\ProductsModule\Forms\CountryPostalFeesFormFactory
 	- Crm\ProductsModule\Forms\SortShopProductsFormFactory
+	- Crm\ProductsModule\Forms\Controls\PostalFeesSelectBoxFactory
 
 	- Crm\ProductsModule\Models\PaymentItem\PaymentItemHelper
 

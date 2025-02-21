@@ -24,7 +24,7 @@
                 <td>
                     <div class="list-group">
                         <div class="list-group-item {if !$countryPostalFee->active}list-group-item-danger{/if}" n:foreach="$country->related('country_postal_fees')->order('sorting') as $countryPostalFee">
-                            {$countryPostalFee->postal_fee->title} <small>/ {$countryPostalFee->postal_fee->amount|price}</small>
+                            <span title="{$countryPostalFee->postal_fee->code}" data-toggle="tooltip">{$countryPostalFee->postal_fee->title} <small>/ {$countryPostalFee->postal_fee->amount|price}</small></span>
                             <i n:foreach="$countryPostalFee->related('country_postal_fee_conditions', 'country_postal_fee_id') as $condition"
                                   class="fa fa-question-circle"
                                   data-toggle="tooltip"

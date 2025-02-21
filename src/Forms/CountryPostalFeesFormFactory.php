@@ -3,8 +3,8 @@
 namespace Crm\ProductsModule\Forms;
 
 use Contributte\Translation\Translator;
-use Crm\ApplicationModule\Helpers\PriceHelper;
 use Crm\ApplicationModule\UI\Form;
+use Crm\ProductsModule\Forms\Controls\PostalFeesSelectBoxFactory;
 use Crm\ProductsModule\Models\PostalFeeCondition\PostalFeeConditionInterface;
 use Crm\ProductsModule\Models\PostalFeeCondition\PostalFeeService;
 use Crm\ProductsModule\Repositories\CountryPostalFeeConditionsRepository;
@@ -26,7 +26,7 @@ class CountryPostalFeesFormFactory
         private readonly PostalFeesRepository $postalFeesRepository,
         private readonly PostalFeeService $postalFeeService,
         private readonly Translator $translator,
-        private readonly PriceHelper $priceHelper,
+        private readonly PostalFeesSelectBoxFactory $postalFeesSelectBoxFactory,
     ) {
     }
 
@@ -45,15 +45,10 @@ class CountryPostalFeesFormFactory
         );
         $countries->getControlPrototype()->addAttributes(['class' => 'select2 form-control']);
 
-        $postalFees = $form->addSelect(
-            'postal_fee_id',
-            'products.data.country_postal_fees.fields.postal_fee_id',
-            $this->getPostalFees()
-        );
-        $postalFees->getControlPrototype()->addAttributes([
-            'class' => 'select2',
-            'style' => 'width: 100%',
-        ]);
+        $form->addComponent($this->postalFeesSelectBoxFactory->build(
+            label: 'products.data.country_postal_fees.fields.postal_fee_id',
+            postalFees: $this->postalFeesRepository->all()->order('id')->fetchAll(),
+        ), 'postal_fee_id');
 
         $form->addText('sorting', 'products.data.country_postal_fees.fields.sorting')
             ->addRule(Form::INTEGER, 'products.admin.country_postal_fees.default.submit')
@@ -104,20 +99,6 @@ class CountryPostalFeesFormFactory
         $form->onSuccess[] = [$this, 'formSucceeded'];
 
         return $form;
-    }
-
-    private function getPostalFees(): array
-    {
-        $postalFees = $this->postalFeesRepository->all()->order('id');
-        $result = [];
-        foreach ($postalFees as $postalFee) {
-            $result[$postalFee->id] = sprintf(
-                '%s / %s',
-                $postalFee->title,
-                $this->priceHelper->getFormattedPrice($postalFee->amount)
-            );
-        }
-        return $result;
     }
 
     public function formSucceeded(Form $form, $values): void
