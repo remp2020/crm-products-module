@@ -61,6 +61,8 @@ data:
         errors:
             name: Field 'Name' is required
             code: Field 'Code' is required
+            code_not_webalized: Code contains forbidden characters
+            code_already_used: Product with same code already exists
             description: Field 'Description' is required
             image_url: Field 'Photo URL' is required
             og_image_url: Field 'OG:image URL' is required

@@ -22,7 +22,9 @@ use Crm\ProductsModule\Repositories\ProductsRepository;
 use Crm\ProductsModule\Repositories\TagsRepository;
 use League\Event\Emitter;
 use Nette\Database\Table\ActiveRow;
+use Nette\Forms\Controls\TextInput;
 use Nette\Utils\Html;
+use Nette\Utils\Strings;
 use Tomaj\Form\Renderer\BootstrapRenderer;
 use Tracy\Debugger;
 
@@ -113,7 +115,23 @@ class ProductsFormFactory
             ->setRequired('products.data.products.errors.code')
             ->setOption('description', Html::el('span', ['class' => 'help-block'])
                 ->setHtml($this->translator->translate('products.data.products.descriptions.code')))
-            ->setHtmlAttribute('placeholder', 'products.data.products.placeholder.code');
+            ->setHtmlAttribute('placeholder', 'products.data.products.placeholder.code')
+            ->addRule(function (TextInput $control) {
+                // code has to be URL friendly
+                return Strings::webalize($control->getValue(), '_') === $control->getValue();
+            }, 'products.data.products.errors.code_not_webalized')
+            ->addRule(function (TextInput $control) use ($productId) {
+                // single fetch is enough, code is unique column
+                $productWithSameCode = $this->productsRepository->getByCode($control->getValue());
+                if ($productWithSameCode === null) {
+                    return true;
+                }
+                if ($productId === null) {
+                    return false; // error; product with same code exists and we are not editing
+                }
+                // if there is product with same code, it has to be product we are editing
+                return (int) $productId === $productWithSameCode->id;
+            }, 'products.data.products.errors.code_already_used');
 
         $form->addText('user_label', 'products.data.products.fields.user_label')
             ->setOption('description', 'products.data.products.descriptions.user_label')

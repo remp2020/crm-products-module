@@ -15,59 +15,47 @@ use DateTime;
 use Nette\Database\Explorer;
 use Nette\Database\Table\ActiveRow;
 use Nette\Database\Table\Selection;
-use Nette\Utils\Strings;
+use Nette\Database\UniqueConstraintViolationException;
 
 class ProductsRepository extends Repository
 {
     protected $tableName = 'products';
 
-    private $amountSpentDistribution;
-
-    private $paymentCountDistribution;
-
-    private $productDaysFromLastOrderDistribution;
-
-    private $productShopCountsDistribution;
-
-    private $cacheRepository;
+    protected $slugs = ['code'];
 
     public function __construct(
         Explorer $database,
         AuditLogRepository $auditLogRepository,
-        AmountSpentDistribution $amountSpentDistribution,
-        PaymentCountsDistribution $paymentCountDistribution,
-        ProductDaysFromLastOrderDistribution $productDaysFromLastOrderDistribution,
-        ProductShopCountsDistribution $productShopCountsDistribution,
-        CacheRepository $cacheRepository
+        private AmountSpentDistribution $amountSpentDistribution,
+        private PaymentCountsDistribution $paymentCountDistribution,
+        private ProductDaysFromLastOrderDistribution $productDaysFromLastOrderDistribution,
+        private ProductShopCountsDistribution $productShopCountsDistribution,
+        private CacheRepository $cacheRepository,
     ) {
         parent::__construct($database);
         $this->auditLogRepository = $auditLogRepository;
-        $this->amountSpentDistribution = $amountSpentDistribution;
-        $this->paymentCountDistribution = $paymentCountDistribution;
-        $this->productDaysFromLastOrderDistribution = $productDaysFromLastOrderDistribution;
-        $this->productShopCountsDistribution = $productShopCountsDistribution;
-        $this->cacheRepository = $cacheRepository;
     }
 
     final public function insert($data)
     {
-        if (isset($data['code'])) {
-            $data['code'] = Strings::webalize($data['code']);
+        try {
+            $row = parent::insert($data);
+        } catch (UniqueConstraintViolationException) {
+            throw new ProductAlreadyExistsException('Product with same code already exists: '. $data['code']);
         }
-
-        return parent::insert($data);
+        return $row;
     }
 
     final public function update(ActiveRow &$row, $data)
     {
-        // webalize `code` only if it was changed to something new
-        // we don't want to break current URLs
-        if (isset($data['code']) && $data['code'] !== $row->code) {
-            $data['code'] = Strings::webalize($data['code']);
-        }
-
         $data['modified_at'] = new \DateTime();
-        return parent::update($row, $data);
+
+        try {
+            $result = parent::update($row, $data);
+        } catch (UniqueConstraintViolationException) {
+            throw new ProductAlreadyExistsException('Product with same code already exists: '. $data['code']);
+        }
+        return $result;
     }
 
     final public function find($id): ?\Crm\ApplicationModule\Models\Database\ActiveRow

@@ -61,6 +61,8 @@ data:
         errors:
             name: Položka 'Názov' je povinná
             code: Položka 'Identifikátor' je povinná
+            code_not_webalized: Identifikátor obsahuje nepovolené znaky
+            code_already_used: Produkt s rovnakým identifikátorom už existuje
             description: Položka 'Popis' je povinná
             image_url: Položka 'URL Fotky' je povinná
             og_image_url: Položka 'OG:image URL' je povinná
