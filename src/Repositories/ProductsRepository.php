@@ -66,6 +66,7 @@ class ProductsRepository extends Repository
             $data['code'] = Strings::webalize($data['code']);
         }
 
+        $data['modified_at'] = new \DateTime();
         return parent::update($row, $data);
     }
 
