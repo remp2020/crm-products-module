@@ -53,6 +53,7 @@ data:
         descriptions:
             catalog_price: <strong>Vyššia</strong> z dvoch cien. Zobrazí sa preškrtnutá.
             code: 'Bude použitý v URL. Napr.: <code>bambusove-tricko</code>. URL: <code>http://shop.crm.press/show/1/bambusove-tricko</code>.'
+            generate_code: Vygeneruj identifikátor z názvu
             user_label: Používa sa iba na faktúre
             image_url: Prosím dodržujte veľkosť obrázku 856px * 565px
             images: Zoznam URL fotiek. Každá URL na novom riadku.

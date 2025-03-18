@@ -1,0 +1,38 @@
+{control productsForm}
+
+{block scripts}
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $('#generate_product_code').click(function (event) {
+        event.preventDefault();
+        var productName = document.getElementById('frm-productsForm-name').value;
+        if (productName === '') {
+          return;
+        }
+
+        var codeInput = document.getElementById('frm-productsForm-code');
+
+        // make code input readonly & link to generate code unclickable
+        codeInput.readOnly = true;
+        var generateLink = this;
+        generateLink.style['pointer-events'] = 'none';
+
+        $.nette.ajax({
+          type: 'POST',
+          url: {link generateProductCode!} ,
+          data: {
+            'product_name': productName,
+          },
+          success: function (payload) {
+            codeInput.value = payload;
+          },
+          complete: function () {
+            // revert readonly & unclickable link
+            codeInput.readOnly = false;
+            generateLink.style.removeProperty('pointer-events');
+          }
+        });
+      });
+    });
+  </script>
+{/block}

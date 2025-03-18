@@ -5,6 +5,7 @@ namespace Crm\ProductsModule\Presenters;
 use Crm\AdminModule\Presenters\AdminPresenter;
 use Crm\ApplicationModule\Components\Graphs\GoogleLineGraphGroup\GoogleLineGraphGroupControlFactoryInterface;
 use Crm\ApplicationModule\Components\PreviousNextPaginator\PreviousNextPaginator;
+use Crm\ApplicationModule\Models\Database\SlugColumnTrait;
 use Crm\ApplicationModule\Models\Graphs\Criteria;
 use Crm\ApplicationModule\Models\Graphs\GraphDataItem;
 use Crm\ApplicationModule\UI\Form;
@@ -22,6 +23,8 @@ use Tomaj\Form\Renderer\BootstrapInlineRenderer;
 
 class ProductsAdminPresenter extends AdminPresenter
 {
+    use SlugColumnTrait;
+
     private $productsRepository;
 
     private $productsFormFactory;
@@ -291,5 +294,14 @@ class ProductsAdminPresenter extends AdminPresenter
     public function adminFilterSubmited(Form $form, array $values)
     {
         $this->redirect('Default', $values);
+    }
+
+    /**
+     * @admin-access-level read
+     */
+    public function handleGenerateProductCode(): void
+    {
+        $productName = $this->request->getPost('product_name');
+        $this->sendJson($this->webalize($productName));
     }
 }

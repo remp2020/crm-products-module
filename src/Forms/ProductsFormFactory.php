@@ -5,6 +5,7 @@ namespace Crm\ProductsModule\Forms;
 use Contributte\Translation\Translator;
 use Crm\ApplicationModule\Forms\FormFactoryDefaultsTrait;
 use Crm\ApplicationModule\Models\DataProvider\DataProviderManager;
+use Crm\ApplicationModule\Models\Database\SlugColumnTrait;
 use Crm\ApplicationModule\UI\Form;
 use Crm\ProductsModule\DataProviders\ProductTemplatePropertiesDataProviderInterface;
 use Crm\ProductsModule\DataProviders\ProductsFormDataProviderInterface;
@@ -24,13 +25,12 @@ use League\Event\Emitter;
 use Nette\Database\Table\ActiveRow;
 use Nette\Forms\Controls\TextInput;
 use Nette\Utils\Html;
-use Nette\Utils\Strings;
 use Tomaj\Form\Renderer\BootstrapRenderer;
 use Tracy\Debugger;
 
 class ProductsFormFactory
 {
-    use FormFactoryDefaultsTrait;
+    use FormFactoryDefaultsTrait, SlugColumnTrait;
 
     public $onSave;
 
@@ -111,14 +111,18 @@ class ProductsFormFactory
             ->setRequired('products.data.products.errors.name')
             ->setHtmlAttribute('placeholder', 'products.data.products.placeholder.name');
 
+        $codeGenerateButton = Html::el('a', ['id' => 'generate_product_code', 'href' => 'javascript://'])
+            ->setHtml($this->translator->translate('products.data.products.descriptions.generate_code'));
+        $codeDescription = Html::el('span')
+            ->setHtml($this->translator->translate('products.data.products.descriptions.code'));
         $form->addText('code', 'products.data.products.fields.code')
             ->setRequired('products.data.products.errors.code')
-            ->setOption('description', Html::el('span', ['class' => 'help-block'])
-                ->setHtml($this->translator->translate('products.data.products.descriptions.code')))
+            ->setOption('description', Html::el('div', ['class' => 'help-block'])
+                ->setHtml($codeGenerateButton . ' | ' . $codeDescription))
             ->setHtmlAttribute('placeholder', 'products.data.products.placeholder.code')
             ->addRule(function (TextInput $control) {
                 // code has to be URL friendly
-                return Strings::webalize($control->getValue(), '_') === $control->getValue();
+                return $this->webalize($control->getValue()) === $control->getValue();
             }, 'products.data.products.errors.code_not_webalized')
             ->addRule(function (TextInput $control) use ($productId) {
                 // single fetch is enough, code is unique column
