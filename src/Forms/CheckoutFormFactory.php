@@ -217,7 +217,7 @@ class CheckoutFormFactory
                 ->addConditionOn($action, Form::NOT_EQUAL, 'login')
                 ->addRule(Form::FILLED, 'products.frontend.shop.checkout.fields.last_name_required');
 
-            $shippingAddress->addText('address', 'products.frontend.shop.checkout.fields.street')
+            $shippingAddress->addText('street', 'products.frontend.shop.checkout.fields.street')
                 ->addConditionOn($action, Form::NOT_EQUAL, 'login')
                 ->addRule(Form::FILLED, 'products.frontend.shop.checkout.fields.street_required')
                 ->addRule(Form::MIN_LENGTH, 'products.frontend.shop.checkout.fields.street_min_length', 3);
@@ -266,7 +266,7 @@ class CheckoutFormFactory
             ->addConditionOn($sameShipping, Form::EQUAL, false)
             ->addRule(Form::FILLED, 'products.frontend.shop.checkout.fields.company_name_required');
 
-        $billingAddress->addText('address', 'products.frontend.shop.checkout.fields.street')
+        $billingAddress->addText('street', 'products.frontend.shop.checkout.fields.street')
             ->addConditionOn($addInvoice, Form::EQUAL, true)
             ->addConditionOn($sameShipping, Form::EQUAL, false)
             ->addRule(Form::FILLED, 'products.frontend.shop.checkout.fields.street_required');
@@ -590,7 +590,7 @@ class CheckoutFormFactory
                     AddressTypesSeeder::PRODUCTS_SHOP_ADDRESS_TYPE,
                     $values['shipping_address']['first_name'],
                     $values['shipping_address']['last_name'],
-                    $values['shipping_address']['address'],
+                    $values['shipping_address']['street'],
                     $values['shipping_address']['number'],
                     $values['shipping_address']['city'],
                     $values['shipping_address']['zip'],
@@ -648,7 +648,7 @@ class CheckoutFormFactory
                     $values['shipping_address']['first_name'],
                     $values['shipping_address']['last_name'],
                     $values['shipping_address']['first_name'] . ' ' . $values['shipping_address']['last_name'],
-                    $values['shipping_address']['address'],
+                    $values['shipping_address']['street'],
                     $values['shipping_address']['number'],
                     $values['shipping_address']['city'],
                     $values['shipping_address']['zip'],
@@ -670,7 +670,7 @@ class CheckoutFormFactory
                     null,
                     null,
                     $values['billing_address']['company_name'],
-                    $values['billing_address']['address'],
+                    $values['billing_address']['street'],
                     $values['billing_address']['number'],
                     $values['billing_address']['city'],
                     $values['billing_address']['zip'],
