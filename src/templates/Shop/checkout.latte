@@ -22,6 +22,10 @@
         .checkout .has-error > legend {
             color: #BF2134;
         }
+
+        .radio-inline[hidden], .checkbox-inline[hidden] {
+            display: none;
+        }
     </style>
 {/block}
 
@@ -406,14 +410,17 @@
 
             $('form').on('submit', function(e) {
                 clearFormErrors(e.target.elements)
-
                 if (Nette.validateForm(e.target, true)) {
+                    return true;
+                }
+                if (!Nette.formErrors.length) {
+                    // Form is not valid, but Nette didn't provide any meaningful errors. Let's submit the form so that
+                    // the backend displays what it needs to display.
                     return true;
                 }
                 if (e && e.stopPropagation) {
                     e.stopPropagation();
                 }
-
                 setTimeout(() => handleFormErrors(Nette.formErrors), 0)
                 return false;
             });

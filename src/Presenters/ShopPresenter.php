@@ -275,6 +275,7 @@ class ShopPresenter extends FrontendPresenter
     public function createComponentCheckoutForm()
     {
         $form = $this->checkoutFormFactory->create($this->cartProducts, $this->cartSession->freeProducts);
+
         $this->checkoutFormFactory->onLogin = function ($removeProducts) {
             if (empty($removeProducts)) {
                 $this->redirect('checkout');

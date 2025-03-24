@@ -340,7 +340,6 @@ class CheckoutFormFactory
 
         $finishSubmit = $form->addSubmit('finish', 'products.frontend.shop.cart.confirm_order');
 
-
         $form->onAnchor[]  = function () use ($form, $addInvoice, $sameShipping, $finishSubmit) {
             // if invoice is not required or checkbox to "use same invoice address as shipping address" is checked,
             // disable validation of billing address
