@@ -2,8 +2,8 @@
 
 namespace Crm\ProductsModule\Models\PaymentItem;
 
+use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Repositories\PaymentItemsRepository;
-use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Nette\Database\Table\ActiveRow;
 
 class PaymentItemHelper
@@ -19,7 +19,7 @@ class PaymentItemHelper
     {
         return $this->paymentItemsRepository->getTable()->where([
             'payment.user_id' => $userId,
-            'payment.status' => PaymentsRepository::STATUS_PAID,
+            'payment.status' => PaymentStatusEnum::Paid->value,
             'type' => ProductPaymentItem::TYPE,
             'product_id' => $product->id
         ])->count('*') > 0;

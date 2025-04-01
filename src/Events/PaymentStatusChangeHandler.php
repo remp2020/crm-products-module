@@ -3,7 +3,7 @@
 namespace Crm\ProductsModule\Events;
 
 use Crm\PaymentsModule\Events\PaymentChangeStatusEvent;
-use Crm\PaymentsModule\Repositories\PaymentsRepository;
+use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\ProductsModule\Repositories\OrdersRepository;
 use League\Event\AbstractListener;
 use League\Event\EventInterface;
@@ -36,23 +36,23 @@ class PaymentStatusChangeHandler extends AbstractListener
         }
 
         switch ($payment->status) {
-            case PaymentsRepository::STATUS_PAID:
-            case PaymentsRepository::STATUS_PREPAID:
+            case PaymentStatusEnum::Paid->value:
+            case PaymentStatusEnum::Prepaid->value:
                 if (in_array($order->status, [OrdersRepository::STATUS_NEW, OrdersRepository::STATUS_PAYMENT_FAILED], true)) {
                     $this->ordersRepository->update($order, ['status' => OrdersRepository::STATUS_PAID]);
                 }
                 break;
 
-            case PaymentsRepository::STATUS_FAIL:
-            case PaymentsRepository::STATUS_TIMEOUT:
+            case PaymentStatusEnum::Fail->value:
+            case PaymentStatusEnum::Timeout->value:
                 $this->ordersRepository->update($order, ['status' => OrdersRepository::STATUS_PAYMENT_FAILED]);
                 break;
 
-            case PaymentsRepository::STATUS_REFUND:
+            case PaymentStatusEnum::Refund->value:
                 $this->ordersRepository->update($order, ['status' => OrdersRepository::STATUS_PAYMENT_REFUNDED]);
                 break;
 
-            case PaymentsRepository::STATUS_IMPORTED:
+            case PaymentStatusEnum::Imported->value:
                 $this->ordersRepository->update($order, ['status' => OrdersRepository::STATUS_IMPORTED]);
                 break;
 

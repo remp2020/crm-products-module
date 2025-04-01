@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Crm\ProductsModule\Commands;
 
 use Crm\ApplicationModule\Commands\DecoratedCommandTrait;
+use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\ProductsModule\Models\PaymentItem\PostalFeePaymentItem;
 use Crm\ProductsModule\Models\PaymentItem\ProductPaymentItem;
@@ -29,7 +30,7 @@ class CalculateAveragesCommand extends Command
 {
     use DecoratedCommandTrait;
 
-    private const PAYMENT_STATUSES = [PaymentsRepository::STATUS_PAID, PaymentsRepository::STATUS_PREPAID];
+    private const PAYMENT_STATUSES = [PaymentStatusEnum::Paid->value, PaymentStatusEnum::Prepaid->value];
 
     private ?int $calculatedPeriod = null;
     private ?DateTime $startDate = null;

@@ -60,11 +60,11 @@
                     <td><a n:href=":Users:UsersAdmin:show $order->payment->user_id">{$order->payment->user->public_name}</a></td>
                     <td>
                         {var $btn_class = 'btn-default'}
-                        {if $order->payment->status == \Crm\PaymentsModule\Repositories\PaymentsRepository::STATUS_PAID || $order->payment->status == \Crm\PaymentsModule\Repositories\PaymentsRepository::STATUS_IMPORTED}
+                        {if $order->payment->status === \Crm\PaymentsModule\Models\Payment\PaymentStatusEnum::Paid->value || $order->payment->status === \Crm\PaymentsModule\Models\Payment\PaymentStatusEnum::Imported->value}
                             {var $btn_class = 'btn-success'}
-                        {elseif $order->payment->status == \Crm\PaymentsModule\Repositories\PaymentsRepository::STATUS_FORM}
+                        {elseif $order->payment->status === \Crm\PaymentsModule\Models\Payment\PaymentStatusEnum::Form->value}
                             {var $btn_class = 'btn-info'}
-                        {elseif $order->payment->status == \Crm\PaymentsModule\Repositories\PaymentsRepository::STATUS_FAIL || $order->payment->status == \Crm\PaymentsModule\Repositories\PaymentsRepository::STATUS_TIMEOUT}
+                        {elseif $order->payment->status === \Crm\PaymentsModule\Models\Payment\PaymentStatusEnum::Fail->value || $order->payment->status === \Crm\PaymentsModule\Models\Payment\PaymentStatusEnum::Timeout->value}
                             {var $btn_class = 'btn-danger'}
                         {/if}
                         <button class="btn {$btn_class} btn-sm" type="button">

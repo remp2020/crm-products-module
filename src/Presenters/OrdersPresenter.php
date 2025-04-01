@@ -3,7 +3,7 @@
 namespace Crm\ProductsModule\Presenters;
 
 use Crm\ApplicationModule\Presenters\FrontendPresenter;
-use Crm\PaymentsModule\Repositories\PaymentsRepository;
+use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\ProductsModule\DataProviders\EbookProvider;
 use Crm\ProductsModule\Models\PaymentItem\PaymentItemHelper;
 use Crm\ProductsModule\Repositories\OrdersRepository;
@@ -38,7 +38,7 @@ class OrdersPresenter extends FrontendPresenter
         $ebooks = [];
         $orders = $this->ordersRepository->getByUser($this->getUser()->getId());
         foreach ($orders as $order) {
-            if ($order->payment->status != PaymentsRepository::STATUS_PAID) {
+            if ($order->payment->status != PaymentStatusEnum::Paid->value) {
                 continue;
             }
 

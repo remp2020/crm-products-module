@@ -27,7 +27,7 @@
             <tbody>
             {foreach $orders as $order}
                 <tr n:ifset="$statusMap[$order->status]">
-                    {php $prepaid = ($order->payment->status == \Crm\PaymentsModule\Repositories\PaymentsRepository::STATUS_PREPAID)}
+                    {php $prepaid = ($order->payment->status == \Crm\PaymentsModule\Models\Payment\PaymentStatusEnum::Prepaid->value)}
                     <td>
                         {if $prepaid}
                             {$order->payment->modified_at|userDate:true}

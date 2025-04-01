@@ -5,7 +5,7 @@ namespace Crm\ProductsModule\Repositories;
 use Crm\ApplicationModule\Models\Database\Repository;
 use Crm\ApplicationModule\Repositories\AuditLogRepository;
 use Crm\ApplicationModule\Repositories\CacheRepository;
-use Crm\PaymentsModule\Repositories\PaymentsRepository;
+use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\ProductsModule\Models\Distribution\AmountSpentDistribution;
 use Crm\ProductsModule\Models\Distribution\PaymentCountsDistribution;
 use Crm\ProductsModule\Models\Distribution\ProductDaysFromLastOrderDistribution;
@@ -139,7 +139,7 @@ class ProductsRepository extends Repository
             ->select('products.*, SUM(:payment_items.count) AS sold_count')
             ->where([
                 ':payment_items.type' => ProductPaymentItem::TYPE,
-                ':payment_items.payment.status' => PaymentsRepository::STATUS_PAID,
+                ':payment_items.payment.status' => PaymentStatusEnum::Paid->value,
                 'products.deleted_at' => null
             ])
             ->group('products.id');
@@ -245,7 +245,7 @@ class ProductsRepository extends Repository
         $selection = $this->getTable()
             ->select('SUM(:payment_items.count) AS product_count, SUM(:payment_items.amount * :payment_items.count) AS product_amount, products.id AS product_id')
             ->where(':payment_items.type = ?', ProductPaymentItem::TYPE)
-            ->where(':payment_items.payment.status = ?', PaymentsRepository::STATUS_PAID)
+            ->where(':payment_items.payment.status = ?', PaymentStatusEnum::Paid->value)
             ->group('products.id');
 
         if ($to === null) {

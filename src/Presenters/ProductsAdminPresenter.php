@@ -9,8 +9,8 @@ use Crm\ApplicationModule\Models\Database\SlugColumnTrait;
 use Crm\ApplicationModule\Models\Graphs\Criteria;
 use Crm\ApplicationModule\Models\Graphs\GraphDataItem;
 use Crm\ApplicationModule\UI\Form;
+use Crm\PaymentsModule\Models\Payment\PaymentStatusEnum;
 use Crm\PaymentsModule\Repositories\PaymentItemsRepository;
-use Crm\PaymentsModule\Repositories\PaymentsRepository;
 use Crm\ProductsModule\Forms\ProductsFormFactory;
 use Crm\ProductsModule\Forms\SortShopProductsFormFactory;
 use Crm\ProductsModule\Models\Manager\ProductManager;
@@ -176,7 +176,7 @@ class ProductsAdminPresenter extends AdminPresenter
     {
         return $this->paymentItemsRepository->getTable()
             ->where('product_id', $product->id)
-            ->where('payment.status', PaymentsRepository::STATUS_PAID)
+            ->where('payment.status', PaymentStatusEnum::Paid->value)
             ->fetchField('COALESCE(SUM(`count`), 0)');
     }
 
