@@ -407,8 +407,10 @@ frontend:
                 street: Street
                 street_required: 'Field Street is required.'
                 street_min_length: 'Field Street has to be at least 3 characters long'
+                street_wrong_format: 'The street should only contain letters, numbers, and hyphens.'
                 number: Number
                 number_required: 'Field Number is required.'
+                number_wrong_format: 'The number should only contain letters, numbers, and hyphens.'
                 city: City
                 city_required: 'Field City is required.'
                 zip_code: Zip Code

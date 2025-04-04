@@ -58,6 +58,15 @@ class CountryPostalFeesRepository extends Repository
             ->fetchPairs('country_id', 'country_name');
     }
 
+    final public function findAllAvailableCountryIsoPairs(): array
+    {
+        return $this->getTable()
+            ->where(['country_postal_fees.active' => true])
+            ->select('country.iso_code AS country_iso_code, country.name AS country_name')
+            ->order('-country.sorting DESC, country.name')
+            ->fetchPairs('country_iso_code', 'country_name');
+    }
+
     final public function findAllByPostalFeeId($postalFeeId)
     {
         return $this->getTable()->where('postal_fee_id', $postalFeeId)->fetchAll();

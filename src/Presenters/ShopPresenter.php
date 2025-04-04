@@ -17,6 +17,7 @@ use Crm\ProductsModule\Models\PostalFeeCondition\PostalFeeService;
 use Crm\ProductsModule\Repositories\PostalFeesRepository;
 use Crm\ProductsModule\Repositories\ProductsRepository;
 use Crm\ProductsModule\Repositories\TagsRepository;
+use Crm\UsersModule\Repositories\CountriesRepository;
 use Nette\Application\BadRequestException;
 use Nette\Forms\Controls\RadioList;
 use Nette\Utils\DateTime;
@@ -39,7 +40,8 @@ class ShopPresenter extends FrontendPresenter
         private readonly EbookProvider $ebookProvider,
         private readonly Emitter $hermesEmitter,
         private readonly DataProviderManager $dataProviderManager,
-        private readonly PostalFeeService $postalFeeService
+        private readonly PostalFeeService $postalFeeService,
+        private readonly CountriesRepository $countriesRepository,
     ) {
         parent::__construct();
     }
@@ -337,11 +339,13 @@ class ShopPresenter extends FrontendPresenter
             return;
         }
         if ($this['checkoutForm']['postal_fee'] instanceof RadioList) {
-            $options = $this->postalFeeService->getAvailablePostalFeesOptions($value, $this->cartProducts, $this->user->getId());
+            $country = $this->countriesRepository->findByIsoCode($value);
+
+            $options = $this->postalFeeService->getAvailablePostalFeesOptions($country->id, $this->cartProducts, $this->user->getId());
             $this['checkoutForm']['postal_fee']
                 ->setItems($options)
-                ->setDefaultValue($this->postalFeeService->getDefaultPostalFee($value, $options));
-            $this['checkoutForm']['shipping_country_id']->setValue($value);
+                ->setDefaultValue($this->postalFeeService->getDefaultPostalFee($country->id, $options));
+            $this['checkoutForm']['shipping_country']->setValue($country->iso_code);
         }
 
         $this->template->getLatte()->addProvider('formsStack', [$this['checkoutForm']]);
@@ -351,16 +355,18 @@ class ShopPresenter extends FrontendPresenter
         $this->redrawControl('cart');
     }
 
-    public function handlePostalFeeChange($value, $countryId)
+    public function handlePostalFeeChange($value, $countryIsoCode)
     {
-        if (!$value || !$countryId) {
+        if (!$value || !$countryIsoCode) {
             return;
         }
+
+        $country = $this->countriesRepository->findByIsoCode($countryIsoCode);
         if ($this['checkoutForm']['postal_fee'] instanceof RadioList) {
-            $options = $this->postalFeeService->getAvailablePostalFeesOptions($countryId, $this->cartProducts, $this->user->getId());
+            $options = $this->postalFeeService->getAvailablePostalFeesOptions($country->id, $this->cartProducts, $this->user->getId());
             $this['checkoutForm']['postal_fee']
                 ->setItems($options)
-                ->setDefaultValue($this->postalFeeService->getDefaultPostalFee($countryId, $options));
+                ->setDefaultValue($this->postalFeeService->getDefaultPostalFee($country->id, $options));
             $this['checkoutForm']['postal_fee']->setDefaultValue($value);
         }
 

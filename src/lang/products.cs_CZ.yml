@@ -404,8 +404,10 @@ frontend:
                 street: Ulice
                 street_required: 'Položka Ulice je povinná.'
                 street_min_length: 'Ulice musí mít alespoň 3 znaky'
+                street_wrong_format: 'Ulice má obsahovat pouze písmena, číslice a pomlčky.'
                 number: Číslo
                 number_required: 'Položka Číslo je povinná.'
+                number_wrong_format: 'Číslo má obsahovat pouze písmena, číslice a pomlčky.'
                 city: Město
                 city_required: 'Položka Město je povinná.'
                 zip_code: PSČ

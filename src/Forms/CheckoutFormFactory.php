@@ -4,6 +4,7 @@ namespace Crm\ProductsModule\Forms;
 
 use Contributte\Translation\Translator;
 use Crm\ApplicationModule\Forms\Controls\CountriesSelectItemsBuilder;
+use Crm\ApplicationModule\Forms\FormPatterns;
 use Crm\ApplicationModule\Models\Config\ApplicationConfig;
 use Crm\ApplicationModule\Models\DataProvider\DataProviderManager;
 use Crm\ApplicationModule\UI\Form;
@@ -47,13 +48,18 @@ class CheckoutFormFactory
 {
     use ProductsTrait;
 
+    /* callback function */
     public $onSave;
+
+    /* callback function */
     public $onLogin;
+
+    /* callback function */
     public $onAuth;
 
-    private $gateways = [];
+    private array $gateways = [];
 
-    private $cartFree;
+    private array $cartFree;
 
     public function __construct(
         private readonly ApplicationConfig $applicationConfig,
@@ -82,11 +88,11 @@ class CheckoutFormFactory
     ) {
     }
 
-    public function create($cart, $cartFree = [], $payment = null)
+    public function create($cart, $cartFree = [], $payment = null): Form
     {
         $this->cartFree = $cartFree;
         $defaults = [];
-        $countryId = $this->countriesRepository->defaultCountry()->id;
+        $selectedCountry = $this->countriesRepository->defaultCountry();
 
         if ($this->user->isLoggedIn()) {
             if ($payment) {
@@ -99,7 +105,7 @@ class CheckoutFormFactory
             if ($address) {
                 $defaults['shipping_address'] = $address->toArray();
                 $defaults['contact']['phone_number'] = $address->phone_number;
-                $countryId = $address->country_id;
+                $selectedCountry = $address->country;
             }
 
             $address = $this->addressesRepository->address($user, 'invoice');
@@ -112,9 +118,9 @@ class CheckoutFormFactory
             }
         }
 
-        $postShippingCountryId = $this->request->getPost('shipping_country_id');
-        if (!empty($postShippingCountryId)) {
-            $countryId = $postShippingCountryId;
+        $postShippingCountryIsoCode = $this->request->getPost('shipping_country');
+        if (!empty($postShippingCountryIsoCode)) {
+            $selectedCountry = $this->countriesRepository->findByIsoCode($postShippingCountryIsoCode);
         }
 
         $products = $this->productsRepository->findByIds(array_keys($cart));
@@ -153,7 +159,8 @@ class CheckoutFormFactory
                 ->setDefaultValue($this->user->getIdentity()->email);
         } else {
             $email = $user->addText('email', Html::el()->setHtml('Email<i id="preloader" class="fa fa-refresh fa-spin"></i>'));
-            $email->setHtmlAttribute('placeholder', '@');
+            $email->setHtmlAttribute('placeholder', '@')
+                ->setHtmlAttribute('autocomplete', 'email');
             $email->setRequired('products.frontend.shop.checkout.fields.email_required');
 
             $emailUsable = function (TextInput $emailField, ?string $password) {
@@ -167,9 +174,9 @@ class CheckoutFormFactory
 
             $password = $user->addPassword('password', 'products.frontend.shop.checkout.fields.password');
             $password
-                ->addConditionOn($action, Form::EQUAL, 'login')
-                ->addRule(Form::FILLED, 'products.frontend.shop.checkout.fields.pass_required');
-            $email->addConditionOn($action, Form::NOT_EQUAL, 'login')
+                ->addConditionOn($action, $form::Equal, 'login')
+                ->addRule($form::Filled, 'products.frontend.shop.checkout.fields.pass_required');
+            $email->addConditionOn($action, $form::NotEqual, 'login')
                 ->addRule($emailUsable, 'products.frontend.shop.checkout.fields.account_exists', $password);
 
             $user->addSubmit('login_submit', 'products.frontend.shop.checkout.login')
@@ -180,9 +187,11 @@ class CheckoutFormFactory
             $contact = $form->addContainer('contact');
             $contact->addText('phone_number', 'products.frontend.shop.checkout.fields.phone_number')
                 ->setHtmlAttribute('placeholder', 'products.frontend.shop.checkout.fields.phone_number_placeholder')
-                ->addConditionOn($action, Form::NOT_EQUAL, 'login')
-                ->addRule(Form::FILLED, 'products.frontend.shop.checkout.fields.phone_number_required')
-                ->addRule(Form::PATTERN, 'products.frontend.shop.checkout.fields.phone_number_wrong_format', '^[+][-\s\.\/\d]{12,}$');
+                ->setHtmlAttribute('autocomplete', 'tel')
+                ->setHtmlAttribute('inputmode', 'tel')
+                ->addConditionOn($action, $form::NotEqual, 'login')
+                ->addRule($form::Filled, 'products.frontend.shop.checkout.fields.phone_number_required')
+                ->addRule($form::Pattern, 'products.frontend.shop.checkout.fields.phone_number_wrong_format', FormPatterns::PHONE_NUMBER_INTERNATIONAL);
         }
 
         $invoice = $form->addContainer('invoice');
@@ -192,109 +201,128 @@ class CheckoutFormFactory
         $sameShipping = $invoice->addCheckbox('same_shipping', 'products.frontend.shop.checkout.fields.same_shipping')
             ->setDefaultValue(true);
         $sameShipping->getLabelPrototype()->addAttributes(['class' => 'checkbox-inline', 'id' => 'same-address']);
-        $addInvoice->addCondition(Form::EQUAL, true)
+        $addInvoice->addCondition($form::Equal, true)
             ->toggle('same-address');
 
         if ($hasDelivery) {
             $form->removeComponent($postalFee);
 
-            $availableCountryPairs = $this->countryPostalFeesRepository->findAllAvailableCountryPairs();
-            $country = $form->addSelect('shipping_country_id', 'products.frontend.shop.checkout.fields.country', $availableCountryPairs)
-                        ->setDefaultValue($countryId);
+            $availableCountryPairs = $this->countryPostalFeesRepository->findAllAvailableCountryIsoPairs();
+            $country = $form->addSelect('shipping_country', 'products.frontend.shop.checkout.fields.country', $availableCountryPairs)
+                ->setHtmlAttribute('autocomplete', 'country')
+                ->setDefaultValue($selectedCountry->iso_code);
 
-            $options = $this->postalFeeService->getAvailablePostalFeesOptions($countryId, $cart, $this->user->getId());
+            $options = $this->postalFeeService->getAvailablePostalFeesOptions($selectedCountry->id, $cart, $this->user->getId());
 
             $form->addRadioList('postal_fee', null, $options)
                 ->setRequired('products.frontend.shop.checkout.fields.choose_shipping_method')
-                ->setDefaultValue($this->postalFeeService->getDefaultPostalFee($countryId, $options));
+                ->setDefaultValue($this->postalFeeService->getDefaultPostalFee($selectedCountry->id, $options));
 
             $shippingAddress = $form->addContainer('shipping_address');
             $shippingAddress->addText('first_name', 'products.frontend.shop.checkout.fields.first_name')
-                ->addConditionOn($action, Form::NOT_EQUAL, 'login')
-                ->addRule(Form::FILLED, 'products.frontend.shop.checkout.fields.first_name_required');
+                ->setHtmlAttribute('autocomplete', 'given-name')
+                ->addConditionOn($action, $form::NotEqual, 'login')
+                ->addRule($form::Filled, 'products.frontend.shop.checkout.fields.first_name_required');
 
             $shippingAddress->addText('last_name', 'products.frontend.shop.checkout.fields.last_name')
-                ->addConditionOn($action, Form::NOT_EQUAL, 'login')
-                ->addRule(Form::FILLED, 'products.frontend.shop.checkout.fields.last_name_required');
+                ->setHtmlAttribute('autocomplete', 'family-name')
+                ->addConditionOn($action, $form::NotEqual, 'login')
+                ->addRule($form::Filled, 'products.frontend.shop.checkout.fields.last_name_required');
 
             $shippingAddress->addText('street', 'products.frontend.shop.checkout.fields.street')
-                ->addConditionOn($action, Form::NOT_EQUAL, 'login')
-                ->addRule(Form::FILLED, 'products.frontend.shop.checkout.fields.street_required')
-                ->addRule(Form::MIN_LENGTH, 'products.frontend.shop.checkout.fields.street_min_length', 3);
+                ->setHtmlAttribute('pattern', FormPatterns::STREET_NAME)
+                ->addConditionOn($action, $form::NotEqual, 'login')
+                ->addRule($form::Filled, 'products.frontend.shop.checkout.fields.street_required')
+                ->addRule($form::Pattern, 'products.frontend.shop.checkout.fields.street_wrong_format', FormPatterns::STREET_NAME)
+                ->addRule($form::MinLength, 'products.frontend.shop.checkout.fields.street_min_length', 3);
 
             $shippingAddress->addText('number', 'products.frontend.shop.checkout.fields.number')
-                ->addConditionOn($action, Form::NOT_EQUAL, 'login')
-                ->addRule(Form::FILLED, 'products.frontend.shop.checkout.fields.number_required');
+                ->setHtmlAttribute('pattern', FormPatterns::STREET_NUMBER)
+                ->addConditionOn($action, $form::NotEqual, 'login')
+                ->addRule($form::Filled, 'products.frontend.shop.checkout.fields.number_required')
+                ->addRule($form::Pattern, 'products.frontend.shop.checkout.fields.number_wrong_format', FormPatterns::STREET_NUMBER);
 
             $shippingAddress->addText('city', 'products.frontend.shop.checkout.fields.city')
-                ->addConditionOn($action, Form::NOT_EQUAL, 'login')
-                ->addRule(Form::FILLED, 'products.frontend.shop.checkout.fields.city_required');
+                ->addConditionOn($action, $form::NotEqual, 'login')
+                ->addRule($form::Filled, 'products.frontend.shop.checkout.fields.city_required');
 
             $zip = $shippingAddress->addText('zip', 'products.frontend.shop.checkout.fields.zip_code')
-                ->addConditionOn($action, Form::NOT_EQUAL, 'login')
-                ->addRule(Form::FILLED, 'products.frontend.shop.checkout.fields.zip_code_required');
+                ->setHtmlAttribute('autocomplete', 'postal-code')
+                ->setHtmlAttribute('pattern', FormPatterns::ZIP_CODE)
+                ->addConditionOn($action, $form::NotEqual, 'login')
+                ->addRule($form::Filled, 'products.frontend.shop.checkout.fields.zip_code_required');
 
-            $validateCountryIds = $this->getIdsOfCountriesByIsoCode(['CZ', 'SK']);
-            $zip->addConditionOn($country, Form::IS_IN, $validateCountryIds)
-                ->addRule(Form::PATTERN, 'products.frontend.shop.checkout.fields.zip_code_invalid', '\d{3} ?\d{2}');
+            $zip->addConditionOn($country, $form::IsIn, ['CZ', 'SK'])
+                ->addRule($form::Pattern, 'products.frontend.shop.checkout.fields.zip_code_invalid', FormPatterns::ZIP_CODE);
         } elseif ($hasLicence) {
             $licenceAddress = $form->addContainer('licence_address');
             $licenceAddress->addText('first_name', 'products.frontend.shop.checkout.fields.first_name')
-                ->addConditionOn($action, Form::NOT_EQUAL, 'login')
-                ->addRule(Form::FILLED, 'products.frontend.shop.checkout.fields.first_name_required');
+                ->setHtmlAttribute('autocomplete', 'given-name')
+                ->addConditionOn($action, $form::NotEqual, 'login')
+                ->addRule($form::Filled, 'products.frontend.shop.checkout.fields.first_name_required');
 
             $licenceAddress->addText('last_name', 'products.frontend.shop.checkout.fields.last_name')
-                ->addConditionOn($action, Form::NOT_EQUAL, 'login')
-                ->addRule(Form::FILLED, 'products.frontend.shop.checkout.fields.first_name_required');
+                ->setHtmlAttribute('autocomplete', 'family-name')
+                ->addConditionOn($action, $form::NotEqual, 'login')
+                ->addRule($form::Filled, 'products.frontend.shop.checkout.fields.first_name_required');
         }
 
         if ($hasDelivery) {
-            $addInvoice->addCondition(Form::EQUAL, true)
-                ->addConditionOn($sameShipping, Form::EQUAL, false)
+            $addInvoice->addCondition($form::Equal, true)
+                ->addConditionOn($sameShipping, $form::Equal, false)
                 ->toggle('billing-address');
         } else {
             $sameShipping->setDisabled(true)->setDefaultValue(false);
-            $addInvoice->addCondition(Form::EQUAL, true)
-                ->addConditionOn($sameShipping, Form::EQUAL, false)
+            $addInvoice->addCondition($form::Equal, true)
+                ->addConditionOn($sameShipping, $form::Equal, false)
                 ->toggle('billing-address');
         }
 
         $billingAddress = $form->addContainer('billing_address');
         $billingAddress->addTextArea('company_name', 'products.frontend.shop.checkout.fields.company_name', null, 1)
+            ->setHtmlAttribute('autocomplete', 'organization')
             ->setMaxLength(150)
-            ->addConditionOn($addInvoice, Form::EQUAL, true)
-            ->addConditionOn($sameShipping, Form::EQUAL, false)
-            ->addRule(Form::FILLED, 'products.frontend.shop.checkout.fields.company_name_required');
+            ->addConditionOn($addInvoice, $form::Equal, true)
+            ->addConditionOn($sameShipping, $form::Equal, false)
+            ->addRule($form::Filled, 'products.frontend.shop.checkout.fields.company_name_required');
 
         $billingAddress->addText('street', 'products.frontend.shop.checkout.fields.street')
-            ->addConditionOn($addInvoice, Form::EQUAL, true)
-            ->addConditionOn($sameShipping, Form::EQUAL, false)
-            ->addRule(Form::FILLED, 'products.frontend.shop.checkout.fields.street_required');
+            ->setHtmlAttribute('pattern', FormPatterns::STREET_NAME)
+            ->addConditionOn($addInvoice, $form::Equal, true)
+            ->addConditionOn($sameShipping, $form::Equal, false)
+            ->addRule($form::Pattern, 'products.frontend.shop.checkout.fields.street_wrong_format', FormPatterns::STREET_NAME)
+            ->addRule($form::Filled, 'products.frontend.shop.checkout.fields.street_required');
 
         $billingAddress->addText('number', 'products.frontend.shop.checkout.fields.number')
-            ->addConditionOn($addInvoice, Form::EQUAL, true)
-            ->addConditionOn($sameShipping, Form::EQUAL, false)
-            ->addRule(Form::FILLED, 'products.frontend.shop.checkout.fields.number_required');
+            ->setHtmlAttribute('pattern', FormPatterns::STREET_NUMBER)
+            ->addConditionOn($addInvoice, $form::Equal, true)
+            ->addConditionOn($sameShipping, $form::Equal, false)
+            ->addRule($form::Pattern, 'products.frontend.shop.checkout.fields.number_wrong_format', FormPatterns::STREET_NUMBER)
+            ->addRule($form::Filled, 'products.frontend.shop.checkout.fields.number_required');
 
         $billingAddress->addText('city', 'products.frontend.shop.checkout.fields.city')
-            ->addConditionOn($addInvoice, Form::EQUAL, true)
-            ->addConditionOn($sameShipping, Form::EQUAL, false)
-            ->addRule(Form::FILLED, 'products.frontend.shop.checkout.fields.city_required');
+            ->addConditionOn($addInvoice, $form::Equal, true)
+            ->addConditionOn($sameShipping, $form::Equal, false)
+            ->addRule($form::Filled, 'products.frontend.shop.checkout.fields.city_required');
 
         $zip = $billingAddress->addText('zip', 'products.frontend.shop.checkout.fields.zip_code')
-            ->addConditionOn($addInvoice, Form::EQUAL, true)
-            ->addConditionOn($sameShipping, Form::EQUAL, false)
-            ->addRule(Form::FILLED, 'products.frontend.shop.checkout.fields.zip_code_required');
+            ->setHtmlAttribute('autocomplete', 'postal-code')
+            ->setHtmlAttribute('pattern', FormPatterns::ZIP_CODE)
+            ->addConditionOn($addInvoice, $form::Equal, true)
+            ->addConditionOn($sameShipping, $form::Equal, false)
+            ->addRule($form::Pattern, 'products.frontend.shop.checkout.fields.zip_code_invalid', FormPatterns::ZIP_CODE)
+            ->addRule($form::Filled, 'products.frontend.shop.checkout.fields.zip_code_required');
 
         $country = $billingAddress->addSelect(
-            'country_id',
+            'country',
             'products.frontend.shop.checkout.fields.country',
-            $this->countriesSelectItemsBuilder->getAllPairs()
-        )->addRule(Form::FILLED, 'products.frontend.shop.checkout.fields.country_required');
+            $this->countriesSelectItemsBuilder->getAllIsoPairs()
+        )
+            ->addRule($form::Filled, 'products.frontend.shop.checkout.fields.country_required')
+            ->setHtmlAttribute('autocomplete', 'country');
 
-        $validateCountryIds = $this->getIdsOfCountriesByIsoCode(['CZ', 'SK']);
-        $zip->addConditionOn($country, Form::IS_IN, $validateCountryIds)
-            ->addRule(Form::PATTERN, 'products.frontend.shop.checkout.fields.zip_code_invalid', '\d{3} ?\d{2}');
+        $zip->addConditionOn($country, $form::IsIn, ['CZ', 'SK'])
+            ->addRule($form::Pattern, 'products.frontend.shop.checkout.fields.zip_code_invalid', '\d{3} ?\d{2}');
 
         $billingAddress->addText('company_id', 'products.frontend.shop.checkout.fields.company_id')
             ->setHtmlAttribute('placeholder', 'products.frontend.shop.checkout.fields.company_id_placeholder')
@@ -332,8 +360,8 @@ class CheckoutFormFactory
                     'products.frontend.shop.checkout.fields.toc',
                     ['link' => $termsURL]
                 )));
-                $toc->addConditionOn($action, Form::NOT_EQUAL, 'login')
-                    ->addRule(Form::FILLED, 'products.frontend.shop.checkout.fields.toc_required');
+                $toc->addConditionOn($action, $form::NotEqual, 'login')
+                    ->addRule($form::Filled, 'products.frontend.shop.checkout.fields.toc_required');
                 $toc->getLabelPrototype()->addAttributes(['class' => 'checkbox-inline']);
             }
         }
@@ -373,12 +401,12 @@ class CheckoutFormFactory
         return $scope;
     }
 
-    public function addPaymentGateway($code, $label)
+    public function addPaymentGateway($code, $label): void
     {
         $this->gateways[$code] = $label;
     }
 
-    public function gatewayLabel($code)
+    public function gatewayLabel($code): string
     {
         if (!isset($this->gateways[$code])) {
             throw new \Exception('request for label of gateway not registered in checkout form: ' . $code);
@@ -386,7 +414,7 @@ class CheckoutFormFactory
         return $this->gateways[$code];
     }
 
-    public function formSucceeded($form, $values)
+    public function formSucceeded($form, $values): void
     {
         if (isset($form['user']['login_submit']) && $form['user']['login_submit']->isSubmittedBy()) {
             $this->user->setExpiration('14 days');
@@ -540,7 +568,7 @@ class CheckoutFormFactory
         $this->onSave->__invoke($payment);
     }
 
-    public function formAdminSucceeded($form, $values)
+    public function formAdminSucceeded($form, $values): void
     {
         $payment = $this->paymentsRepository->find($values['payment_id']);
         $user = $payment->user;
@@ -574,7 +602,7 @@ class CheckoutFormFactory
         $this->onSave->__invoke($payment);
     }
 
-    private function handleShippingAddress($user, $values)
+    private function handleShippingAddress($user, $values): ?int
     {
         $shippingAddressId = null;
         if (isset($values['shipping_address'])) {
@@ -585,6 +613,8 @@ class CheckoutFormFactory
                 $user->id
             );
             if (!$shippingAddress) {
+                $country = $this->countriesRepository->findByIsoCode($values['shipping_country']);
+
                 $shippingAddress = $this->addressesRepository->add(
                     $user,
                     AddressTypesSeeder::PRODUCTS_SHOP_ADDRESS_TYPE,
@@ -594,7 +624,7 @@ class CheckoutFormFactory
                     $values['shipping_address']['number'],
                     $values['shipping_address']['city'],
                     $values['shipping_address']['zip'],
-                    $values['shipping_country_id'],
+                    $country->id,
                     $values['shipping_address']['phone_number']
                 );
             }
@@ -604,7 +634,7 @@ class CheckoutFormFactory
         return $shippingAddressId;
     }
 
-    private function handleLicenceAddress($user, $values)
+    private function handleLicenceAddress($user, $values): ?int
     {
         $licenceAddressId = null;
         if (isset($values['licence_address'])) {
@@ -634,7 +664,7 @@ class CheckoutFormFactory
         return $licenceAddressId;
     }
 
-    private function handleBillingAddress($user, $values)
+    private function handleBillingAddress($user, $values): ?int
     {
         $billingAddressId = null;
         if ($values['invoice']['add_invoice']) {
@@ -642,6 +672,8 @@ class CheckoutFormFactory
             $billingAddress = $this->addressesRepository->address($user, 'invoice');
 
             if (isset($values['shipping_address']) && isset($values['invoice']['same_shipping']) && $values['invoice']['same_shipping']) {
+                $shippingCountry = $this->countriesRepository->findByIsoCode($values['shipping_country']);
+
                 $changeRequest = $this->addressChangeRequestsRepository->add(
                     $user,
                     $billingAddress,
@@ -652,7 +684,7 @@ class CheckoutFormFactory
                     $values['shipping_address']['number'],
                     $values['shipping_address']['city'],
                     $values['shipping_address']['zip'],
-                    $values['shipping_country_id'],
+                    $shippingCountry->id,
                     null,
                     null,
                     null,
@@ -663,6 +695,8 @@ class CheckoutFormFactory
                     $billingAddress = $this->addressChangeRequestsRepository->acceptRequest($changeRequest);
                 }
             } else {
+                $billingCountry = $this->countriesRepository->findByIsoCode($values['billing_address']['country']);
+
                 $values['billing_address']['phone_number'] = $values['contact']['phone_number'] ?? null;
                 $changeRequest = $this->addressChangeRequestsRepository->add(
                     $user,
@@ -674,7 +708,7 @@ class CheckoutFormFactory
                     $values['billing_address']['number'],
                     $values['billing_address']['city'],
                     $values['billing_address']['zip'],
-                    $values['billing_address']['country_id'],
+                    $billingCountry->id,
                     $values['billing_address']['company_id'],
                     $values['billing_address']['company_tax_id'],
                     $values['billing_address']['company_vat_id'],
@@ -693,21 +727,12 @@ class CheckoutFormFactory
         return $billingAddressId;
     }
 
-    private function handlePostalFee($values)
+    private function handlePostalFee($values): ?\Crm\ApplicationModule\Models\Database\ActiveRow
     {
         $postalFee = null;
         if (!empty($values['postal_fee'])) {
             $postalFee = $this->postalFeesRepository->find($values['postal_fee']);
         }
         return $postalFee;
-    }
-
-    private function getIdsOfCountriesByIsoCode(array $codes)
-    {
-        $countries = $this->countriesRepository->all()->where(['iso_code' => $codes])->fetchAssoc('id');
-        if (empty($countries)) {
-            return [];
-        }
-        return array_keys($countries);
     }
 }

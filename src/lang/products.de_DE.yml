@@ -52,8 +52,10 @@ frontend:
                 street: Straße
                 street_required: 'Straße wird benötigt'
                 street_min_length: 'Straßenname muss mindestens 3 Zeichen lang sein.'
+                street_wrong_format: 'Die Straße darf nur Buchstaben, Zahlen und Bindestriche enthalten.'
                 number: Hausnummer
                 number_required: 'Hausnummer wird benötigt'
+                number_wrong_format: 'Die Nummer darf nur Buchstaben, Zahlen und Bindestriche enthalten.'
                 city: Stadt
                 city_required: 'Stadt wird benötigt'
                 zip_code: Postleitzahl

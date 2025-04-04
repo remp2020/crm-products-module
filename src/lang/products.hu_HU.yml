@@ -65,7 +65,9 @@ frontend:
                 street: Utcanév
                 street_required: Az Utcanév kitöltése kötelező.
                 street_min_length: Az utcanévnek legalább 3 betűből kell állnia.
+                street_wrong_format: 'Az utca csak betűket, számokat és kötőjeleket tartalmazhat.'
                 number: Házszám
+                number_wrong_format: A szám csak betűket, számokat és kötőjeleket tartalmazhat.
                 country: Ország
                 country_required: Az Ország kitöltése kötelező.
                 company_name: Név / A cég neve

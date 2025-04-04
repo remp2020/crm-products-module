@@ -119,12 +119,12 @@
                 {/ifset}
 
                 {snippet postalFees}
-                {ifset $control['checkoutForm']['shipping_country_id']}
+                {ifset $control['checkoutForm']['shipping_country']}
                 <fieldset id="delivery-country" class="login-hide">
                     <legend>{_products.frontend.shop.checkout.shipping_method}</legend>
                     <div class="form-group">
-                        {label shipping_country_id /}
-                        {input shipping_country_id}
+                        {label shipping_country /}
+                        {input shipping_country}
                     </div>
                 </fieldset>
                 {/ifset}
@@ -244,8 +244,8 @@
                                 {input zip}
                             </div>
                             <div class="form-group">
-                                {label country_id /}
-                                {input country_id}
+                                {label country /}
+                                {input country}
                             </div>
                             <div class="form-group">
                                 {label company_id /}
@@ -453,7 +453,7 @@
                     url: {link postalFeeChange!},
                     data: {
                         'value': $checked.val(),
-                        'countryId': $('#delivery-country select').val()
+                        'countryIsoCode': $('#delivery-country select').val()
                     }
                 });
             });
