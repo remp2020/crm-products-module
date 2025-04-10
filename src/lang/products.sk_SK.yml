@@ -410,7 +410,7 @@ frontend:
                 street: Ulica
                 street_required: 'Položka Ulica je povinná.'
                 street_min_length: 'Ulica musí mať aspoň 3 znaky'
-                street_wrong_format: 'Ulica má obsahovať len písmená, číslice a pomlčky.'
+                street_wrong_format: 'Ulica má obsahovať len písmená, medzery, pomĺčky a bodky.'
                 number: Číslo
                 number_required: 'Položka Číslo je povinná.'
                 number_wrong_format: 'Číslo má obsahovať len písmená, číslice a pomlčky.'

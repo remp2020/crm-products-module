@@ -407,7 +407,7 @@ frontend:
                 street: Street
                 street_required: 'Field Street is required.'
                 street_min_length: 'Field Street has to be at least 3 characters long'
-                street_wrong_format: 'The street should only contain letters, numbers, and hyphens.'
+                street_wrong_format: 'The street should contain only letters, spaces, dashes, and dots.'
                 number: Number
                 number_required: 'Field Number is required.'
                 number_wrong_format: 'The number should only contain letters, numbers, and hyphens.'
