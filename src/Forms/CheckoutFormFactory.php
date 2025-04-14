@@ -144,7 +144,7 @@ class CheckoutFormFactory
             $paymentGatewayItems = [];
             foreach ($this->gateways as $code => $name) {
                 if (isset($paymentGateways[$code])) {
-                    $paymentGatewayItems[$paymentGateways[$code]] = $code;
+                    $paymentGatewayItems[$code] = $code;
                 }
             }
 
@@ -460,6 +460,10 @@ class CheckoutFormFactory
             $user = $this->userManager->loadUser($this->user);
         }
 
+        if (!$values['invoice']['add_invoice']) {
+            unset($values['billing_address']);
+        }
+
         try {
             $this->oneStopShop->resolveCountry(
                 user: $user,
@@ -472,7 +476,7 @@ class CheckoutFormFactory
             return;
         }
 
-        $paymentGateway = $this->paymentGatewaysRepository->find($values['payment_gateway']);
+        $paymentGateway = $this->paymentGatewaysRepository->findByCode($values['payment_gateway']);
 
         // add products
         $cart = Json::decode($values['cart'], Json::FORCE_ARRAY);

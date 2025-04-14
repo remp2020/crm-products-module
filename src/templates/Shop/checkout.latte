@@ -411,6 +411,12 @@
             $('form').on('submit', function(e) {
                 clearFormErrors(e.target.elements)
                 if (Nette.validateForm(e.target, true)) {
+                    if ("trustPayModalSubmit" in window && "isTrustPayModalCompatible" in window) {
+                        if (isTrustPayModalCompatible(e.target)) {
+                            trustPayModalSubmit(e.target)
+                            return false;
+                        }
+                    }
                     return true;
                 }
                 if (!Nette.formErrors.length) {
