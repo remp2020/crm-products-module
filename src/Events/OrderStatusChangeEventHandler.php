@@ -5,36 +5,74 @@ namespace Crm\ProductsModule\Events;
 use Crm\ProductsModule\Models\Manager\ProductManager;
 use Crm\ProductsModule\Models\PaymentItem\PaymentItemHelper;
 use Crm\ProductsModule\Repositories\OrdersRepository;
+use Exception;
 use League\Event\AbstractListener;
 use League\Event\EventInterface;
+use Nette\Database\Table\ActiveRow;
 
 class OrderStatusChangeEventHandler extends AbstractListener
 {
-    private $paymentItemHelper;
-
-    private $productManager;
+    /**
+     * @var array<string>
+     */
+    private array $skippedPostalFees = [];
 
     public function __construct(
-        PaymentItemHelper $paymentItemHelper,
-        ProductManager $productManager
+        private readonly PaymentItemHelper $paymentItemHelper,
+        private readonly ProductManager $productManager,
     ) {
-        $this->paymentItemHelper = $paymentItemHelper;
-        $this->productManager = $productManager;
     }
 
-    public function handle(EventInterface $event)
+    /**
+     * @param array<string> $postalFees Array of postal fee codes to skip
+     */
+    public function setSkippedPostalFees(array $postalFees): self
+    {
+        $this->skippedPostalFees = $postalFees;
+
+        return $this;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function handle(EventInterface $event): void
     {
         if (!$event instanceof OrderEventInterface) {
-            throw new \Exception("Invalid type of event received, 'OrderEventInterface' expected: " . get_class($event));
+            throw new Exception(
+                "Invalid event type received, 'OrderEventInterface' expected: " . $event::class
+            );
         }
 
         $order = $event->getOrder();
-        $payment = $order->payment;
 
-        if ($order->status === OrdersRepository::STATUS_PAID) {
-            $this->paymentItemHelper->unBundleProducts($payment, function ($product, $itemCount) {
-                $this->productManager->decreaseStock($product, $itemCount);
-            });
+        if ($order->status !== OrdersRepository::STATUS_PAID) {
+            return;
         }
+
+        $postalFee = $order->postal_fee;
+
+        if ($this->isPostalFeeSkipped($postalFee)) {
+            return;
+        }
+
+        $this->decreaseProductStock($order->payment);
+    }
+
+    private function isPostalFeeSkipped(ActiveRow $postalFee): bool
+    {
+        if (empty($this->skippedPostalFees)) {
+            return false;
+        }
+
+        return in_array($postalFee->code, $this->skippedPostalFees, true);
+    }
+
+    private function decreaseProductStock(ActiveRow $payment): void
+    {
+        $this->paymentItemHelper->unBundleProducts(
+            payment: $payment,
+            callback: fn ($product, $itemCount) => $this->productManager->decreaseStock($product, $itemCount)
+        );
     }
 }

@@ -44,7 +44,8 @@ services:
 	ebookProvider:
 		factory: Crm\ProductsModule\DataProviders\EbookProvider
 
-	- Crm\ProductsModule\Events\OrderStatusChangeEventHandler
+	productsOrderStatusChangeEventHandler: Crm\ProductsModule\Events\OrderStatusChangeEventHandler
+
 	- Crm\ProductsModule\Events\PaymentStatusChangeHandler
 
 	checkoutFormFactory:
