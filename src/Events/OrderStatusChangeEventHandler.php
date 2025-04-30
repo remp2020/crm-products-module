@@ -59,9 +59,13 @@ class OrderStatusChangeEventHandler extends AbstractListener
         $this->decreaseProductStock($order->payment);
     }
 
-    private function isPostalFeeSkipped(ActiveRow $postalFee): bool
+    private function isPostalFeeSkipped(?ActiveRow $postalFee): bool
     {
-        if (empty($this->skippedPostalFees)) {
+        if ($postalFee === null) {
+            return false;
+        }
+
+        if (count($this->skippedPostalFees) === 0) {
             return false;
         }
 
