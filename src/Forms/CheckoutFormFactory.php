@@ -111,6 +111,7 @@ class CheckoutFormFactory
             $address = $this->addressesRepository->address($user, 'invoice');
             if ($address) {
                 $defaults['billing_address'] = $address->toArray();
+                $defaults['billing_address']['country'] = $address->country->iso_code;
 
                 if (!isset($defaults['contact']['phone_number'])) {
                     $defaults['contact']['phone_number'] = $address->phone_number;
