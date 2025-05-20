@@ -140,7 +140,7 @@ class ProductsRepository extends Repository
             ->where([
                 ':payment_items.type' => ProductPaymentItem::TYPE,
                 ':payment_items.payment.status' => PaymentStatusEnum::Paid->value,
-                'products.deleted_at' => null
+                'products.deleted_at' => null,
             ])
             ->group('products.id');
 
@@ -158,7 +158,7 @@ class ProductsRepository extends Repository
     {
         return $this->getTable()->where([
             'id' => (array)$ids,
-            'deleted_at' => null
+            'deleted_at' => null,
         ])->fetchAll();
     }
 
@@ -277,7 +277,7 @@ class ProductsRepository extends Repository
                 'products_count',
                 $callable,
                 \Nette\Utils\DateTime::from(CacheRepository::REFRESH_TIME_5_MINUTES),
-                $forceCacheUpdate
+                $forceCacheUpdate,
             );
         }
         return $callable();

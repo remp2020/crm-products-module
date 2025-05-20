@@ -24,7 +24,7 @@ class CountryPostalFeesPresenter extends AdminPresenter
         CountryPostalFeesRepository $countryPostalFeesRepository,
         CountriesRepository $countriesRepository,
         PostalFeeService $postalFeeService,
-        CountryPostalFeesFormFactory $countryPostalFeeFormFactory
+        CountryPostalFeesFormFactory $countryPostalFeeFormFactory,
     ) {
         parent::__construct();
 
@@ -132,7 +132,7 @@ class CountryPostalFeesPresenter extends AdminPresenter
         if ($conditionValueComponent) {
             $this['countryPostalFeeForm']->addComponent(
                 $condition->getInputControl(),
-                'condition_value'
+                'condition_value',
             );
         }
 

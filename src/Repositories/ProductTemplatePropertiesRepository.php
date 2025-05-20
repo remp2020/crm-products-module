@@ -36,7 +36,7 @@ class ProductTemplatePropertiesRepository extends Repository
             'sorting' => (int)$sorting,
             'product_template_id' => $template->id,
             'hint' => $hint,
-            'type' => $type
+            'type' => $type,
         ]);
     }
 }

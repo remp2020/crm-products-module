@@ -48,7 +48,7 @@ class ProductsAdminPresenter extends AdminPresenter
         SortShopProductsFormFactory $sortShopProductsFormFactory,
         PaymentItemsRepository $paymentItemsRepository,
         TagsRepository $tagsRepository,
-        ProductManager $productManager
+        ProductManager $productManager,
     ) {
         parent::__construct();
         $this->productsRepository = $productsRepository;
@@ -166,8 +166,8 @@ class ProductsAdminPresenter extends AdminPresenter
             $this->translator->translate(
                 'products.admin.products.messages.product_deleted',
                 null,
-                ['product' => $product->name]
-            )
+                ['product' => $product->name],
+            ),
         );
         $this->redirect('this');
     }
@@ -272,7 +272,7 @@ class ProductsAdminPresenter extends AdminPresenter
         $form->addMultiSelect(
             'tags',
             $this->translator->translate('products.admin.products.default.admin_filter_form.tags'),
-            $this->tagsRepository->userAssignable()->fetchPairs('id', 'code')
+            $this->tagsRepository->userAssignable()->fetchPairs('id', 'code'),
         )->getControlPrototype()->addAttributes(['class' => 'select2']);
 
         $form->addSubmit('send', $this->translator->translate('system.filter'))

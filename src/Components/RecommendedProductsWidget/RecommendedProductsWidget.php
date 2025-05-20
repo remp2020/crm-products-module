@@ -14,7 +14,7 @@ class RecommendedProductsWidget extends BaseLazyWidget
 
     public function __construct(
         LazyWidgetManager $lazyWidgetManager,
-        ProductsRepository $productsRepository
+        ProductsRepository $productsRepository,
     ) {
         parent::__construct($lazyWidgetManager);
         $this->productsRepository = $productsRepository;

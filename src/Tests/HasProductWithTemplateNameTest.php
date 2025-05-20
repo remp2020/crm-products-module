@@ -113,7 +113,7 @@ class HasProductWithTemplateNameTest extends DatabaseTestCase
 
         $values = (object)['selection' => $shouldHaveIds];
         $hasProductWithTemplateCriteria->addConditions($paymentSelection, [
-            HasProductWithTemplateNameCriteria::KEY => $values
+            HasProductWithTemplateNameCriteria::KEY => $values,
         ], $paymentRow);
 
         if ($result) {
@@ -165,7 +165,7 @@ class HasProductWithTemplateNameTest extends DatabaseTestCase
             $userRow,
             $paymentItemContainer,
             null,
-            0.01 // fake amount so we don't have to care about payment items
+            0.01, // fake amount so we don't have to care about payment items
         );
 
         $order = $this->ordersRepository->add(
@@ -174,7 +174,7 @@ class HasProductWithTemplateNameTest extends DatabaseTestCase
             null,
             null,
             null,
-            null
+            null,
         );
 
         $selection = $this->ordersRepository

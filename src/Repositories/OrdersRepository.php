@@ -40,7 +40,7 @@ class OrdersRepository extends Repository
         AuditLogRepository $auditLogRepository,
         CacheRepository $cacheRepository,
         Emitter $emitter,
-        \Tomaj\Hermes\Emitter $hermesEmitter
+        \Tomaj\Hermes\Emitter $hermesEmitter,
     ) {
         parent::__construct($database);
         $this->auditLogRepository = $auditLogRepository;
@@ -61,7 +61,7 @@ class OrdersRepository extends Repository
         $billingAddressId,
         $postalFee,
         $note = null,
-        $additionalColumns = []
+        $additionalColumns = [],
     ) {
         $order = $this->insert(array_merge([
             'payment_id' => $paymentId,
@@ -77,7 +77,7 @@ class OrdersRepository extends Repository
 
         $this->emitter->emit(new NewOrderEvent($order));
         $this->hermesEmitter->emit(new HermesMessage('new-order', [
-            'order_id' => $order->id
+            'order_id' => $order->id,
         ]));
 
         return $order;
@@ -153,7 +153,7 @@ class OrdersRepository extends Repository
                 'orders_count',
                 $callable,
                 DateTime::from(CacheRepository::REFRESH_TIME_5_MINUTES),
-                $forceCacheUpdate
+                $forceCacheUpdate,
             );
         }
         return $callable();

@@ -19,7 +19,7 @@ class TagsAdminPresenter extends AdminPresenter
     public function __construct(
         Request $request,
         TagsRepository $tagsRepository,
-        TagsFormFactory $tagsFormFactory
+        TagsFormFactory $tagsFormFactory,
     ) {
         parent::__construct();
         $this->request = $request;

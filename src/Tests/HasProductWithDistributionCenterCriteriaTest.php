@@ -108,7 +108,7 @@ class HasProductWithDistributionCenterCriteriaTest extends DatabaseTestCase
 
         $values = (object)['selection' => $shouldHaveIds];
         $hasProductWithDistributionCenterCriteria->addConditions($orderSelection, [
-            HasProductWithDistributionCenterCriteria::KEY => $values
+            HasProductWithDistributionCenterCriteria::KEY => $values,
         ], $orderRow);
 
         if ($result) {
@@ -160,7 +160,7 @@ class HasProductWithDistributionCenterCriteriaTest extends DatabaseTestCase
             $userRow,
             $paymentItemContainer,
             null,
-            0.01 // fake amount so we don't have to care about payment items
+            0.01, // fake amount so we don't have to care about payment items
         );
 
         $order = $this->ordersRepository->add(
@@ -169,7 +169,7 @@ class HasProductWithDistributionCenterCriteriaTest extends DatabaseTestCase
             null,
             null,
             null,
-            null
+            null,
         );
 
         $selection = $this->ordersRepository

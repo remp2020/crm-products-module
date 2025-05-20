@@ -299,9 +299,9 @@ class ShopPresenter extends FrontendPresenter
                         'type' => 'checkout',
                         'user_id' => $userId,
                         'sales_funnel_id' => self::SALES_FUNNEL_SHOP,
-                    ])
+                    ]),
                 ),
-                HermesMessage::PRIORITY_DEFAULT
+                HermesMessage::PRIORITY_DEFAULT,
             );
         };
         $this->checkoutFormFactory->onSave = function ($payment) {
@@ -318,9 +318,9 @@ class ShopPresenter extends FrontendPresenter
             $this->hermesEmitter->emit(
                 new HermesMessage(
                     'sales-funnel',
-                    array_merge($eventParams, $trackerParams)
+                    array_merge($eventParams, $trackerParams),
                 ),
-                HermesMessage::PRIORITY_DEFAULT
+                HermesMessage::PRIORITY_DEFAULT,
             );
 
             try {
@@ -429,7 +429,7 @@ class ShopPresenter extends FrontendPresenter
         /** @var TrackerDataProviderInterface[] $providers */
         $providers = $this->dataProviderManager->getProviders(
             'products.dataprovider.tracker',
-            TrackerDataProviderInterface::class
+            TrackerDataProviderInterface::class,
         );
         foreach ($providers as $sorting => $provider) {
             $trackerParams[] = $provider->provide();

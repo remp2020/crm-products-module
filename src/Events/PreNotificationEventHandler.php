@@ -16,7 +16,7 @@ class PreNotificationEventHandler extends AbstractListener
 
     public function __construct(
         private PaymentsRepository $paymentsRepository,
-        private PaymentItemsRepository $paymentItemsRepository
+        private PaymentItemsRepository $paymentItemsRepository,
     ) {
     }
 

@@ -174,7 +174,7 @@ class ProductsFormFactory
             'products.data.products.fields.bundle_items',
             $this->productsRepository->getTable()->where([
                 'bundle' => false,
-            ])->fetchPairs('id', 'name')
+            ])->fetchPairs('id', 'name'),
         )->setOption('id', 'bundleItems');
 
         $bundleItems->getControlPrototype()->addAttributes(['class' => 'select2']);
@@ -270,7 +270,7 @@ class ProductsFormFactory
                             'form' => $form,
                             'container' => $templateContainer,
                             'templateProperty' => $templateProperty,
-                            'productId' => $productId
+                            'productId' => $productId,
                         ]);
                     }
                 } else {
@@ -308,7 +308,7 @@ class ProductsFormFactory
         /** @var ProductsFormDataProviderInterface[] $providers */
         $providers = $this->dataProviderManager->getProviders(
             'products.dataprovider.product_form',
-            ProductsFormDataProviderInterface::class
+            ProductsFormDataProviderInterface::class,
         );
         foreach ($providers as $sorting => $provider) {
             $form = $provider->provide(['form' => $form]);
@@ -377,7 +377,7 @@ class ProductsFormFactory
                 /** @var ProductTemplatePropertiesDataProviderInterface[] $providers */
                 $providers = $this->dataProviderManager->getProviders(
                     'products.dataprovider.product_form.product_template.' . $templateProperty->code,
-                    ProductTemplatePropertiesDataProviderInterface::class
+                    ProductTemplatePropertiesDataProviderInterface::class,
                 );
                 foreach ($providers as $provider) {
                     $provider->beforeUpdate($product, $templateProperty);
@@ -446,7 +446,7 @@ class ProductsFormFactory
             /** @var ProductTemplatePropertiesDataProviderInterface[] $providers */
             $providers = $this->dataProviderManager->getProviders(
                 'products.dataprovider.product_form.product_template.' . $templateProperty->code,
-                ProductTemplatePropertiesDataProviderInterface::class
+                ProductTemplatePropertiesDataProviderInterface::class,
             );
             foreach ($providers as $provider) {
                 $provider->afterSave($product, $templateProperty);

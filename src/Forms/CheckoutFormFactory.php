@@ -317,7 +317,7 @@ class CheckoutFormFactory
         $country = $billingAddress->addSelect(
             'country',
             'products.frontend.shop.checkout.fields.country',
-            $this->countriesSelectItemsBuilder->getAllIsoPairs()
+            $this->countriesSelectItemsBuilder->getAllIsoPairs(),
         )
             ->addRule($form::Filled, 'products.frontend.shop.checkout.fields.country_required')
             ->setHtmlAttribute('autocomplete', 'country');
@@ -359,7 +359,7 @@ class CheckoutFormFactory
             if ($termsURL !== null && !empty(trim($termsURL))) {
                 $toc = $form->addCheckbox('toc1', Html::el()->setHtml($this->translator->translate(
                     'products.frontend.shop.checkout.fields.toc',
-                    ['link' => $termsURL]
+                    ['link' => $termsURL],
                 )));
                 $toc->addConditionOn($action, $form::NotEqual, 'login')
                     ->addRule($form::Filled, 'products.frontend.shop.checkout.fields.toc_required');
@@ -493,8 +493,8 @@ class CheckoutFormFactory
             $paymentItemsContainer->addItem(
                 new ProductPaymentItem(
                     $product,
-                    $cart[$product->id]
-                )
+                    $cart[$product->id],
+                ),
             );
             if ($postalFeeVat === null || $product->vat > $postalFeeVat) {
                 $postalFeeVat = $product->vat;
@@ -507,7 +507,7 @@ class CheckoutFormFactory
                 $paymentItemsContainer->addItem(
                     (new ProductPaymentItem($product, $freeCart[$product->id]))
                         ->forceVat(0)
-                        ->forcePrice(0)
+                        ->forcePrice(0),
                 );
             }
         }
@@ -517,14 +517,14 @@ class CheckoutFormFactory
             }
             $postalFeeItem = new PostalFeePaymentItem(
                 $postalFee,
-                $postalFeeVat
+                $postalFeeVat,
             );
             $postalFeeItem->forceName(
                 sprintf(
                     "%s - %s",
                     $this->translator->translate('products.frontend.orders.postal_fee'),
-                    $postalFeeItem->name()
-                )
+                    $postalFeeItem->name(),
+                ),
             );
             $paymentItemsContainer->addItem($postalFeeItem);
         }
@@ -559,7 +559,7 @@ class CheckoutFormFactory
         $providers = $this->dataProviderManager->getProviders('products.dataprovider.checkout_form', CheckoutFormDataProviderInterface::class);
         foreach ($providers as $sorting => $provider) {
             [$form, $values] = $provider->formSucceeded($form, $values, [
-                'payment' => $payment
+                'payment' => $payment,
             ]);
             $provider->addAdditionalColumns($form, $values, $additionalColumns);
         }
@@ -615,7 +615,7 @@ class CheckoutFormFactory
             $shippingAddress = $this->addressesRepository->findByAddress(
                 $values['shipping_address'],
                 AddressTypesSeeder::PRODUCTS_SHOP_ADDRESS_TYPE,
-                $user->id
+                $user->id,
             );
             if (!$shippingAddress) {
                 $country = $this->countriesRepository->findByIsoCode($values['shipping_country']);
@@ -630,7 +630,7 @@ class CheckoutFormFactory
                     $values['shipping_address']['city'],
                     $values['shipping_address']['zip'],
                     $country->id,
-                    $values['shipping_address']['phone_number']
+                    $values['shipping_address']['phone_number'],
                 );
             }
             $this->addressesRepository->update($shippingAddress, []);
@@ -647,7 +647,7 @@ class CheckoutFormFactory
             $licenceAddress = $this->addressesRepository->findByAddress(
                 $values['licence_address'],
                 AddressTypesSeeder::PRODUCTS_LICENCE_ADDRESS_TYPE,
-                $user->id
+                $user->id,
             );
             if (!$licenceAddress) {
                 $licenceAddress = $this->addressesRepository->add(
@@ -660,7 +660,7 @@ class CheckoutFormFactory
                     null,
                     null,
                     null,
-                    $values['licence_address']['phone_number']
+                    $values['licence_address']['phone_number'],
                 );
             }
             $this->addressesRepository->update($licenceAddress, []);
@@ -694,7 +694,7 @@ class CheckoutFormFactory
                     null,
                     null,
                     $values['shipping_address']['phone_number'],
-                    'invoice'
+                    'invoice',
                 );
                 if ($changeRequest) {
                     $billingAddress = $this->addressChangeRequestsRepository->acceptRequest($changeRequest);
@@ -718,7 +718,7 @@ class CheckoutFormFactory
                     $values['billing_address']['company_tax_id'],
                     $values['billing_address']['company_vat_id'],
                     $values['billing_address']['phone_number'],
-                    'invoice'
+                    'invoice',
                 );
                 if ($changeRequest) {
                     $billingAddress = $this->addressChangeRequestsRepository->acceptRequest($changeRequest);

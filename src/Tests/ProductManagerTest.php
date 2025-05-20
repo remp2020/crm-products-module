@@ -32,7 +32,7 @@ class ProductManagerTest extends DatabaseTestCase
     {
         return [
             ProductsRepository::class,
-            ProductBundlesRepository::class
+            ProductBundlesRepository::class,
         ];
     }
 
@@ -114,7 +114,7 @@ class ProductManagerTest extends DatabaseTestCase
             'stored' => 1,
             'stock' => $stock,
             'created_at' => new \DateTime(),
-            'modified_at' => new \DateTime()
+            'modified_at' => new \DateTime(),
         ]);
     }
 }

@@ -21,7 +21,7 @@ class TagsRepository extends Repository
     {
         return $this->getTable()
             ->where([
-                ':product_tags.product.stock > ?' => 0
+                ':product_tags.product.stock > ?' => 0,
             ])
             ->group(':product_tags.tag_id')
             ->select(':product_tags.tag_id AS id, COUNT(*) AS val');
@@ -34,7 +34,7 @@ class TagsRepository extends Repository
         bool $visible = false,
         bool $frontendVisible = false,
         bool $userAssignable = false,
-        string $htmlHeading = ''
+        string $htmlHeading = '',
     ) {
         return $this->insert([
             'code' => $code,

@@ -21,7 +21,7 @@ class UserSegmentCondition implements PostalFeeConditionInterface, PostalFeeMess
     public function __construct(
         Translator $translator,
         SegmentFactoryInterface $segmentFactory,
-        SegmentsRepository $segmentsRepository
+        SegmentsRepository $segmentsRepository,
     ) {
         $this->translator = $translator;
         $this->segmentFactory = $segmentFactory;
@@ -48,7 +48,7 @@ class UserSegmentCondition implements PostalFeeConditionInterface, PostalFeeMess
     {
         $selectBox = new SelectBox(
             'products.data.country_postal_fees.fields.condition_value',
-            $this->segmentsRepository->all()->fetchPairs('code', 'name')
+            $this->segmentsRepository->all()->fetchPairs('code', 'name'),
         );
 
         $selectBox->setRequired()

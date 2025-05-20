@@ -29,7 +29,7 @@ class ProductBuilder extends Builder
         ProductsRepository $productsRepository,
         ProductBundlesRepository $productBundlesRepository,
         ProductPropertiesRepository $productPropertiesRepository,
-        ProductTagsRepository $productTagsRepository
+        ProductTagsRepository $productTagsRepository,
     ) {
         parent::__construct($database);
 

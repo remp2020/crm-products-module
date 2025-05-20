@@ -40,7 +40,7 @@ class PostalFeeServiceTest extends DatabaseTestCase
     protected function requiredSeeders(): array
     {
         return [
-            CountriesSeeder::class
+            CountriesSeeder::class,
         ];
     }
 

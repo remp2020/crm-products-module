@@ -22,12 +22,12 @@ class ProductPropertiesRepository extends Repository
     {
         $productProperty = $this->getTable()->where([
             'product_id' => $product->id,
-            'product_template_property_id' => $productTemplateProperty->id
+            'product_template_property_id' => $productTemplateProperty->id,
         ])->fetch();
 
         if ($productProperty) {
             return $this->update($productProperty, [
-                'value' => $value
+                'value' => $value,
             ]);
         }
 
@@ -57,7 +57,7 @@ class ProductPropertiesRepository extends Repository
     {
         return $this->getTable()->where([
             'product_template_property.code' => $propertyCode,
-            'product_properties.value' => $propertyValue
+            'product_properties.value' => $propertyValue,
         ])->fetch()?->product;
     }
 }

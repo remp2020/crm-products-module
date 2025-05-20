@@ -46,7 +46,7 @@ class OrderStatusOnScenarioEnterCriteriaTest extends BaseTestCase
         $this->scenariosCriteriaStorage->register(
             'trigger',
             OrderStatusOnScenarioEnterCriteria::KEY,
-            $this->container->createInstance(OrderStatusOnScenarioEnterCriteria::class)
+            $this->container->createInstance(OrderStatusOnScenarioEnterCriteria::class),
         );
 
         $this->ordersRepository = $this->getRepository(OrdersRepository::class);
@@ -59,7 +59,7 @@ class OrderStatusOnScenarioEnterCriteriaTest extends BaseTestCase
     {
         return array_merge(parent::requiredRepositories(), [
             OrdersRepository::class,
-            UsersRepository::class
+            UsersRepository::class,
         ]);
     }
 
@@ -76,7 +76,7 @@ class OrderStatusOnScenarioEnterCriteriaTest extends BaseTestCase
 
         // set status = paid, triggers scenario
         $this->ordersRepository->update($orderRow, [
-            'status' => OrdersRepository::STATUS_PAID
+            'status' => OrdersRepository::STATUS_PAID,
         ]);
 
         // run Hermes to create trigger job
@@ -84,7 +84,7 @@ class OrderStatusOnScenarioEnterCriteriaTest extends BaseTestCase
 
         // set status = not-sent, to check if are using order status on enter
         $this->ordersRepository->update($orderRow, [
-            'status' => OrdersRepository::STATUS_NOT_SENT
+            'status' => OrdersRepository::STATUS_NOT_SENT,
         ]);
 
         $this->engine->run(3); // process trigger, finish its job and create wait job, job(condition): created -> started
@@ -138,8 +138,8 @@ class OrderStatusOnScenarioEnterCriteriaTest extends BaseTestCase
                     'type' => TriggersRepository::TRIGGER_TYPE_EVENT,
                     'id' => 'trigger1',
                     'event' => ['code' => $triggerCode],
-                    'elements' => ['element_order_status_on_scenario']
-                ])
+                    'elements' => ['element_order_status_on_scenario'],
+                ]),
             ],
             'elements' => [
                 self::obj([
@@ -160,16 +160,16 @@ class OrderStatusOnScenarioEnterCriteriaTest extends BaseTestCase
                                             'key' => 'order_status_on_scenario_enter',
                                             'values' => [
                                                 'selection'=> ['paid'],
-                                                'operator' => 'or'
-                                            ]
-                                        ]
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]
+                                                'operator' => 'or',
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
                 ]),
-            ]
+            ],
         ]);
     }
 
@@ -186,7 +186,7 @@ class OrderStatusOnScenarioEnterCriteriaTest extends BaseTestCase
             $user,
             new PaymentItemContainer(),
             null,
-            10
+            10,
         );
 
         $orderRow = $this->ordersRepository->add(
@@ -194,7 +194,7 @@ class OrderStatusOnScenarioEnterCriteriaTest extends BaseTestCase
             null,
             null,
             null,
-            null
+            null,
         );
 
         return $orderRow;

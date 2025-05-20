@@ -66,7 +66,7 @@ class DashboardPresenter extends AdminPresenter
             ->setGroupBy('products.id')
             ->setJoin(
                 "LEFT JOIN payment_items ON payments.id = payment_items.payment_id AND payment_items.type = '" . ProductPaymentItem::TYPE . "' " .
-                'LEFT JOIN products ON product_id = products.id'
+                'LEFT JOIN products ON product_id = products.id',
             )
             ->setSeries('products.name')
             ->setValueField('SUM(payment_items.count)')
@@ -96,7 +96,7 @@ class DashboardPresenter extends AdminPresenter
                 "LEFT JOIN payment_items ON payments.id = payment_items.payment_id AND payment_items.type = '" . ProductPaymentItem::TYPE . "' " .
                 'LEFT JOIN products ON product_id = products.id ' .
                 'LEFT JOIN product_tags ON products.id = product_tags.product_id ' .
-                'LEFT JOIN tags ON product_tags.tag_id = tags.id '
+                'LEFT JOIN tags ON product_tags.tag_id = tags.id ',
             )
             ->setSeries('tags.name')
             ->setValueField('SUM(payment_items.count)')
@@ -120,7 +120,7 @@ class DashboardPresenter extends AdminPresenter
         $graphDataItem->setCriteria((new Criteria())
             ->setTableName('orders')
             ->setJoin(
-                "INNER JOIN payments ON payments.id = orders.payment_id AND payments.status = 'paid'"
+                "INNER JOIN payments ON payments.id = orders.payment_id AND payments.status = 'paid'",
             )
             ->setTimeField('created_at')
             ->setValueField('COUNT(orders.id)')
@@ -147,7 +147,7 @@ class DashboardPresenter extends AdminPresenter
             ->setTimeField('paid_at')
             ->setWhere("AND payments.status = 'paid'")
             ->setJoin(
-                "INNER JOIN payment_items ON payments.id = payment_items.payment_id AND payment_items.type = '" . ProductPaymentItem::TYPE . "'"
+                "INNER JOIN payment_items ON payments.id = payment_items.payment_id AND payment_items.type = '" . ProductPaymentItem::TYPE . "'",
             )
             ->setValueField('SUM(payment_items.count * payment_items.amount)')
             ->setStart($this->dateFrom)
@@ -177,7 +177,7 @@ class DashboardPresenter extends AdminPresenter
                         INNER JOIN payment_items ON payments.id = payment_items.payment_id AND payment_items.type = '" . ProductPaymentItem::TYPE . "'
                     WHERE status = 'paid'
                     GROUP BY payments.id
-                ) products_paid_amounts ON products_paid_amounts.id = payments.id"
+                ) products_paid_amounts ON products_paid_amounts.id = payments.id",
             )
             ->setValueField('AVG(products_paid_amounts.sum)')
             ->setStart($this->dateFrom)
@@ -207,7 +207,7 @@ class DashboardPresenter extends AdminPresenter
                         INNER JOIN payment_items ON payments.id = payment_items.payment_id AND payment_items.type = '" . ProductPaymentItem::TYPE . "'
                     WHERE status = 'paid'
                     GROUP BY payments.id
-                ) products_count ON products_count.id = payments.id"
+                ) products_count ON products_count.id = payments.id",
             )
             ->setValueField('AVG(products_count.sum)')
             ->setStart($this->dateFrom)
@@ -237,7 +237,7 @@ class DashboardPresenter extends AdminPresenter
                         INNER JOIN payment_items ON payments.id = payment_items.payment_id AND payment_items.type = '" . ProductPaymentItem::TYPE . "'
                     WHERE status = 'paid'
                     GROUP BY payments.id
-                ) products_various_count ON products_various_count.id = payments.id"
+                ) products_various_count ON products_various_count.id = payments.id",
             )
             ->setValueField('AVG(products_various_count.count)')
             ->setStart($this->dateFrom)

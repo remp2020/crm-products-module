@@ -40,7 +40,7 @@ class OrderStatusChangeEventHandler extends AbstractListener
     {
         if (!$event instanceof OrderEventInterface) {
             throw new Exception(
-                "Invalid event type received, 'OrderEventInterface' expected: " . $event::class
+                "Invalid event type received, 'OrderEventInterface' expected: " . $event::class,
             );
         }
 
@@ -76,7 +76,7 @@ class OrderStatusChangeEventHandler extends AbstractListener
     {
         $this->paymentItemHelper->unBundleProducts(
             payment: $payment,
-            callback: fn ($product, $itemCount) => $this->productManager->decreaseStock($product, $itemCount)
+            callback: fn ($product, $itemCount) => $this->productManager->decreaseStock($product, $itemCount),
         );
     }
 }

@@ -21,7 +21,7 @@ class PaymentItemHelper
             'payment.user_id' => $userId,
             'payment.status' => PaymentStatusEnum::Paid->value,
             'type' => ProductPaymentItem::TYPE,
-            'product_id' => $product->id
+            'product_id' => $product->id,
         ])->count('*') > 0;
     }
 

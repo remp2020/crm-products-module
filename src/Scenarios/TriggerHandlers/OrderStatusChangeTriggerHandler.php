@@ -51,7 +51,7 @@ class OrderStatusChangeTriggerHandler implements TriggerHandlerInterface
         if (!$order) {
             throw new Exception(sprintf(
                 "Order with ID=%s does not exist",
-                $orderId
+                $orderId,
             ));
         }
 
@@ -62,7 +62,7 @@ class OrderStatusChangeTriggerHandler implements TriggerHandlerInterface
             'order_id' => $order->id,
             'order_status' => $orderStatus,
             'payment_id' => $payment->id,
-            'subscription_id' => $payment->subscription_id ?? null
+            'subscription_id' => $payment->subscription_id ?? null,
         ]);
     }
 }

@@ -71,7 +71,7 @@ class OrderStatusChangeTriggerHandlerTest extends BaseTestCase
             $subscriptionType,
             isRecurrent: false,
             isPaid: true,
-            user: $user
+            user: $user,
         );
 
         /** @var PaymentsRepository $paymentsRepository */
@@ -92,7 +92,7 @@ class OrderStatusChangeTriggerHandlerTest extends BaseTestCase
             shippingAddressId: null,
             licenceAddressId: null,
             billingAddressId: null,
-            postalFee: null
+            postalFee: null,
         );
 
         /** @var OrderStatusChangeTriggerHandler $orderStatusChangeTriggerHandler */
@@ -147,7 +147,7 @@ class OrderStatusChangeTriggerHandlerTest extends BaseTestCase
             shippingAddressId: null,
             licenceAddressId: null,
             billingAddressId: null,
-            postalFee: null
+            postalFee: null,
         );
 
         /** @var OrderStatusChangeTriggerHandler $orderStatusChangeTriggerHandler */

@@ -13,7 +13,7 @@ class PostalFeeService
     private $countryPostalFeesRepository;
 
     public function __construct(
-        CountryPostalFeesRepository $countryPostalFeesRepository
+        CountryPostalFeesRepository $countryPostalFeesRepository,
     ) {
         $this->countryPostalFeesRepository = $countryPostalFeesRepository;
     }
@@ -70,7 +70,7 @@ class PostalFeeService
 
         return array_combine(
             array_column($result, 'id'),
-            array_values($result)
+            array_values($result),
         );
     }
 

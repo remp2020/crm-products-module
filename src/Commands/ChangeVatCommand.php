@@ -108,7 +108,7 @@ class ChangeVatCommand extends Command
             $helper = $this->getHelper('question');
             $question = new ConfirmationQuestion(
                 "\n********\n<comment>Do you wish to proceed?</comment> This will update <comment>{$productsCount}</comment> products, and <comment>{$paymentItemsCount}</comment> payment items of unpaid payments with {$originalVat}% VAT. (y/N) ",
-                false
+                false,
             );
 
             if (!$helper->ask($input, $output, $question)) {

@@ -71,7 +71,7 @@ class NewOrderTriggerHandlerTest extends BaseTestCase
             $subscriptionType,
             isRecurrent: false,
             isPaid: true,
-            user: $user
+            user: $user,
         );
 
         /** @var PaymentsRepository $paymentsRepository */
@@ -92,7 +92,7 @@ class NewOrderTriggerHandlerTest extends BaseTestCase
             shippingAddressId: null,
             licenceAddressId: null,
             billingAddressId: null,
-            postalFee: null
+            postalFee: null,
         );
 
         /** @var NewOrderTriggerHandler $newOrderTriggerHandler */
@@ -146,7 +146,7 @@ class NewOrderTriggerHandlerTest extends BaseTestCase
             shippingAddressId: null,
             licenceAddressId: null,
             billingAddressId: null,
-            postalFee: null
+            postalFee: null,
         );
 
         /** @var NewOrderTriggerHandler $newOrderTriggerHandler */

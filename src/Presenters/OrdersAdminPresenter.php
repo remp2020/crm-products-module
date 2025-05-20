@@ -39,7 +39,7 @@ class OrdersAdminPresenter extends AdminPresenter
         PaymentsRepository $paymentsRepository,
         ProductsRepository $productsRepository,
         CheckoutFormFactory $checkoutFormFactory,
-        PostalFeeService $postalFeeService
+        PostalFeeService $postalFeeService,
     ) {
         parent::__construct();
         $this->ordersRepository = $ordersRepository;

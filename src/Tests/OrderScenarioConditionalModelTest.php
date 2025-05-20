@@ -64,7 +64,7 @@ class OrderScenarioConditionalModelTest extends BaseTestCase
             shippingAddressId: null,
             licenceAddressId: null,
             billingAddressId: null,
-            postalFee: null
+            postalFee: null,
         );
 
         $orderScenarioConditionalModel = new OrderScenarioConditionalModel($ordersRepository);

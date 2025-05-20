@@ -34,7 +34,7 @@ class EbookProvider
             } catch (\Exception $e) {
                 Debugger::log(
                     "Ebook provider [{$provider::identifier()}] returned exception: " . $e->getMessage(),
-                    Debugger::EXCEPTION
+                    Debugger::EXCEPTION,
                 );
                 continue;
             }

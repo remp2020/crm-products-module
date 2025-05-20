@@ -80,7 +80,7 @@ class HasOrderCriteriaTest extends DatabaseTestCase
             $userRow,
             new PaymentItemContainer(),
             null,
-            0.01 // fake amount so we don't have to care about payment items
+            0.01, // fake amount so we don't have to care about payment items
         );
 
         $selection = $this->paymentsRepository
@@ -93,7 +93,7 @@ class HasOrderCriteriaTest extends DatabaseTestCase
                 null,
                 null,
                 null,
-                null
+                null,
             );
         }
 

@@ -14,7 +14,7 @@ class AddressTypesSeeder implements ISeeder
     private $addressTypesRepository;
 
     public function __construct(
-        AddressTypesRepository $addressTypesRepository
+        AddressTypesRepository $addressTypesRepository,
     ) {
         $this->addressTypesRepository = $addressTypesRepository;
     }

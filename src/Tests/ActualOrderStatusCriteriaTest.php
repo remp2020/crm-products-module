@@ -70,7 +70,7 @@ class ActualOrderStatusCriteriaTest extends PaymentsTestCase
             $user,
             new PaymentItemContainer(),
             null,
-            10
+            10,
         );
 
         $orderRow = $ordersRepository->add(
@@ -78,11 +78,11 @@ class ActualOrderStatusCriteriaTest extends PaymentsTestCase
             null,
             null,
             null,
-            null
+            null,
         );
 
         $ordersRepository->update($orderRow, [
-            'status' => $withStatus
+            'status' => $withStatus,
         ]);
 
         $orderSelection = $ordersRepository->getTable()->where('id = ?', $orderRow->id);

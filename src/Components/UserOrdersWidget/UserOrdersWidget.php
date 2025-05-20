@@ -18,7 +18,7 @@ class UserOrdersWidget extends BaseLazyWidget
     public function __construct(
         LazyWidgetManager $lazyWidgetManager,
         Translator $translator,
-        OrdersRepository $ordersRepository
+        OrdersRepository $ordersRepository,
     ) {
         parent::__construct($lazyWidgetManager);
 

@@ -41,7 +41,7 @@ class CountryPostalFeesFormFactory
         $countries = $form->addSelect(
             'country_id',
             'products.data.country_postal_fees.fields.country_id',
-            $this->countriesRepository->all()->fetchPairs('id', 'name')
+            $this->countriesRepository->all()->fetchPairs('id', 'name'),
         );
         $countries->getControlPrototype()->addAttributes(['class' => 'select2 form-control']);
 
@@ -135,7 +135,7 @@ class CountryPostalFeesFormFactory
                     'postal_fee_id' => $values['postal_fee_id'],
                     'sorting' => $values['sorting'],
                     'default' => $values['default'],
-                    'active' => $values['active']
+                    'active' => $values['active'],
                 ]);
             } else {
                 $countryPostalFeeRow = $this->countryPostalFeesRepository->add(
@@ -143,7 +143,7 @@ class CountryPostalFeesFormFactory
                     $values['postal_fee_id'],
                     $values['sorting'],
                     $values['default'],
-                    $values['active']
+                    $values['active'],
                 );
             }
 

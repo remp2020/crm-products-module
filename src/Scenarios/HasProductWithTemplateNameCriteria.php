@@ -19,7 +19,7 @@ class HasProductWithTemplateNameCriteria implements ScenariosCriteriaInterface
 
     public function __construct(
         ProductTemplatesRepository $productTemplatesRepository,
-        Translator $translator
+        Translator $translator,
     ) {
         $this->productTemplatesRepository = $productTemplatesRepository;
         $this->translator = $translator;
@@ -33,7 +33,7 @@ class HasProductWithTemplateNameCriteria implements ScenariosCriteriaInterface
             new StringLabeledArrayParam(
                 self::KEY,
                 $this->label(),
-                $options
+                $options,
             ),
         ];
     }

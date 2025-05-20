@@ -19,7 +19,7 @@ class ActualOrderStatusCriteria implements ScenariosCriteriaInterface
 
     public function __construct(
         OrdersRepository $ordersRepository,
-        Translator $translator
+        Translator $translator,
     ) {
         $this->ordersRepository = $ordersRepository;
         $this->translator = $translator;

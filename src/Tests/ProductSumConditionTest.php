@@ -39,7 +39,7 @@ class ProductSumConditionTest extends DatabaseTestCase
 
         $productSumCondition = new ProductSumCondition(
             $this->inject(Translator::class),
-            $this->productsRepository
+            $this->productsRepository,
         );
 
         $cartProducts = [
@@ -65,7 +65,7 @@ class ProductSumConditionTest extends DatabaseTestCase
             'stored' => 1,
             'stock' => 10,
             'created_at' => new \DateTime(),
-            'modified_at' => new \DateTime()
+            'modified_at' => new \DateTime(),
         ]);
     }
 }

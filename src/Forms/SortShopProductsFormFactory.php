@@ -23,7 +23,7 @@ class SortShopProductsFormFactory
     public function __construct(
         ProductsRepository $productsRepository,
         DataProviderManager $dataProviderManager,
-        Translator $translator
+        Translator $translator,
     ) {
         $this->productsRepository = $productsRepository;
         $this->dataProviderManager = $dataProviderManager;
@@ -50,7 +50,7 @@ class SortShopProductsFormFactory
         /** @var SortShopProductsFormValidationDataProviderInterface[] $providers */
         $providers = $this->dataProviderManager->getProviders(
             'products.dataprovider.sort_shop_products.validation',
-            SortShopProductsFormValidationDataProviderInterface::class
+            SortShopProductsFormValidationDataProviderInterface::class,
         );
         $errors = [];
         foreach ($providers as $provider) {

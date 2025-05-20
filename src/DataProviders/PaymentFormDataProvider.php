@@ -29,7 +29,7 @@ class PaymentFormDataProvider implements PaymentFormDataProviderInterface
         ProductsRepository $productsRepository,
         PostalFeesRepository $postalFeesRepository,
         Emitter $emitter,
-        Translator $translator
+        Translator $translator,
     ) {
         $this->productsRepository = $productsRepository;
         $this->postalFeesRepository = $postalFeesRepository;
@@ -66,10 +66,10 @@ class PaymentFormDataProvider implements PaymentFormDataProviderInterface
         $productIdsMultiselect = $container->addMultiSelect(
             'product_ids',
             $this->translator->translate('products.data_provider.payment_form_data.products_from_eshop'),
-            $productPairs
+            $productPairs,
         )->setOption(
             'description',
-            $this->translator->translate('products.data_provider.payment_form_data.products_from_eshop_desc')
+            $this->translator->translate('products.data_provider.payment_form_data.products_from_eshop_desc'),
         );
         $productIdsMultiselect->getControlPrototype()->addAttributes(['class' => 'select2']);
 
@@ -79,7 +79,7 @@ class PaymentFormDataProvider implements PaymentFormDataProviderInterface
             $productIdsMultiselect->setHtmlAttribute('readonly', 'readonly')
                 ->setOption(
                     'description',
-                    $this->translator->translate('products.data_provider.payment_form_data.products_from_eshop_readonly')
+                    $this->translator->translate('products.data_provider.payment_form_data.products_from_eshop_readonly'),
                 );
         } else {
             // TODO: revive possibility to create order directly from payment form
@@ -147,8 +147,8 @@ class PaymentFormDataProvider implements PaymentFormDataProviderInterface
                     sprintf(
                         "%s - %s",
                         $this->translator->translate('products.frontend.orders.postal_fee'),
-                        $postalFeeItem->name()
-                    )
+                        $postalFeeItem->name(),
+                    ),
                 );
                 $items[] = $postalFeeItem;
             }

@@ -19,7 +19,7 @@ class HasProductWithDistributionCenterCriteria implements ScenariosCriteriaInter
 
     public function __construct(
         DistributionCentersRepository $distributionCentersRepository,
-        Translator $translator
+        Translator $translator,
     ) {
         $this->distributionCentersRepository = $distributionCentersRepository;
         $this->translator = $translator;
@@ -39,7 +39,7 @@ class HasProductWithDistributionCenterCriteria implements ScenariosCriteriaInter
         $values = $paramValues[self::KEY];
         $selection->where(
             'payment:payment_items.product.distribution_center IN (?)',
-            $values->selection
+            $values->selection,
         );
         return true;
     }

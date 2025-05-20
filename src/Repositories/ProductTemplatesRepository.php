@@ -16,7 +16,7 @@ class ProductTemplatesRepository extends Repository
     final public function add($name)
     {
         return $this->insert([
-            'name' => $name
+            'name' => $name,
         ]);
     }
 }

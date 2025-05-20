@@ -15,7 +15,7 @@ class ProductManager
 
     public function __construct(
         DataProviderManager $dataProviderManager,
-        ProductsRepository $productsRepository
+        ProductsRepository $productsRepository,
     ) {
         $this->productsRepository = $productsRepository;
         $this->dataProviderManager = $dataProviderManager;

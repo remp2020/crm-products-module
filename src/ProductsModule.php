@@ -73,7 +73,7 @@ class ProductsModule extends CrmModule
         private ProductsCache $productsCache,
         private ProductsRepository $productsRepository,
         private TagsCache $tagsCache,
-        private TagsRepository $tagsRepository
+        private TagsRepository $tagsRepository,
     ) {
         parent::__construct($container, $translator);
     }
@@ -84,43 +84,43 @@ class ProductsModule extends CrmModule
             $this->translator->translate('products.menu.shop'),
             '#products',
             'fa fa-shekel-sign',
-            550
+            550,
         );
         $menuItem1 = new MenuItem(
             $this->translator->translate('products.menu.products'),
             ':Products:ProductsAdmin:default',
             'fa fa-cube',
-            500
+            500,
         );
         $menuItem2 = new MenuItem(
             $this->translator->translate('products.menu.tags'),
             ':Products:TagsAdmin:default',
             'fa fa-tag',
-            600
+            600,
         );
         $menuItem3 = new MenuItem(
             $this->translator->translate('products.menu.orders'),
             ':Products:OrdersAdmin:default',
             'fa fa-paper-plane',
-            700
+            700,
         );
         $menuItem4 = new MenuItem(
             $this->translator->translate('products.menu.postal_fees'),
             ':Products:PostalFees:default',
             'fa fa-rocket',
-            943
+            943,
         );
         $menuItem5 = new MenuItem(
             $this->translator->translate('products.menu.country_postal_fees'),
             ':Products:CountryPostalFees:default',
             'fa fa-globe',
-            944
+            944,
         );
         $menuItem6 = new MenuItem(
             $this->translator->translate('products.menu.sort_shop_products'),
             ':Products:ProductsAdmin:sortShopProducts',
             'fa fa-sort',
-            945
+            945,
         );
 
         $mainMenu->addChild($menuItem1);
@@ -138,7 +138,7 @@ class ProductsModule extends CrmModule
             $this->translator->translate('products.menu.stats'),
             ':Products:Dashboard:default',
             'fa fa-shekel-sign',
-            350
+            350,
         );
         $menuContainer->attachMenuItemToForeignModule('#dashboard', $mainMenu, $menuItem);
     }
@@ -159,17 +159,17 @@ class ProductsModule extends CrmModule
     {
         $emitter->addListener(
             PaymentChangeStatusEvent::class,
-            PaymentStatusChangeHandler::class
+            PaymentStatusChangeHandler::class,
         );
 
         $emitter->addListener(
             OrderStatusChangeEvent::class,
-            OrderStatusChangeEventHandler::class
+            OrderStatusChangeEventHandler::class,
         );
 
         $emitter->addListener(
             PreNotificationEvent::class,
-            PreNotificationEventHandler::class
+            PreNotificationEventHandler::class,
         );
     }
 
@@ -240,7 +240,7 @@ class ProductsModule extends CrmModule
     {
         $layoutManager->registerLayout(
             'shop',
-            realpath(__DIR__ . '/templates/@shop_layout.latte')
+            realpath(__DIR__ . '/templates/@shop_layout.latte'),
         );
     }
 
@@ -259,15 +259,15 @@ class ProductsModule extends CrmModule
     {
         $dataProviderManager->registerDataProvider(
             'payments.dataprovider.payments_filter_form',
-            $this->getInstance(PaymentsAdminFilterFormDataProvider::class)
+            $this->getInstance(PaymentsAdminFilterFormDataProvider::class),
         );
         $dataProviderManager->registerDataProvider(
             'payments.dataprovider.payment_form',
-            $this->getInstance(PaymentFormDataProvider::class)
+            $this->getInstance(PaymentFormDataProvider::class),
         );
         $dataProviderManager->registerDataProvider(
             'payments.dataprovider.dashboard',
-            $this->getInstance(PaymentItemTypesFilterDataProvider::class)
+            $this->getInstance(PaymentItemTypesFilterDataProvider::class),
         );
         $dataProviderManager->registerDataProvider(
             OneStopShopCountryResolutionDataProviderInterface::PATH,
@@ -291,43 +291,43 @@ class ProductsModule extends CrmModule
     {
         $widgetManager->registerWidget(
             'payments.admin.payment_item_listing',
-            ProductItemsListWidget::class
+            ProductItemsListWidget::class,
         );
         $widgetManager->registerWidget(
             'payments.admin.total_user_payments',
-            TotalShopPaymentsWidget::class
+            TotalShopPaymentsWidget::class,
         );
         $widgetManager->registerWidget(
             'segment.detail.statspanel.row',
-            AvgProductsPaymentWidget::class
+            AvgProductsPaymentWidget::class,
         );
         $widgetManager->registerWidget(
             'admin.products.order.address',
-            AddressWidget::class
+            AddressWidget::class,
         );
         $widgetManager->registerWidget(
             'products.frontend.orders_my',
-            UserOrdersWidget::class
+            UserOrdersWidget::class,
         );
 
         $widgetManager->registerWidget(
             'products.shop.cart',
-            FreeShippingProgressBarWidget::class
+            FreeShippingProgressBarWidget::class,
         );
 
         $widgetManager->registerWidget(
             'products.shop.show.title',
-            FreeShippingProgressBarWidget::class
+            FreeShippingProgressBarWidget::class,
         );
 
         $widgetManager->registerWidget(
             'products.shop.product_list.title',
-            FreeShippingProgressBarWidget::class
+            FreeShippingProgressBarWidget::class,
         );
 
         $widgetManager->registerWidget(
             'products.shop.show.bottom',
-            RecommendedProductsWidget::class
+            RecommendedProductsWidget::class,
         );
     }
 
@@ -335,32 +335,32 @@ class ProductsModule extends CrmModule
     {
         $scenariosCriteriaStorage->registerConditionModel(
             'order',
-            $this->getInstance(OrderScenarioConditionalModel::class)
+            $this->getInstance(OrderScenarioConditionalModel::class),
         );
         $scenariosCriteriaStorage->register(
             'payment',
             'has_order',
-            $this->getInstance(HasOrderCriteria::class)
+            $this->getInstance(HasOrderCriteria::class),
         );
         $scenariosCriteriaStorage->register(
             'order',
             ActualOrderStatusCriteria::KEY,
-            $this->getInstance(ActualOrderStatusCriteria::class)
+            $this->getInstance(ActualOrderStatusCriteria::class),
         );
         $scenariosCriteriaStorage->register(
             'trigger',
             OrderStatusOnScenarioEnterCriteria::KEY,
-            $this->getInstance(OrderStatusOnScenarioEnterCriteria::class)
+            $this->getInstance(OrderStatusOnScenarioEnterCriteria::class),
         );
         $scenariosCriteriaStorage->register(
             'order',
             HasProductWithTemplateNameCriteria::KEY,
-            $this->getInstance(HasProductWithTemplateNameCriteria::class)
+            $this->getInstance(HasProductWithTemplateNameCriteria::class),
         );
         $scenariosCriteriaStorage->register(
             'order',
             HasProductWithDistributionCenterCriteria::KEY,
-            $this->getInstance(HasProductWithDistributionCenterCriteria::class)
+            $this->getInstance(HasProductWithDistributionCenterCriteria::class),
         );
     }
 }

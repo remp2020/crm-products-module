@@ -18,7 +18,7 @@ class ProductSumCondition implements PostalFeeConditionInterface, PostalFeeNumer
 
     public function __construct(
         Translator $translator,
-        ProductsRepository $productsRepository
+        ProductsRepository $productsRepository,
     ) {
         $this->translator = $translator;
         $this->productsRepository = $productsRepository;

@@ -20,7 +20,7 @@ class ProductStatsFactory
 
     public function __construct(
         Translator $translator,
-        ProductsRepository $productsRepository
+        ProductsRepository $productsRepository,
     ) {
         $this->productsRepository = $productsRepository;
         $this->translator = $translator;
@@ -41,7 +41,7 @@ class ProductStatsFactory
             'last_7days' => [(new DateTime('-7 days'))->setTime(0, 0), $now],
             'current_month' => [(new DateTime('first day of this month'))->setTime(0, 0), $now],
             'last_month' => [(new DateTime('first day of previous month'))->setTime(0, 0), (new DateTime('last day of previous month'))->setTime(23, 59, 59)],
-            'all' => [null, null]
+            'all' => [null, null],
         ];
 
         $totalStats = [];
@@ -89,7 +89,7 @@ class ProductStatsFactory
             self::MODES,
             array_map(function ($mode) {
                 return $this->translator->translate("products.admin.products.stats.modes.{$mode}");
-            }, self::MODES)
+            }, self::MODES),
         );
     }
 }

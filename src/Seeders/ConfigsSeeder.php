@@ -28,7 +28,7 @@ class ConfigsSeeder implements ISeeder
         Translator $translator,
         ConfigBuilder $configBuilder,
         ConfigCategoriesRepository $configCategoriesRepository,
-        ConfigsRepository $configsRepository
+        ConfigsRepository $configsRepository,
     ) {
         $this->translator = $translator;
         $this->configBuilder = $configBuilder;
@@ -48,7 +48,7 @@ class ConfigsSeeder implements ISeeder
             'products.config.shop_host.name',
             'products.config.shop_host.description',
             null,
-            100
+            100,
         );
 
         $this->addConfig(
@@ -59,7 +59,7 @@ class ConfigsSeeder implements ISeeder
             'products.config.shop_title.name',
             'products.config.shop_title.description',
             $this->translator->translate('products.config.shop_title.value'),
-            100
+            100,
         );
 
         $this->addConfig(
@@ -70,7 +70,7 @@ class ConfigsSeeder implements ISeeder
             'products.config.shop_header_block.name',
             'products.config.shop_header_block.description',
             null,
-            200
+            200,
         );
 
         $this->addConfig(
@@ -81,7 +81,7 @@ class ConfigsSeeder implements ISeeder
             'products.config.shop_og_image_url.name',
             'products.config.shop_og_image_url.description',
             null,
-            300
+            300,
         );
 
         $this->addConfig(
@@ -92,7 +92,7 @@ class ConfigsSeeder implements ISeeder
             'products.config.shop_terms_and_conditions_url.name',
             'products.config.shop_terms_and_conditions_url.description',
             null,
-            400
+            400,
         );
 
         $category = $this->getCategory($output, 'subscriptions.config.users.category', 'fa fa-user', 300);
@@ -104,7 +104,7 @@ class ConfigsSeeder implements ISeeder
             'products.config.users.prevent_anonymization.name',
             'products.config.users.prevent_anonymization.description',
             true,
-            120
+            120,
         );
 
         $this->addConfig(
@@ -115,7 +115,7 @@ class ConfigsSeeder implements ISeeder
             'products.config.users.prevent_anonymization_within_days.name',
             'products.config.users.prevent_anonymization_within_days.description',
             45,
-            120
+            120,
         );
     }
 }

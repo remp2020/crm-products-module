@@ -21,7 +21,7 @@ class OrdersUserDataProvider implements UserDataProviderInterface
     public function __construct(
         OrdersRepository $ordersRepository,
         ConfigsRepository $configsRepository,
-        Translator $translator
+        Translator $translator,
     ) {
         $this->ordersRepository = $ordersRepository;
         $this->configsRepository = $configsRepository;

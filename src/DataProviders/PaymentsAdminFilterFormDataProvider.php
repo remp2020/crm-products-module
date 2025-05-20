@@ -46,7 +46,7 @@ class PaymentsAdminFilterFormDataProvider implements AdminFilterFormDataProvider
             ->getControlPrototype()->addAttributes(['class' => 'select2']);
 
         $form->setDefaults([
-            'products' => $this->getProducts($formData)
+            'products' => $this->getProducts($formData),
         ]);
 
         return $form;

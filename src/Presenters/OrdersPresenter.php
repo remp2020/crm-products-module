@@ -17,7 +17,7 @@ class OrdersPresenter extends FrontendPresenter
     public function __construct(
         OrdersRepository $ordersRepository,
         PaymentItemHelper $paymentItemHelper,
-        EbookProvider $ebookProvider
+        EbookProvider $ebookProvider,
     ) {
         parent::__construct();
 

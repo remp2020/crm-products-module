@@ -19,7 +19,7 @@ class TagsFormFactory
     public function __construct(
         private TagsCache $tagsCache,
         private TagsRepository $tagsRepository,
-        private Translator $translator
+        private Translator $translator,
     ) {
     }
 
@@ -129,7 +129,7 @@ class TagsFormFactory
                 $values['visible'],
                 $values['frontend_visible'],
                 $values['user_assignable'],
-                $values['html_heading']
+                $values['html_heading'],
             );
 
             $this->tagsCache->add($tag->id, $code);
