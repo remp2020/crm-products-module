@@ -1,7 +1,7 @@
 {block #title}{$product->name} | {$title}{/block}
 
 {block #head}
-    <meta content="sk_SK" property="og:locale">
+    <meta content="{$locale}" property="og:locale">
     <meta content="{$title}" property="og:site_name">
     <meta content="{$product->name}" property="og:title">
     <meta content="{$product->og_image_url}" property="og:image">
