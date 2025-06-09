@@ -13,74 +13,85 @@
 <div class="row">
     <div class="col-md-12">
         {if $orders->count('*') > 0}
-        <div class="table">
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th>{_products.frontend.orders.day}</th>
-                <th>{_products.frontend.orders.order_number}</th>
-                <th>{_products.frontend.orders.status}</th>
-                <th class="text-right">{_products.frontend.orders.price}</th>
-                <th>{_products.frontend.orders.invoices}</th>
-            </tr>
-            </thead>
-            <tbody>
-            {foreach $orders as $order}
-                <tr n:ifset="$statusMap[$order->status]">
-                    {php $prepaid = ($order->payment->status == \Crm\PaymentsModule\Models\Payment\PaymentStatusEnum::Prepaid->value)}
-                    <td>
-                        {if $prepaid}
-                            {$order->payment->modified_at|userDate:true}
-                        {else}
-                            {$order->payment->paid_at|userDate:true}
-                        {/if}
-                    </td>
-                    <td>
-                        #{$order->id}
-                    </td>
-                    <td>
-                        {$statusMap[$order->status]}
-                    </td>
-                    <td class="text-right">
-                        {$order->payment->amount|price}
-                    </td>
-                    <td>
-                        {control simpleWidget 'frontend.payments.listing.receipts', $order->payment}
-                    </td>
-                </tr>
-                <tr n:ifset="$statusMap[$order->status]">
-                    <td colspan="3">
-                        <div class="row">
-                            <div class="col-md-10 col-md-offset-1">
-                                {foreach $order->payment->related('payment_items')->where('type = ?', \Crm\ProductsModule\Models\PaymentItem\ProductPaymentItem::TYPE) as $productItem}
-                                    {$productItem->name} <span class="text-muted">({$productItem->count}x)</span><br>
-                                {/foreach}
-                                {foreach $order->payment->related('payment_items')->where('type = ?', \Crm\ProductsModule\Models\PaymentItem\PostalFeePaymentItem::TYPE) as $productItem}
-                                    {$productItem->name}
-                                {/foreach}
-                            </div>
-                        </div>
-                    </td>
-                    <td align="right" n:class="$prepaid ? prepaid">
+            <div class="table-responsive">
+                <table class="table table-responsive">
+                    <thead>
+                    <tr>
+                        <th>{_products.frontend.orders.day}</th>
+                        <th>{_products.frontend.orders.order_number}</th>
+                        <th>{_products.frontend.orders.status}</th>
+                        <th class="text-right">{_products.frontend.orders.price}</th>
+                        <th>{_products.frontend.orders.invoices}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {foreach $orders as $order}
+                        <tr class="active" n:ifset="$statusMap[$order->status]">
+                            {php $prepaid = ($order->payment->status == \Crm\PaymentsModule\Models\Payment\PaymentStatusEnum::Prepaid->value)}
+                            <td style="border-bottom: 1px solid #ddd;">
+                                {if $prepaid}
+                                    {$order->payment->modified_at|userDate:true}
+                                {else}
+                                    {$order->payment->paid_at|userDate:true}
+                                {/if}
+                            </td>
+                            <td style="border-bottom: 1px solid #ddd;">
+                                #{$order->id}
+                            </td>
+                            <td style="border-bottom: 1px solid #ddd;">
+                                {$statusMap[$order->status]}
+                            </td>
+                            <td class="text-right" style="border-bottom: 1px solid #ddd;">
+                                {$order->payment->amount|price}
+                            </td>
+                            <td style="border-bottom: 1px solid #ddd;">
+                                {control simpleWidget 'frontend.payments.listing.receipts', $order->payment}
+                            </td>
+                        </tr>
                         {foreach $order->payment->related('payment_items')->where('type = ?', \Crm\ProductsModule\Models\PaymentItem\ProductPaymentItem::TYPE) as $productItem}
-                            {$productItem->amount * $productItem->count|price}<br>
+                            <tr n:ifset="$statusMap[$order->status]">
+                                <td colspan="3" style="border-top: 0; padding-top: 4px; padding-bottom: 4px;">
+                                    <div class="row">
+                                        <div class="col-md-10 col-md-offset-1">
+                                            {$productItem->name}
+                                            <span class="text-muted">({$productItem->count}x)</span>
+                                            {if $productItem->product}
+                                                {control simpleWidget 'products.order.item.badge', $productItem->product}
+                                            {/if}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td n:class="$prepaid ? prepaid, 'text-right'" style="border-top: 0; padding-top: 4px; padding-bottom: 4px;">
+                                    {$productItem->amount * $productItem->count|price}
+                                </td>
+                                <td style="border-top: 0; padding-top: 4px; padding-bottom: 4px;">&nbsp;</td>
+                            </tr>
                         {/foreach}
                         {foreach $order->payment->related('payment_items')->where('type = ?', \Crm\ProductsModule\Models\PaymentItem\PostalFeePaymentItem::TYPE) as $productItem}
-                            {$productItem->amount|price}
+                            <tr n:ifset="$statusMap[$order->status]">
+                                <td colspan="3" style="border-top: 0; padding-top: 4px; padding-bottom: 4px;">
+                                    <div class="row">
+                                        <div class="col-md-10 col-md-offset-1">
+                                            {$productItem->name}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td n:class="$prepaid ? prepaid, 'text-right'" style="border-top: 0; padding-top: 4px; padding-bottom: 4px;;">
+                                    {$productItem->amount|price}
+                                </td>
+                                <td style="border-top: 0; padding-top: 4px; padding-bottom: 4px;">&nbsp;</td>
+                            </tr>
                         {/foreach}
-                    </td>
-                    <td colspan="1">&nbsp;</td>
-                </tr>
-            {/foreach}
-            </tbody>
-        </table>
-        </div>
+                    {/foreach}
+                    </tbody>
+                </table>
+            </div>
         {else}
-        <blockquote>
-            <p class="lead">
-                {_products.frontend.orders.no_orders} <a class="link" href="{plink :Products:Shop:default}">{_products.frontend.orders.visit_eshop}</a>
-            </p>
-        </blockquote>
+            <blockquote>
+                <p class="lead">
+                    {_products.frontend.orders.no_orders} <a class="link" href="{plink :Products:Shop:default}">{_products.frontend.orders.visit_eshop}</a>
+                </p>
+            </blockquote>
         {/if}
     </div>
 </div>
