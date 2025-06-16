@@ -116,6 +116,8 @@ class CountryPostalFeesFormFactory
 
         if ($values['condition']) {
             $countryPostalFeeSelection->where(':country_postal_fee_conditions.code', $values['condition']);
+        } else {
+            $countryPostalFeeSelection->where(':country_postal_fee_conditions.id IS NULL');
         }
 
         $countryPostalFeeRow = $countryPostalFeeSelection->fetch();
