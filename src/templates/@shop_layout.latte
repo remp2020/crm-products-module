@@ -6,10 +6,6 @@
 	<title>{ifset #title}{include title|striptags} | {/ifset}{$siteTitle}</title>
 	<meta n:if="$siteDescription" name="description" content="{$siteDescription}">
 
-	<script>
-        document.domain = {$jsDomain};
-	</script>
-
 	<link rel="stylesheet" href="{$basePath}/layouts/default/css/bootstrap.min.css">
 	<link rel="stylesheet" href="{$basePath}/layouts/default/js/jquery-ui.css">
 	<link rel="stylesheet" href="{$basePath}/layouts/dennikn/css/shop.css?v=3">
