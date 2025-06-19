@@ -55,7 +55,7 @@ class ProductSumConditionTest extends DatabaseTestCase
     {
         return $this->productsRepository->insert([
             'name' => 'test1',
-            'code' => 'test1_code' . uniqid(),
+            'code' => 'test1_code' . random_int(0, 9999),
             'price' => 10.0,
             'vat' => 19,
             'user_label' => 'user_label',
