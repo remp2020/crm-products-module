@@ -16,7 +16,7 @@ class FreeShippingProgressBarWidget extends BaseLazyWidget
 {
     use ProductsTrait;
 
-    private $templateName = 'free_shipping_progress_bar.latte';
+    protected $templateName = __DIR__ . '/free_shipping_progress_bar.latte';
 
     public function __construct(
         LazyWidgetManager $lazyWidgetManager,
@@ -102,7 +102,7 @@ class FreeShippingProgressBarWidget extends BaseLazyWidget
             $this->template->cartProducts = $cartProducts;
         }
 
-        $this->template->setFile(__DIR__ . '/' . $this->templateName);
+        $this->template->setFile($this->templateName);
         $this->template->render();
     }
 }
