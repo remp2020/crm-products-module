@@ -33,6 +33,8 @@ services:
 	- Crm\ProductsModule\DataProviders\PaymentsAdminFilterFormDataProvider
 	- Crm\ProductsModule\DataProviders\PaymentItemTypesFilterDataProvider
 	- Crm\ProductsModule\DataProviders\PaymentItemVatDataProvider
+	- Crm\ProductsModule\DataProviders\ProductAuditLogHistoryDataProvider
+	- Crm\ProductsModule\DataProviders\OrderAuditLogHistoryDataProvider
 
 	- Crm\ProductsModule\Models\Distribution\AmountSpentDistribution
 	- Crm\ProductsModule\Models\Distribution\PaymentCountsDistribution

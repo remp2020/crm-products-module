@@ -57,6 +57,8 @@
                 <b>{_products.data.products.fields.stock}:</b> {$product->stock}
             </li>
         </ul>
+
+        {control simpleWidget 'admin.products.detail.right', $product}
     </div>
 </div>
 

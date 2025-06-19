@@ -491,6 +491,23 @@ data_provider:
     payment_item_types_filter:
         key:
             product: Obchod
+    order_audit_log_history:
+        status_change:
+            new: "Objednávka byla <strong>vytvořena</strong>"
+            confirmed: "Objednávka byla <strong>zaregistrována v distribučním centru</strong>"
+            delivered: "Objednávka byla <strong>doručena</strong>"
+            paid: "Objednávka byla <strong>zaplacena</strong>"
+            payment_refunded: "Platba byla <strong>vrácena</strong>"
+            payment_failed: "Platba <strong>selhala</strong>"
+    product_audit_log_history:
+        name_change: "Název produktu byl změněn z <strong>„%from%“</strong> na <strong>„%to%“</strong>"
+        price_change: "Cena produktu byla změněna z <strong>„%from%“</strong> na <strong>„%to%“</strong>"
+        columns_changed: "Upravená pole: <strong>%columns%</strong>"
+        available_at_change: "Datum dostupnosti produktu bylo změněno z <strong>„%from%“</strong> na <strong>„%to%“</strong>"
+        vat_change: "DPH produktu bylo změněno z <strong>„%from%“</strong> na <strong>„%to%“</strong>"
+        sorting_change: "Řazení produktu bylo změněno"
+        distribution_center_change: "Distribuční centrum produktu bylo změněno z <strong>„%from%“</strong> na <strong>„%to%“</strong>"
+        description_change: "Popis produktu byl změněn"
 
 config:
     category: Obchod

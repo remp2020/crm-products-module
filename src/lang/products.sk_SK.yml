@@ -497,6 +497,23 @@ data_provider:
     payment_item_types_filter:
         key:
             product: Obchod
+    order_audit_log_history:
+        status_change:
+            new: "Objednávka bola <strong>vytvorená</strong>"
+            confirmed: "Objednávka bola <strong>zaregistrovaná v distribučnom centre</strong>"
+            delivered: "Objednávka bola <strong>doručená</strong>"
+            paid: "Objednávka bola <strong>zaplatená</strong>"
+            payment_refunded: "Platba bola <strong>refundovaná</strong>"
+            payment_failed: "Platba <strong>zlyhala</strong>"
+    product_audit_log_history:
+        name_change: "Názov produktu bol zmenený z <strong>\"%from%\"</strong> na <strong>\"%to%\"</strong>"
+        price_change: "Cena produktu bola zmenená z <strong>\"%from%\"</strong> na <strong>\"%to%\"</strong>"
+        columns_changed: "Upravené polia: <strong>%columns%</strong>"
+        available_at_change: "Dátum dostupnosti produktu bol zmenený z <strong>\"%from%\"</strong> na <strong>\"%to%\"</strong>"
+        vat_change: "DPH produktu bola zmenená z <strong>\"%from%\"</strong> na <strong>\"%to%\"</strong>"
+        sorting_change: "Poradie produktu bolo zmenené"
+        distribution_center_change: "Distribučné centrum produktu bolo zmenené z <strong>\"%from%\"</strong> na <strong>\"%to%\"</strong>"
+        description_change: "Popis produktu bol zmenený"
 
 config:
     category: Obchod

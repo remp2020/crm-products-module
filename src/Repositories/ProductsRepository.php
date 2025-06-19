@@ -48,7 +48,11 @@ class ProductsRepository extends Repository
 
     final public function update(ActiveRow &$row, $data)
     {
-        $data['modified_at'] = new \DateTime();
+        $data['modified_at'] = new DateTime();
+
+        if (isset($data['available_at']) && !($data['available_at'] instanceof DateTime)) {
+            $data['available_at'] = new DateTime($data['available_at']);
+        }
 
         try {
             $result = parent::update($row, $data);

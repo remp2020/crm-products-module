@@ -124,3 +124,22 @@ frontend:
         free_shipping_progress_bar:
             message: "Für kostenlose Lieferung kaufen Sie weitere <strong>%amount%</strong> Produkte."
             reached_message: "Ihre Bestellung hat <strong>%amount%</strong> erreicht. Sie erhalten nun die <strong>Lieferung kostenlos</strong>."
+
+data_provider:
+    order_audit_log_history:
+        status_change:
+            new: "Die Bestellung wurde <strong>erstellt</strong>"
+            confirmed: "Die Bestellung wurde <strong>im Vertriebszentrum registriert</strong>"
+            delivered: "Die Bestellung wurde <strong>geliefert</strong>"
+            paid: "Die Bestellung wurde <strong>bezahlt</strong>"
+            payment_refunded: "Die Zahlung wurde <strong>erstattet</strong>"
+            payment_failed: "Die Zahlung ist <strong>fehlgeschlagen</strong>"
+    product_audit_log_history:
+        name_change: "Der Produktname wurde von <strong>„%from%“</strong> zu <strong>„%to%“</strong> geändert"
+        price_change: "Der Produktpreis wurde von <strong>„%from%“</strong> zu <strong>„%to%“</strong> geändert"
+        columns_changed: "Felder aktualisiert: <strong>%columns%</strong>"
+        available_at_change: "Das Verfügbarkeitsdatum des Produkts wurde von <strong>„%from%“</strong> zu <strong>„%to%“</strong> geändert"
+        vat_change: "Die Mehrwertsteuer des Produkts wurde von <strong>„%from%“</strong> zu <strong>„%to%“</strong> geändert"
+        sorting_change: "Die Sortierung des Produkts wurde geändert"
+        distribution_center_change: "Das Vertriebszentrum des Produkts wurde von <strong>„%from%“</strong> zu <strong>„%to%“</strong> geändert"
+        description_change: "Die Produktbeschreibung wurde geändert"

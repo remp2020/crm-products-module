@@ -260,6 +260,24 @@ data_provider:
     payment_item_types_filter:
         key:
             product: E-shop
+    order_audit_log_history:
+        status_change:
+            new: "A rendelés <strong>létrehozva</strong>"
+            confirmed: "A rendelés <strong>visszaigazolva a forgalmazói központban</strong>"
+            delivered: "A rendelés <strong>kézbesítve</strong>"
+            paid: "A rendelés <strong>kifizetve</strong>"
+            payment_refunded: "A fizetés <strong>visszatérítve</strong>"
+            payment_failed: "A fizetés <strong>meghiúsult</strong>"
+    product_audit_log_history:
+        name_change: "A termék neve megváltozott: <strong>„%from%”</strong> → <strong>„%to%”</strong>"
+        price_change: "A termék ára megváltozott: <strong>„%from%”</strong> → <strong>„%to%”</strong>"
+        columns_changed: "Frissített mezők: <strong>%columns%</strong>"
+        available_at_change: "A termék elérhetőségi dátuma megváltozott: <strong>„%from%”</strong> → <strong>„%to%”</strong>"
+        vat_change: "A termék áfája megváltozott: <strong>„%from%”</strong> → <strong>„%to%”</strong>"
+        sorting_change: "A termék sorrendje megváltozott"
+        distribution_center_change: "A forgalmazói központ megváltozott: <strong>„%from%”</strong> → <strong>„%to%”</strong>"
+        description_change: "A termék leírása megváltozott"
+
 admin:
     products:
         show:

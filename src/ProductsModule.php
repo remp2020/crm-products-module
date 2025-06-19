@@ -7,6 +7,7 @@ use Crm\ApplicationModule\Application\CommandsContainerInterface;
 use Crm\ApplicationModule\Application\Managers\AssetsManager;
 use Crm\ApplicationModule\Application\Managers\LayoutManager;
 use Crm\ApplicationModule\Application\Managers\SeederManager;
+use Crm\ApplicationModule\Components\AuditLogHistoryWidget\AuditLogHistoryWidget;
 use Crm\ApplicationModule\CrmModule;
 use Crm\ApplicationModule\Models\Config\ApplicationConfig;
 use Crm\ApplicationModule\Models\Config\ConfigsCache;
@@ -31,11 +32,13 @@ use Crm\ProductsModule\Components\RecommendedProductsWidget\RecommendedProductsW
 use Crm\ProductsModule\Components\TotalShopPaymentsWidget\TotalShopPaymentsWidget;
 use Crm\ProductsModule\Components\UserOrdersWidget\UserOrdersWidget;
 use Crm\ProductsModule\DataProviders\OneStopShopCountryResolutionDataProvider;
+use Crm\ProductsModule\DataProviders\OrderAuditLogHistoryDataProvider;
 use Crm\ProductsModule\DataProviders\OrdersUserDataProvider;
 use Crm\ProductsModule\DataProviders\PaymentFormDataProvider;
 use Crm\ProductsModule\DataProviders\PaymentItemTypesFilterDataProvider;
 use Crm\ProductsModule\DataProviders\PaymentItemVatDataProvider;
 use Crm\ProductsModule\DataProviders\PaymentsAdminFilterFormDataProvider;
+use Crm\ProductsModule\DataProviders\ProductAuditLogHistoryDataProvider;
 use Crm\ProductsModule\Events\NewOrderEvent;
 use Crm\ProductsModule\Events\OrderStatusChangeEvent;
 use Crm\ProductsModule\Events\OrderStatusChangeEventHandler;
@@ -278,6 +281,14 @@ class ProductsModule extends CrmModule
             PaymentItemVatDataProviderInterface::PATH,
             $this->getInstance(PaymentItemVatDataProvider::class),
         );
+        $dataProviderManager->registerDataProvider(
+            'admin.dataprovider.audit_log_history_widget',
+            $this->getInstance(ProductAuditLogHistoryDataProvider::class),
+        );
+        $dataProviderManager->registerDataProvider(
+            'admin.dataprovider.audit_log_history_widget',
+            $this->getInstance(OrderAuditLogHistoryDataProvider::class),
+        );
     }
 
     public function registerEvents(EventsStorage $eventsStorage)
@@ -328,6 +339,16 @@ class ProductsModule extends CrmModule
         $widgetManager->registerWidget(
             'products.shop.show.bottom',
             RecommendedProductsWidget::class,
+        );
+
+        $widgetManager->registerWidget(
+            'admin.products.detail.right',
+            AuditLogHistoryWidget::class,
+        );
+
+        $widgetManager->registerWidget(
+            'admin.products.order.right_column',
+            AuditLogHistoryWidget::class,
         );
     }
 

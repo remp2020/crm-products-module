@@ -494,6 +494,23 @@ data_provider:
     payment_item_types_filter:
         key:
             product: Shop
+    order_audit_log_history:
+        status_change:
+            new: "Order was <strong>created</strong>"
+            confirmed: "Order was <strong>registered in distribution center</strong>"
+            delivered: "Order was <strong>delivered</strong>"
+            paid: "Order was <strong>paid</strong>"
+            payment_refunded: "Payment was <strong>refunded</strong>"
+            payment_failed: "Payment <strong>failed</strong>"
+    product_audit_log_history:
+        name_change: "Product name was changed from <strong>\"%from%\"</strong> to <strong>\"%to%\"</strong>"
+        price_change: "Product price was changed from <strong>\"%from%\"</strong> to <strong>\"%to%\"</strong>"
+        columns_changed: "Fields updated: <strong>%columns%</strong>"
+        available_at_change: "Product availability date was changed from <strong>\"%from%\"</strong> to <strong>\"%to%\"</strong>"
+        vat_change: "Product VAT was changed from <strong>\"%from%\"</strong> to <strong>\"%to%\"</strong>"
+        sorting_change: "Product sorting was changed"
+        distribution_center_change: "Product distribution center was changed from <strong>\"%from%\"</strong> to <strong>\"%to%\"</strong>"
+        description_change: "Product description was changed"
 
 config:
     category: Shop
