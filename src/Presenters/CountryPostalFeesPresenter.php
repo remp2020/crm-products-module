@@ -7,31 +7,20 @@ use Crm\ApplicationModule\UI\Form;
 use Crm\ProductsModule\Forms\CountryPostalFeesFormFactory;
 use Crm\ProductsModule\Models\PostalFeeCondition\PostalFeeService;
 use Crm\ProductsModule\Repositories\CountryPostalFeesRepository;
+use Crm\ProductsModule\Repositories\PostalFeesRepository;
 use Crm\UsersModule\Repositories\CountriesRepository;
 use Nette\Database\Table\ActiveRow;
 
 class CountryPostalFeesPresenter extends AdminPresenter
 {
-    private $countryPostalFeesRepository;
-
-    private $countriesRepository;
-
-    private $postalFeeService;
-
-    private $countryPostalFeeFormFactory;
-
     public function __construct(
-        CountryPostalFeesRepository $countryPostalFeesRepository,
-        CountriesRepository $countriesRepository,
-        PostalFeeService $postalFeeService,
-        CountryPostalFeesFormFactory $countryPostalFeeFormFactory,
+        private readonly PostalFeesRepository $postalFeesRepository,
+        private readonly CountryPostalFeesRepository $countryPostalFeesRepository,
+        private readonly CountriesRepository $countriesRepository,
+        private readonly PostalFeeService $postalFeeService,
+        private readonly CountryPostalFeesFormFactory $countryPostalFeeFormFactory,
     ) {
         parent::__construct();
-
-        $this->countryPostalFeesRepository = $countryPostalFeesRepository;
-        $this->countriesRepository = $countriesRepository;
-        $this->postalFeeService = $postalFeeService;
-        $this->countryPostalFeeFormFactory = $countryPostalFeeFormFactory;
     }
 
     /**
@@ -42,6 +31,8 @@ class CountryPostalFeesPresenter extends AdminPresenter
         $countries = $this->countriesRepository->all();
         $this->template->countries = $countries;
         $this->template->postalFeeService = $this->postalFeeService;
+        $this->template->postalFeeMapping = $this->postalFeesRepository->all()->fetchPairs('id', 'code');
+        $this->template->postalFeeAdminMessages = $this->postalFeeService->getPostalFeeAdminMessages();
         $this->template->form = $this['countryPostalFeeForm'];
     }
 

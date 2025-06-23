@@ -2,25 +2,30 @@
 
 namespace Crm\ProductsModule\Models\PostalFeeCondition;
 
-use Crm\ApplicationModule\Models\Database\Selection;
 use Crm\ProductsModule\Repositories\CountryPostalFeesRepository;
 use Nette\Database\Table\ActiveRow;
 
 class PostalFeeService
 {
-    private $conditions;
+    /** @var PostalFeeConditionInterface[] */
+    private array $conditions;
 
-    private $countryPostalFeesRepository;
+    /** @var PostalFeeSystemConditionInterface[] */
+    private array $systemConditions;
 
     public function __construct(
-        CountryPostalFeesRepository $countryPostalFeesRepository,
+        private readonly CountryPostalFeesRepository $countryPostalFeesRepository,
     ) {
-        $this->countryPostalFeesRepository = $countryPostalFeesRepository;
     }
 
     public function registerCondition(string $code, PostalFeeConditionInterface $postalFeeCondition): void
     {
         $this->conditions[$code] = $postalFeeCondition;
+    }
+
+    public function registerSystemCondition(string $code, PostalFeeSystemConditionInterface $postalFeeCondition): void
+    {
+        $this->systemConditions[$code] = $postalFeeCondition;
     }
 
     /**
@@ -40,13 +45,28 @@ class PostalFeeService
         throw new \Exception("Country postal fee condition with code: '{$code}' is not registered.");
     }
 
+    /**
+     * @return array<array<string>>
+     */
+    public function getPostalFeeAdminMessages(): array
+    {
+        $messages = [];
+        foreach ($this->systemConditions as $postalFeeCondition) {
+            foreach ($postalFeeCondition->getAffectedPostalFees() as $postalFeeCode) {
+                $messages[$postalFeeCode][] = $postalFeeCondition->getAdminMessage();
+            }
+        }
+
+        return $messages;
+    }
+
     public function getAvailablePostalFeesOptions(int $countryId, array $cart, int $userId = null)
     {
         $countryPostalFeesSelection = $this->countryPostalFeesRepository
             ->findActiveByCountry($countryId)
             ->order('sorting');
 
-        $result = [];
+        $postalFees = [];
         foreach ($countryPostalFeesSelection as $countryPostalFee) {
             /** @var ActiveRow $countryPostalFee */
             $conditions = $countryPostalFee->related('country_postal_fee_conditions')
@@ -55,30 +75,49 @@ class PostalFeeService
                 foreach ($conditions as $condition) {
                     /** @var PostalFeeConditionInterface $resolver */
                     $resolver = $this->conditions[$condition->code];
-                    if ($resolver->isReached($cart, $condition->value, $userId)) {
+                    if ($resolver->isReached($cart, $condition, $userId)) {
                         // unset the original postal fee so that the new postal fee complies is appended to end of array
-                        unset($result[$countryPostalFee->postal_fee->code]);
-                        $result[$countryPostalFee->postal_fee->code] = $countryPostalFee->postal_fee;
+                        unset($postalFees[$countryPostalFee->postal_fee->code]);
+                        $postalFees[$countryPostalFee->postal_fee->code] = $countryPostalFee->postal_fee;
                     }
                 }
             } else {
-                if (!isset($result[$countryPostalFee->postal_fee->code]) || $result[$countryPostalFee->postal_fee->code]->amount > $countryPostalFee->postal_fee->amount) {
-                    $result[$countryPostalFee->postal_fee->code] = $countryPostalFee->postal_fee;
+                if (!isset($postalFees[$countryPostalFee->postal_fee->code]) || $postalFees[$countryPostalFee->postal_fee->code]->amount > $countryPostalFee->postal_fee->amount) {
+                    $postalFees[$countryPostalFee->postal_fee->code] = $countryPostalFee->postal_fee;
+                }
+            }
+        }
+
+        foreach ($postalFees as $postalFee) {
+            foreach ($this->systemConditions as $condition) {
+                if (!$condition->isAvailable($cart, $postalFee, $userId)) {
+                    unset($postalFees[$postalFee->code]);
                 }
             }
         }
 
         return array_combine(
-            array_column($result, 'id'),
-            array_values($result),
+            array_column($postalFees, 'id'),
+            array_values($postalFees),
         );
     }
 
-    public function getFreePostalPostalFeeForCondition(int $countryId): Selection
+    public function getFreePostalPostalFeeForCondition(int $countryId, array $cart): array
     {
-        return $this->countryPostalFeesRepository->findActiveByCountry($countryId)
+        $countryPostalFees = $this->countryPostalFeesRepository->findActiveByCountry($countryId)
             ->where('postal_fee.amount', 0)
-            ->order('ABS(:country_postal_fee_conditions.value)');
+            ->order('ABS(:country_postal_fee_conditions.value)')
+            ->fetchAll();
+
+        foreach ($countryPostalFees as $i => $countryPostalFee) {
+            foreach ($this->systemConditions as $condition) {
+                if (!$condition->isAvailable($cart, $countryPostalFee->postal_fee)) {
+                    unset($countryPostalFees[$i]);
+                }
+            }
+        }
+
+        return $countryPostalFees;
     }
 
     public function getDefaultPostalFee(int $countryId, array $postalFees): ActiveRow

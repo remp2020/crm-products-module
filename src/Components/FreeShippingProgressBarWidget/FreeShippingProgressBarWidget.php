@@ -39,8 +39,8 @@ class FreeShippingProgressBarWidget extends BaseLazyWidget
             $countryId = $this->countriesRepository->defaultCountry()->id;
         }
 
-        $freeCountryPostalFees = $this->postalFeeService->getFreePostalPostalFeeForCondition($countryId);
-        if ($freeCountryPostalFees->count('*') === 0) {
+        $freeCountryPostalFees = $this->postalFeeService->getFreePostalPostalFeeForCondition($countryId, $cartProducts);
+        if (count($freeCountryPostalFees) === 0) {
             return;
         }
 

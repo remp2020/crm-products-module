@@ -74,6 +74,9 @@
                   <div class="form-group">
                       <div class="col-sm-3 control-label">{label postal_fee_id /}</div>
                       <div class="col-sm-9">{input postal_fee_id}</div>
+                      <div class="col-sm-9 col-sm-offset-3">
+                          <div id="postalFeeAdminMessage" class="bs-callout bs-callout-warning bs-callout-sm bg-warning" style="margin: 0 0 10px"></div>
+                      </div>
                   </div>
                   <div class="form-group">
                       <div class="col-sm-3 control-label">{label sorting /}</div>
@@ -110,6 +113,10 @@
               $('#' + {$form["condition"]->htmlId}).on('change', function () {
                 changeCondition($(this).val());
               });
+              $('#' + {$form["postal_fee_id"]->htmlId}).on('change', function () {
+                changePostalFeeId($(this).val());
+              }).trigger('change');
+
           </script>
           {/if}
           {/snippet}
@@ -139,5 +146,18 @@
                 'condition': condition,
             }
         });
+    }
+
+    function changePostalFeeId(postalFeeId) {
+        let messages = {$postalFeeAdminMessages};
+        let mapping = {$postalFeeMapping};
+        let messageElement = document.getElementById('postalFeeAdminMessage');
+
+        if (messages[mapping[postalFeeId]]) {
+            messageElement.innerHTML = messages[mapping[postalFeeId]].join('<br>');
+            messageElement.style.display = 'block';
+        } else {
+            messageElement.style.display = 'none';
+        }
     }
 </script>
