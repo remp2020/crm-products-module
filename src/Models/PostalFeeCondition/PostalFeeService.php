@@ -8,10 +8,10 @@ use Nette\Database\Table\ActiveRow;
 class PostalFeeService
 {
     /** @var PostalFeeConditionInterface[] */
-    private array $conditions;
+    private array $conditions = [];
 
     /** @var PostalFeeSystemConditionInterface[] */
-    private array $systemConditions;
+    private array $systemConditions = [];
 
     public function __construct(
         private readonly CountryPostalFeesRepository $countryPostalFeesRepository,
