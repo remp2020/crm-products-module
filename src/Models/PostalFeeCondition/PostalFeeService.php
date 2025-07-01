@@ -75,7 +75,7 @@ class PostalFeeService
                 foreach ($conditions as $condition) {
                     /** @var PostalFeeConditionInterface $resolver */
                     $resolver = $this->conditions[$condition->code];
-                    if ($resolver->isReached($cart, $condition, $userId)) {
+                    if ($resolver->isReached($cart, $condition->value, $userId)) {
                         // unset the original postal fee so that the new postal fee complies is appended to end of array
                         unset($postalFees[$countryPostalFee->postal_fee->code]);
                         $postalFees[$countryPostalFee->postal_fee->code] = $countryPostalFee->postal_fee;
