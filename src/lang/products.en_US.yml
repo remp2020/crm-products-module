@@ -116,6 +116,7 @@ data:
             condition_value: Value
     orders:
         statuses:
+            label: Order
             paid: Paid
             not_sent: Not sent
             pending: Pending
@@ -123,6 +124,10 @@ data:
             sent: Sent
             delivered: Delivered
             returned: Returned
+            new: New
+            payment_failed: Payment failed
+            payment_refunded: Payment refunded
+            imported: Imported
 
 admin:
     component:

@@ -27,6 +27,7 @@ use Crm\ProductsModule\Commands\CalculateAveragesCommand;
 use Crm\ProductsModule\Commands\ChangeVatCommand;
 use Crm\ProductsModule\Components\AvgProductsPaymentWidget\AvgProductsPaymentWidget;
 use Crm\ProductsModule\Components\FreeShippingProgressBarWidget\FreeShippingProgressBarWidget;
+use Crm\ProductsModule\Components\OrderStatusWidget\OrderStatusWidget;
 use Crm\ProductsModule\Components\ProductItemsListWidget\ProductItemsListWidget;
 use Crm\ProductsModule\Components\RecommendedProductsWidget\RecommendedProductsWidget;
 use Crm\ProductsModule\Components\TotalShopPaymentsWidget\TotalShopPaymentsWidget;
@@ -349,6 +350,11 @@ class ProductsModule extends CrmModule
         $widgetManager->registerWidget(
             'admin.products.order.right_column',
             AuditLogHistoryWidget::class,
+        );
+
+        $widgetManager->registerWidget(
+            'admin.payment.status.bottom',
+            OrderStatusWidget::class,
         );
     }
 

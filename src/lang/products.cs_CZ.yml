@@ -114,6 +114,7 @@ data:
 
     orders:
         statuses:
+            label: Objednávka
             paid: Zaplacená
             not_sent: Neodeslaná
             pending: Přijata
@@ -121,6 +122,10 @@ data:
             sent: Odeslaná
             delivered: Doručená
             returned: Vrácená
+            new: Nová
+            payment_failed: Platba selhala
+            payment_refunded: Platba vrácena
+            imported: Importovaná
 admin:
     component:
         avg_product_payment_widget:

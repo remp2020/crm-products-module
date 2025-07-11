@@ -117,6 +117,7 @@ data:
             condition_value: Hodnota
     orders:
         statuses:
+            label: Objednávka
             paid: Zaplatená
             not_sent: Neodoslaná
             pending: Prijatá
@@ -124,6 +125,10 @@ data:
             sent: Odoslaná
             delivered: Doručená
             returned: Vrátená
+            new: Nová
+            payment_failed: Platba zlyhala
+            payment_refunded: Platba vrátená
+            imported: Importovaná
 
 admin:
     component:

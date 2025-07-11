@@ -28,6 +28,7 @@ services:
 	- Crm\ProductsModule\Components\UserOrdersWidget\UserOrdersWidget
 	- Crm\ProductsModule\Components\FreeShippingProgressBarWidget\FreeShippingProgressBarWidget
 	- Crm\ProductsModule\Components\RecommendedProductsWidget\RecommendedProductsWidget
+	- Crm\ProductsModule\Components\OrderStatusWidget\OrderStatusWidget
 
 	- Crm\ProductsModule\DataProviders\PaymentFormDataProvider
 	- Crm\ProductsModule\DataProviders\PaymentsAdminFilterFormDataProvider
