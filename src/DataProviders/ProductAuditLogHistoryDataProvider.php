@@ -76,8 +76,8 @@ class ProductAuditLogHistoryDataProvider implements AuditLogHistoryDataProviderI
                 $auditLogHistoryDataProviderItem->addMessage(
                     'products.data_provider.product_audit_log_history.price_change',
                     [
-                        'from' => $this->priceHelper->getFormattedPrice($changes['from']['price']),
-                        'to' => $this->priceHelper->getFormattedPrice($changes['to']['price']),
+                        'from' => $this->priceHelper->getFormattedPrice((float) $changes['from']['price']),
+                        'to' => $this->priceHelper->getFormattedPrice((float) $changes['to']['price']),
                     ],
                 );
             }
