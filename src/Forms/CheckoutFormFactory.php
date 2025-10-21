@@ -8,6 +8,7 @@ use Crm\ApplicationModule\Forms\FormPatterns;
 use Crm\ApplicationModule\Models\Config\ApplicationConfig;
 use Crm\ApplicationModule\Models\DataProvider\DataProviderManager;
 use Crm\ApplicationModule\UI\Form;
+use Crm\PaymentsModule\Models\OneStopShop\CountryResolution;
 use Crm\PaymentsModule\Models\OneStopShop\OneStopShop;
 use Crm\PaymentsModule\Models\OneStopShop\OneStopShopCountryConflictException;
 use Crm\PaymentsModule\Models\PaymentItem\PaymentItemContainer;
@@ -465,15 +466,9 @@ class CheckoutFormFactory
             unset($values['billing_address']);
         }
 
-        try {
-            $this->oneStopShop->resolveCountry(
-                user: $user,
-                formParams: (array) $values,
-            );
-        } catch (OneStopShopCountryConflictException $e) {
-            Debugger::log("Shop checkout - OSS conflict: " . $e->getMessage(), ILogger::WARNING);
-            $this->userActionsLogRepository->add($user->id, 'funnel.one_stop_shop.conflict', ['exception' => $e->getMessage()]);
-            $form->addError('products.frontend.shop.checkout.warnings.unable_to_create_payment_one_stop_shop');
+        $countryResolution = $this->resolveCountry($user, $form, (array) $values);
+        if ($countryResolution === null) {
+            // error already added to form in resolveCountry
             return;
         }
 
@@ -530,17 +525,9 @@ class CheckoutFormFactory
         }
 
         // Repeat check, now with paymentItemContainer
-        $countryResolution = null;
-        try {
-            $countryResolution = $this->oneStopShop->resolveCountry(
-                user: $user,
-                paymentItemContainer: $paymentItemsContainer,
-                formParams: (array) $values,
-            );
-        } catch (OneStopShopCountryConflictException $e) {
-            Debugger::log("Shop checkout - OSS conflict: " . $e->getMessage(), ILogger::WARNING);
-            $this->userActionsLogRepository->add($user->id, 'funnel.one_stop_shop.conflict', ['exception' => $e->getMessage()]);
-            $form->addError('products.frontend.shop.checkout.warnings.unable_to_create_payment_one_stop_shop');
+        $countryResolution = $this->resolveCountry($user, $form, (array) $values, $paymentItemsContainer);
+        if ($countryResolution === null) {
+            // error already added to form in resolveCountry
             return;
         }
 
@@ -730,6 +717,26 @@ class CheckoutFormFactory
             $billingAddressId = $billingAddress->id;
         }
         return $billingAddressId;
+    }
+
+    private function resolveCountry(
+        ActiveRow $user,
+        Form $form,
+        array $values,
+        ?PaymentItemContainer $paymentItemsContainer = null,
+    ): ?CountryResolution {
+        try {
+            return $this->oneStopShop->resolveCountry(
+                user: $user,
+                paymentItemContainer: $paymentItemsContainer,
+                formParams: (array) $values,
+            );
+        } catch (OneStopShopCountryConflictException $e) {
+            Debugger::log("Shop checkout - OSS conflict: " . $e->getMessage(), ILogger::WARNING);
+            $this->userActionsLogRepository->add($user->id, 'funnel.one_stop_shop.conflict', ['exception' => $e->getMessage()]);
+            $form->addError('products.frontend.shop.checkout.warnings.unable_to_create_payment_one_stop_shop');
+            return null;
+        }
     }
 
     private function handlePostalFee($values): ?\Crm\ApplicationModule\Models\Database\ActiveRow

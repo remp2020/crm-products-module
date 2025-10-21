@@ -40,12 +40,12 @@ final class OneStopShopCountryResolutionDataProvider implements OneStopShopCount
             }
         }
 
-        if (!$shippingCountry && isset($formParams['shipping_country_id'])) {
-            $shippingCountry = $this->countriesRepository->find($formParams['shipping_country_id']);
+        if (!$shippingCountry && isset($formParams['shipping_country'])) {
+            $shippingCountry = $this->countriesRepository->findByIsoCode($formParams['shipping_country']);
         }
 
-        if (!$invoiceCountry && isset($formParams['billing_address']['country_id'])) {
-            $invoiceCountry = $this->countriesRepository->find($formParams['billing_address']['country_id']);
+        if (!$invoiceCountry && isset($formParams['billing_address']['country'])) {
+            $invoiceCountry = $this->countriesRepository->findByIsoCode($formParams['billing_address']['country']);
         }
 
         if ($invoiceCountry && $shippingCountry && $invoiceCountry->id !== $shippingCountry->id) {
