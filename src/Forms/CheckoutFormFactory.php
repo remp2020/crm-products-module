@@ -35,6 +35,7 @@ use Crm\UsersModule\Repositories\AddressesRepository;
 use Crm\UsersModule\Repositories\CountriesRepository;
 use Crm\UsersModule\Repositories\UserActionsLogRepository;
 use Crm\UsersModule\Repositories\UsersRepository;
+use Exception;
 use Nette\Database\Table\ActiveRow;
 use Nette\Forms\Controls\TextInput;
 use Nette\Http\Request;
@@ -411,7 +412,7 @@ class CheckoutFormFactory
     public function gatewayLabel($code): string
     {
         if (!isset($this->gateways[$code])) {
-            throw new \Exception('request for label of gateway not registered in checkout form: ' . $code);
+            throw new Exception('request for label of gateway not registered in checkout form: ' . $code);
         }
         return $this->gateways[$code];
     }
@@ -466,9 +467,8 @@ class CheckoutFormFactory
             unset($values['billing_address']);
         }
 
-        $countryResolution = $this->resolveCountry($user, $form, (array) $values);
-        if ($countryResolution === null) {
-            // error already added to form in resolveCountry
+        $this->resolveCountry($user, $form, (array) $values);
+        if ($form->hasErrors()) {
             return;
         }
 
@@ -508,7 +508,7 @@ class CheckoutFormFactory
         }
         if ($postalFee) {
             if ($postalFeeVat === null) {
-                throw new \Exception("attempt to use uninitialized postal fee VAT (should have been calculated based on sold items)");
+                throw new Exception("attempt to use uninitialized postal fee VAT (should have been calculated based on sold items)");
             }
             $postalFeeItem = new PostalFeePaymentItem(
                 $postalFee,
@@ -526,8 +526,7 @@ class CheckoutFormFactory
 
         // Repeat check, now with paymentItemContainer
         $countryResolution = $this->resolveCountry($user, $form, (array) $values, $paymentItemsContainer);
-        if ($countryResolution === null) {
-            // error already added to form in resolveCountry
+        if ($form->hasErrors()) {
             return;
         }
 
@@ -726,11 +725,19 @@ class CheckoutFormFactory
         ?PaymentItemContainer $paymentItemsContainer = null,
     ): ?CountryResolution {
         try {
-            return $this->oneStopShop->resolveCountry(
+            $countryResolution = $this->oneStopShop->resolveCountry(
                 user: $user,
                 paymentItemContainer: $paymentItemsContainer,
                 formParams: (array) $values,
             );
+
+            if ($countryResolution === null && $this->oneStopShop->isEnabled()) {
+                // When OSS is enabled, country resolution should always succeed (falls back to default country)
+                Debugger::log('Unexpected null country resolution with OSS enabled', ILogger::ERROR);
+                $form->addError('products.frontend.shop.checkout.warnings.unable_to_create_payment_one_stop_shop');
+            }
+
+            return $countryResolution;
         } catch (OneStopShopCountryConflictException $e) {
             Debugger::log("Shop checkout - OSS conflict: " . $e->getMessage(), ILogger::WARNING);
             $this->userActionsLogRepository->add($user->id, 'funnel.one_stop_shop.conflict', ['exception' => $e->getMessage()]);
