@@ -111,12 +111,17 @@ class ProductsRepository extends Repository
         return $this->getTable()->where(['code' => $code, 'deleted_at' => null])->fetch();
     }
 
-    final public function getShopProducts($visibleOnly = true, $availableOnly = true, $tag = null, $order = 'sorting')
-    {
+    final public function getShopProducts(
+        $visibleOnly = true,
+        $availableOnly = true,
+        ActiveRow $tag = null,
+        $order = 'sorting',
+    ) {
         $where = [
             'products.shop' => true,
             'products.deleted_at' => null,
         ];
+
         if ($visibleOnly === true) {
             $where['products.visible'] = true;
         }
@@ -127,33 +132,59 @@ class ProductsRepository extends Repository
             $where[':product_tags.tag_id'] = $tag->id;
         }
 
-        return $this->getTable()->where($where)->order($order);
+        /** @var Selection $query */
+        $query = $this->getTable()->where($where);
+
+        if ($order !== null) {
+            $query->order($order);
+        }
+
+        return $query;
     }
 
-    final public function relatedProducts(ActiveRow $product, $limit = 4)
+    final public function relatedProducts(ActiveRow $product, $limit = 4, DateTime $mostSoldFrom = null)
     {
-        return $this->getShopProducts(true, true, null, 'RAND()')
-            ->where('id != ?', $product->id)
-            ->limit($limit);
+        $productTags = $product->related('product_tags')->fetchPairs(null, 'tag_id');
+
+        $mostSoldTagged = $this->mostSoldProducts($mostSoldFrom, new DateTime())
+            ->where('products.id != ?', $product->id)
+            ->where(':product_tags.tag_id', $productTags)
+            ->limit($limit)
+            ->fetchAll();
+
+        if (count($mostSoldTagged) === $limit) {
+            return $mostSoldTagged;
+        }
+
+        // complement the set with products without matching tags
+        $mostSoldUntagged = $this->mostSoldProducts($mostSoldFrom, new DateTime())
+            ->where('products.id NOT', $mostSoldTagged)
+            ->limit($limit - count($mostSoldTagged))
+            ->fetchAll();
+
+        return array_merge($mostSoldTagged, $mostSoldUntagged);
     }
 
     final public function mostSoldProducts(DateTime $from = null, DateTime $to = null)
     {
-        $products = $this->getShopProducts(true, true, null, 'sold_count DESC')
-            ->select('products.*, SUM(:payment_items.count) AS sold_count')
+        $products = $this->getShopProducts(true, true, null, null);
+        $products
+            ->select('products.*, SUM(COALESCE(:payment_items.count, 0)) AS sold_count')
             ->where([
-                ':payment_items.type' => ProductPaymentItem::TYPE,
-                ':payment_items.payment.status' => PaymentStatusEnum::Paid->value,
                 'products.deleted_at' => null,
             ])
             ->group('products.id');
 
         if ($from) {
-            $products->where(':payment_items.payment.paid_at >= ?', $from);
+            $products->joinWhere(':payment_items', ":payment_items.created_at >= ?", $from);
+            $products->joinWhere(':payment_items.payment', ":payment_items.payment.paid_at >= ?", $from);
         }
+
         if ($to) {
-            $products->where(':payment_items.payment.paid_at < ?', $to);
+            $products->joinWhere(':payment_items.payment', ':payment_items.payment.paid_at < ?', $to);
         }
+
+        $products->order('sold_count DESC, products.created_at DESC');
 
         return $products;
     }
@@ -266,8 +297,8 @@ class ProductsRepository extends Repository
     final public function softDelete(ActiveRow $segment)
     {
         $this->update($segment, [
-            'deleted_at' => new \DateTime(),
-            'modified_at' => new \DateTime(),
+            'deleted_at' => new DateTime(),
+            'modified_at' => new DateTime(),
         ]);
     }
 
