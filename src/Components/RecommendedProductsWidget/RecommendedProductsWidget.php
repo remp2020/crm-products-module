@@ -27,7 +27,7 @@ class RecommendedProductsWidget extends BaseLazyWidget
 
     public function render($product)
     {
-        $relatedProducts = $this->productsRepository->relatedProducts($product)->fetchAll();
+        $relatedProducts = $this->productsRepository->relatedProducts($product);
 
         $this->template->relatedProducts = $relatedProducts;
         $this->template->setFile(__DIR__ . '/' . $this->templateName);
