@@ -144,7 +144,10 @@ class ProductsRepository extends Repository
 
     final public function relatedProducts(ActiveRow $product, $limit = 4, DateTime $mostSoldFrom = null)
     {
-        $productTags = $product->related('product_tags')->fetchPairs(null, 'tag_id');
+        $productTagsQuery = $product->related('product_tags')
+            ->where('tag.user_assignable', 1);
+
+        $productTags = $productTagsQuery->fetchPairs(null, 'tag_id');
 
         $mostSoldTagged = $this->mostSoldProducts($mostSoldFrom, new DateTime())
             ->where('products.id != ?', $product->id)
