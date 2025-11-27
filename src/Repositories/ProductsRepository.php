@@ -170,7 +170,7 @@ class ProductsRepository extends Repository
 
     final public function mostSoldProducts(DateTime $from = null, DateTime $to = null)
     {
-        $products = $this->getShopProducts(true, true, null, null);
+        $products = $this->getShopProducts(false, true, null, null);
         $products
             ->select('products.*, SUM(COALESCE(:payment_items.count, 0)) AS sold_count')
             ->where([
