@@ -93,7 +93,6 @@ frontend:
             payment_successful: "Ihre Zahlung war erfolgreich."
             list_of_books_to_download: "Liste der downloadbaren E-Papers"
         show:
-            title: "%product_name% : E-Shop - Golem.de"
             available_at: 'Das Produkt wird ab %available_at% zur Verfügung stehen und am nächsten Tag versendet.'
             add_to_cart: zum Warenkorb hinzufügen
             sold_out: ausverkauft
