@@ -1,1 +1,8 @@
-{}
+data:
+    postal_fees:
+        fields:
+            id: ID
+            title: Ime
+            code: Code
+            used_count: Uporabljeno
+            amount: Znesek

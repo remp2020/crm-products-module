@@ -235,6 +235,7 @@ data:
             returned: Visszaküldve
     postal_fees:
         fields:
+            id: ID
             title: Név
             code: Azonosító
             used_count: Felhasználva

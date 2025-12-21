@@ -101,6 +101,7 @@ data:
             code: Code must not be empty and must contain at least one letter of the alphabet.
     postal_fees:
         fields:
+            id: ID
             title: Name
             code: Identifier
             used_count: Used

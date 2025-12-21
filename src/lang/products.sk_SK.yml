@@ -102,6 +102,7 @@ data:
             code: Kód nesmie byť prázdny a musí obsahovať aspoň jedno písmeno abecedy.
     postal_fees:
         fields:
+            id: ID
             title: Názov
             code: Identifikátor
             used_count: Použité

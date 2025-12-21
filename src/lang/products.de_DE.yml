@@ -142,3 +142,12 @@ data_provider:
         sorting_change: "Die Sortierung des Produkts wurde geändert"
         distribution_center_change: "Das Vertriebszentrum des Produkts wurde von <strong>„%from%“</strong> zu <strong>„%to%“</strong> geändert"
         description_change: "Die Produktbeschreibung wurde geändert"
+
+data:
+    postal_fees:
+        fields:
+            id: ID
+            title: Name
+            code: Code
+            used_count: Verwendet
+            amount: Betrag

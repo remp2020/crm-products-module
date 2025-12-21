@@ -14,16 +14,18 @@
         <table class="table table-striped table-hover table-bordered">
           <thead>
             <tr>
-              <th>{_products.data.postal_fees.fields.title}</th>
+              <th>{_products.data.postal_fees.fields.id}</th>
               <th>{_products.data.postal_fees.fields.code}</th>
+              <th>{_products.data.postal_fees.fields.title}</th>
               <th>{_products.data.postal_fees.fields.used_count}</th>
               <th>{_products.data.postal_fees.fields.amount}</th>
             </tr>
           </thead>
           <tbody>
             <tr n:foreach="$postalFees as $fee">
+              <td><code class="muted">{$fee->id}</code></td>
+              <td><code class="muted">{$fee->code}</code></td>
               <td>{$fee->title}</td>
-              <td><code>{$fee->code}</code></td>
               <td><span class="label label-default">{$fee->related('country_postal_fees')->count('*')}</span></td>
               <td>{$fee->amount|price}</td>
             </tr>
