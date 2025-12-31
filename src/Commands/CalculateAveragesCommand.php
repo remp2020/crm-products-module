@@ -88,7 +88,7 @@ class CalculateAveragesCommand extends Command
         $this->calculatedPeriod = $days;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $keys = ['product_payments', 'product_payments_amount'];
 

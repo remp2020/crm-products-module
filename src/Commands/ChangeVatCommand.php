@@ -59,7 +59,7 @@ class ChangeVatCommand extends Command
             );
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): int
     {
         $originalVat = $input->getOption('original-vat');
         if ($originalVat === null) {
