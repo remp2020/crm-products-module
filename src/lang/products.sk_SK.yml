@@ -462,6 +462,7 @@ frontend:
             message: "Platba zatiaľ nebola potvrdená a čakáme na potvrdenie od banky. Vaša objednávka bude spracovaná hneď, ako nám banka platbu potvrdí."
         show:
             available_at: 'Produkt bude dostupný až %available_at%, odosielame ho nasledujúci deň.'
+            available_at_unknown: 'Budúca dostupnosť produktu nie je známa.'
             add_to_cart: vložiť do košíka
             sold_out: vypredané
         search:

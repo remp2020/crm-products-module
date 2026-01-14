@@ -459,6 +459,7 @@ frontend:
             message: "The payment has not been confirmed yet and we are waiting for confirmation from the bank. Your order will be processed as soon as the bank confirms the payment."
         show:
             available_at: 'The product will be available at %available_at%, we will send it the next day.'
+            available_at_unknown: 'The product availability is unknown.'
             add_to_cart: add to cart
             sold_out: sold out
         search:

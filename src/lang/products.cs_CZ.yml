@@ -456,6 +456,7 @@ frontend:
             message: "Platba zatím nebyla potvrzena a čekáme na potvrzení od banky. Vaše objednávka bude zpracována hned, jak nám banka platbu potvrdí."
         show:
             available_at: 'Produkt bude dostupný až %available_at%, odesíláme ho následující den.'
+            available_at_unknown: 'Kdy bude produkt dostupný, zatím nevíme.'
             add_to_cart: vložit do košíku
             sold_out: vyprodáno
         search:
