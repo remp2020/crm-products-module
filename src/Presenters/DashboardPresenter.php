@@ -11,7 +11,6 @@ use Crm\ApplicationModule\UI\Form;
 use Crm\ProductsModule\Components\ProductStats\ProductStatsFactory;
 use Crm\ProductsModule\Models\PaymentItem\ProductPaymentItem;
 use Nette\Application\Attributes\Persistent;
-use Nette\DI\Attributes\Inject;
 use Nette\Utils\DateTime;
 use Tomaj\Form\Renderer\BootstrapInlineRenderer;
 
@@ -26,8 +25,10 @@ class DashboardPresenter extends AdminPresenter
     #[Persistent]
     public $productStatsMode;
 
-    #[Inject]
-    public ProductStatsFactory $productStatsFactory;
+    public function __construct(private readonly ProductStatsFactory $productStatsFactory)
+    {
+        parent::__construct();
+    }
 
     public function startup()
     {
