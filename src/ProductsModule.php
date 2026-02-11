@@ -56,6 +56,7 @@ use Crm\ProductsModule\Scenarios\HasProductWithDistributionCenterCriteria;
 use Crm\ProductsModule\Scenarios\HasProductWithTemplateNameCriteria;
 use Crm\ProductsModule\Scenarios\OrderScenarioConditionalModel;
 use Crm\ProductsModule\Scenarios\OrderStatusOnScenarioEnterCriteria;
+use Crm\ProductsModule\Scenarios\ProductHasTagCriteria;
 use Crm\ProductsModule\Scenarios\TriggerHandlers\NewOrderTriggerHandler;
 use Crm\ProductsModule\Scenarios\TriggerHandlers\OrderStatusChangeTriggerHandler;
 use Crm\ProductsModule\Seeders\AddressTypesSeeder;
@@ -388,6 +389,11 @@ class ProductsModule extends CrmModule
             'order',
             HasProductWithDistributionCenterCriteria::KEY,
             $this->getInstance(HasProductWithDistributionCenterCriteria::class),
+        );
+        $scenariosCriteriaStorage->register(
+            'order',
+            ProductHasTagCriteria::KEY,
+            $this->getInstance(ProductHasTagCriteria::class),
         );
     }
 }

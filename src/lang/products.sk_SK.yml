@@ -360,6 +360,8 @@ admin:
             label: Obsahuje produkt so šablónou
         has_product_with_distribution_center:
             label: Obsahuje produkt s distribučným centrom
+        product_has_tag:
+            label: Obsahuje produkt s tagom
 
 frontend:
     shop:

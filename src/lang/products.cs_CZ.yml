@@ -354,6 +354,8 @@ admin:
             label: Obsahuje produkt se šablonou
         has_product_with_distribution_center:
             label: Obsahuje produkt s distribučním centrem
+        product_has_tag:
+            label: Obsahuje produkt s tagem
 
 frontend:
     shop:

@@ -357,6 +357,8 @@ admin:
             label: Has product with template name
         has_product_with_distribution_center:
             label: Has product with distribution center
+        product_has_tag:
+            label: Has product with tag
 
 frontend:
     shop:

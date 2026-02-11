@@ -74,6 +74,7 @@ services:
 	- Crm\ProductsModule\Scenarios\HasProductWithDistributionCenterCriteria
 	- Crm\ProductsModule\Scenarios\ActualOrderStatusCriteria
 	- Crm\ProductsModule\Scenarios\OrderStatusOnScenarioEnterCriteria
+	- Crm\ProductsModule\Scenarios\ProductHasTagCriteria
 
 	- Crm\ProductsModule\Scenarios\TriggerHandlers\NewOrderTriggerHandler
 	- Crm\ProductsModule\Scenarios\TriggerHandlers\OrderStatusChangeTriggerHandler
