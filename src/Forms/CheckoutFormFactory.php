@@ -5,6 +5,7 @@ namespace Crm\ProductsModule\Forms;
 use Contributte\Translation\Translator;
 use Crm\ApplicationModule\Forms\Controls\CountriesSelectItemsBuilder;
 use Crm\ApplicationModule\Forms\FormPatterns;
+use Crm\ApplicationModule\Models\Authenticator\LoginCredentials;
 use Crm\ApplicationModule\Models\Config\ApplicationConfig;
 use Crm\ApplicationModule\Models\DataProvider\DataProviderManager;
 use Crm\ApplicationModule\UI\Form;
@@ -422,7 +423,7 @@ class CheckoutFormFactory
         if (isset($form['user']['login_submit']) && $form['user']['login_submit']->isSubmittedBy()) {
             $this->user->setExpiration('14 days');
             try {
-                $this->user->login(['username' => $values['user']['email'], 'password' => $values['user']['password']]);
+                $this->user->login(new LoginCredentials(['username' => $values['user']['email'], 'password' => $values['user']['password']]));
                 $this->user->setAuthorizator($this->authorizator);
 
                 $cart = Json::decode($this->request->getPost('cart'), Json::FORCE_ARRAY);
@@ -452,7 +453,7 @@ class CheckoutFormFactory
                 return;
             }
 
-            $this->user->login(['user' => $user, 'autoLogin' => true]);
+            $this->user->login(new LoginCredentials(['user' => $user, 'autoLogin' => true]));
 
             if (!$user) {
                 $form['user']['email']->addError('products.frontend.shop.checkout.warnings.unable_to_create_user');
