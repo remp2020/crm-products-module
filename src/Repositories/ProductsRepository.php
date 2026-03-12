@@ -69,7 +69,7 @@ class ProductsRepository extends Repository
         return $result;
     }
 
-    final public function all(string $search = null, array $tags = []): Selection
+    final public function all(?string $search = null, array $tags = []): Selection
     {
         $all = $this->getTable()
             ->where('deleted_at', null)
@@ -114,7 +114,7 @@ class ProductsRepository extends Repository
     final public function getShopProducts(
         $visibleOnly = true,
         $availableOnly = true,
-        ActiveRow $tag = null,
+        ?ActiveRow $tag = null,
         $order = 'sorting',
     ) {
         $where = [
@@ -142,7 +142,7 @@ class ProductsRepository extends Repository
         return $query;
     }
 
-    final public function relatedProducts(ActiveRow $product, $limit = 4, DateTime $mostSoldFrom = null)
+    final public function relatedProducts(ActiveRow $product, $limit = 4, ?DateTime $mostSoldFrom = null)
     {
         $productTagsQuery = $product->related('product_tags')
             ->where('tag.user_assignable', 1);
@@ -168,7 +168,7 @@ class ProductsRepository extends Repository
         return array_merge($mostSoldTagged, $mostSoldUntagged);
     }
 
-    final public function mostSoldProducts(DateTime $from = null, DateTime $to = null)
+    final public function mostSoldProducts(?DateTime $from = null, ?DateTime $to = null)
     {
         $products = $this->getShopProducts(false, true, null, null);
         $products
@@ -278,7 +278,7 @@ class ProductsRepository extends Repository
     }
 
 
-    final public function stats(DateTime $from = null, DateTime $to = null): Selection
+    final public function stats(?DateTime $from = null, ?DateTime $to = null): Selection
     {
         $selection = $this->getTable()
             ->select('SUM(:payment_items.count) AS product_count, SUM(:payment_items.amount * :payment_items.count) AS product_amount, products.id AS product_id')

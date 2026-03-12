@@ -203,7 +203,7 @@ class CalculateAveragesCommand extends Command
         return $intervals;
     }
 
-    private function computeProductPaymentCounts(array $userIDs = null, array $interval = null): void
+    private function computeProductPaymentCounts(?array $userIDs = null, ?array $interval = null): void
     {
         if (isset($userIDs)) {
             $this->line("  * computing '<info>product_payments</info>' for provided user IDs");
@@ -239,7 +239,7 @@ class CalculateAveragesCommand extends Command
         $this->userStatsRepository->upsertUsersValues('product_payments', $userProductPaymentCounts);
     }
 
-    private function computeProductPaymentAmounts(array $userIDs = null, array $interval = null): void
+    private function computeProductPaymentAmounts(?array $userIDs = null, ?array $interval = null): void
     {
         if (isset($userIDs)) {
             $this->line("  * computing '<info>product_payments_amount</info>' for provided user IDs");

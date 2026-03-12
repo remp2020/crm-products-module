@@ -49,7 +49,7 @@ SQL;
         return $result;
     }
 
-    public function distributionList(int $productId, float $fromLevel, float $toLevel = null): array
+    public function distributionList(int $productId, float $fromLevel, ?float $toLevel = null): array
     {
         if ($toLevel === -1.0) {
             $skeleton = $this->getNegativeQuerySkeleton($productId);

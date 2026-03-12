@@ -60,7 +60,7 @@ class PostalFeeService
         return $messages;
     }
 
-    public function getAvailablePostalFeesOptions(int $countryId, array $cart, int $userId = null)
+    public function getAvailablePostalFeesOptions(int $countryId, array $cart, ?int $userId = null)
     {
         $countryPostalFeesSelection = $this->countryPostalFeesRepository
             ->findActiveByCountry($countryId)

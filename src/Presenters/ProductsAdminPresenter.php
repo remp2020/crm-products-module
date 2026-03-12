@@ -183,7 +183,7 @@ class ProductsAdminPresenter extends AdminPresenter
     /**
      * @admin-access-level read
      */
-    public function renderUserList(int $id, string $type, float $fromLevel, float $toLevel = null)
+    public function renderUserList(int $id, string $type, float $fromLevel, ?float $toLevel = null)
     {
         $product = $this->productsRepository->find($id);
         if (!$product) {

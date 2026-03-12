@@ -9,7 +9,7 @@ class ProductTagsRepository extends Repository
 {
     protected $tableName = 'product_tags';
 
-    final public function add(int $productId, int $tagId, int $sorting = null)
+    final public function add(int $productId, int $tagId, ?int $sorting = null)
     {
         $data = [
             'product_id' => $productId,

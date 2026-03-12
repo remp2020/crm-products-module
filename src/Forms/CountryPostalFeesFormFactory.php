@@ -30,7 +30,7 @@ class CountryPostalFeesFormFactory
     ) {
     }
 
-    public function create(int $id = null)
+    public function create(?int $id = null)
     {
         $form = new Form();
         $form->setTranslator($this->translator);

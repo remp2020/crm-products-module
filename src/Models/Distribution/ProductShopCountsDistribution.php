@@ -53,7 +53,7 @@ SQL;
         return $result;
     }
 
-    public function distributionList(int $productId, float $fromLevel, float $toLevel = null): array
+    public function distributionList(int $productId, float $fromLevel, ?float $toLevel = null): array
     {
         if ($toLevel === 0.0) {
             $having = 'COUNT(DISTINCT shop_payment_items.payment_id) = 0';

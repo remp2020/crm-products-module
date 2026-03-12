@@ -33,7 +33,7 @@ class FreeShippingProgressBarWidget extends BaseLazyWidget
         return 'freeshippingprogressbarwidget';
     }
 
-    public function render(array $cartProducts = [], int $countryId = null)
+    public function render(array $cartProducts = [], ?int $countryId = null)
     {
         if (!$countryId) {
             $countryId = $this->countriesRepository->defaultCountry()->id;
