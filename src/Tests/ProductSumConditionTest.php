@@ -65,7 +65,7 @@ class ProductSumConditionTest extends DatabaseTestCase
             'stored' => 1,
             'stock' => 10,
             'created_at' => new \DateTime(),
-            'modified_at' => new \DateTime(),
+            'updated_at' => new \DateTime(),
         ]);
     }
 }

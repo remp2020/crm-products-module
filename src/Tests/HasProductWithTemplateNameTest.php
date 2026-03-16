@@ -149,7 +149,7 @@ class HasProductWithTemplateNameTest extends DatabaseTestCase
                     'product_template_id' => $productTemplate->id,
                     'bundle' => 0,
                     'created_at' => new DateTime(),
-                    'modified_at' => new DateTime(),
+                    'updated_at' => new DateTime(),
                 ]), 1);
             }
         }

@@ -130,7 +130,7 @@ class OrderStatusChangeEventHandlerTest extends BaseTestCase
             'stock' => 10,
             'bundle' => false,
             'created_at' => new DateTime(),
-            'modified_at' => new DateTime(),
+            'updated_at' => new DateTime(),
         ]);
 
         $paymentItemContainer = new PaymentItemContainer();

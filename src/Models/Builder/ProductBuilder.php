@@ -74,7 +74,7 @@ class ProductBuilder extends Builder
     {
         parent::setDefaults();
         $this->set('created_at', new \DateTime());
-        $this->set('modified_at', new \DateTime());
+        $this->set('updated_at', new \DateTime());
     }
 
     protected function store($tableName)

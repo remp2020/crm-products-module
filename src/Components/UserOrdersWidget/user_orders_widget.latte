@@ -30,7 +30,7 @@
                             {php $prepaid = ($order->payment->status == \Crm\PaymentsModule\Models\Payment\PaymentStatusEnum::Prepaid->value)}
                             <td style="border-bottom: 1px solid #ddd;">
                                 {if $prepaid}
-                                    {$order->payment->modified_at|userDate:true}
+                                    {$order->payment->updated_at|userDate:true}
                                 {else}
                                     {$order->payment->paid_at|userDate:true}
                                 {/if}
