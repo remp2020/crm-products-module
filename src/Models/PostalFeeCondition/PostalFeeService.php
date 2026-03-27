@@ -71,7 +71,7 @@ class PostalFeeService
             /** @var ActiveRow $countryPostalFee */
             $conditions = $countryPostalFee->related('country_postal_fee_conditions')
                 ->where('country_postal_fee_conditions.code IN (?)', array_keys($this->getRegisteredConditions()));
-            if ($conditions && $conditions->count() > 0) {
+            if ($conditions->count() > 0) {
                 foreach ($conditions as $condition) {
                     /** @var PostalFeeConditionInterface $resolver */
                     $resolver = $this->conditions[$condition->code];
