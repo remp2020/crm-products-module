@@ -17,6 +17,9 @@ use Crm\ProductsModule\Models\PostalFeeCondition\PostalFeeService;
 use Crm\ProductsModule\Repositories\PostalFeesRepository;
 use Crm\ProductsModule\Repositories\ProductsRepository;
 use Crm\ProductsModule\Repositories\TagsRepository;
+use Crm\ProductsModule\Seeders\AddressTypesSeeder;
+use Crm\UsersModule\Forms\Controls\AddressesSelectItemsBuilder;
+use Crm\UsersModule\Repositories\AddressesRepository;
 use Crm\UsersModule\Repositories\CountriesRepository;
 use Nette\Application\BadRequestException;
 use Nette\Forms\Controls\RadioList;
@@ -42,6 +45,8 @@ class ShopPresenter extends FrontendPresenter
         private readonly DataProviderManager $dataProviderManager,
         private readonly PostalFeeService $postalFeeService,
         private readonly CountriesRepository $countriesRepository,
+        private readonly AddressesSelectItemsBuilder $addressesSelectItemsBuilder,
+        private readonly AddressesRepository $addressesRepository,
     ) {
         parent::__construct();
     }
@@ -346,6 +351,35 @@ class ShopPresenter extends FrontendPresenter
                 ->setItems($options)
                 ->setDefaultValue($this->postalFeeService->getDefaultPostalFee($country->id, $options));
             $this['checkoutForm']['shipping_country']->setValue($country->iso_code);
+
+            if ($this->user->isLoggedIn()) {
+                $user = $this->usersRepository->find($this->user->getId());
+                $shopAddresses = $this->addressesSelectItemsBuilder->buildSimple(
+                    $user,
+                    AddressTypesSeeder::PRODUCTS_SHOP_ADDRESS_TYPE,
+                    $country,
+                    requireFullAddress: true,
+                );
+                $lastUsedAddress = $this->addressesRepository->all()
+                    ->where([
+                        'user_id' => $user,
+                        'type' => AddressTypesSeeder::PRODUCTS_SHOP_ADDRESS_TYPE,
+                        'country_id' => $country->id,
+                        // we want full address; require all fields
+                        'street IS NOT NULL AND TRIM(street) != ""',
+                        'number IS NOT NULL AND TRIM(number) != ""',
+                        'city IS NOT NULL AND TRIM(city) != ""',
+                        'zip IS NOT NULL AND TRIM(zip) != ""',
+                        'phone_number IS NOT NULL AND TRIM(phone_number) != ""',
+                    ])
+                    ->order('updated_at DESC')
+                    ->limit(1)
+                    ->fetch();
+
+                $this['checkoutForm']['address_id']
+                    ->setItems($shopAddresses)
+                    ->setDefaultValue($lastUsedAddress->id ?? null);
+            }
         }
 
         $this->template->getLatte()->addProvider('formsStack', [$this['checkoutForm']]);

@@ -28,6 +28,7 @@ use Crm\ProductsModule\Repositories\PostalFeesRepository;
 use Crm\ProductsModule\Repositories\ProductsRepository;
 use Crm\ProductsModule\Seeders\AddressTypesSeeder;
 use Crm\UsersModule\DataProviders\AddressFormDataProviderInterface;
+use Crm\UsersModule\Forms\Controls\AddressesSelectItemsBuilder;
 use Crm\UsersModule\Models\Auth\Authorizator;
 use Crm\UsersModule\Models\Auth\InvalidEmailException;
 use Crm\UsersModule\Models\Auth\UserManager;
@@ -88,6 +89,7 @@ class CheckoutFormFactory
         private readonly UserActionsLogRepository $userActionsLogRepository,
         private readonly CountriesSelectItemsBuilder $countriesSelectItemsBuilder,
         private readonly DistributionCentersRepository $distributionCentersRepository,
+        private readonly AddressesSelectItemsBuilder $addressesSelectItemsBuilder,
     ) {
     }
 
@@ -95,7 +97,14 @@ class CheckoutFormFactory
     {
         $this->cartFree = $cartFree;
         $defaults = [];
-        $selectedCountry = $this->countriesRepository->defaultCountry();
+        $selectedCountry = null;
+        $shopAddresses = [];
+        $defaultShopAddressId = null;
+
+        $postShippingCountryIsoCode = $this->request->getPost('shipping_country');
+        if (!empty($postShippingCountryIsoCode)) {
+            $selectedCountry = $this->countriesRepository->findByIsoCode($postShippingCountryIsoCode);
+        }
 
         if ($this->user->isLoggedIn()) {
             if ($payment) {
@@ -103,14 +112,38 @@ class CheckoutFormFactory
             } else {
                 $user = $this->userManager->loadUser($this->user);
             }
+        }
 
-            $address = $this->addressesRepository->address($user, AddressTypesSeeder::PRODUCTS_SHOP_ADDRESS_TYPE);
+        // if user exists, load addresses
+        if (isset($user)) {
+            $address = $this->addressesRepository
+                ->all()
+                ->where([
+                    'user_id' => $user->id,
+                    'type' => AddressTypesSeeder::PRODUCTS_SHOP_ADDRESS_TYPE,
+                ])
+                ->where([
+                    // only full address is allowed
+                    'street IS NOT NULL AND TRIM(street) != ""',
+                    'number IS NOT NULL AND TRIM(number) != ""',
+                    'city IS NOT NULL AND TRIM(city) != ""',
+                    'zip IS NOT NULL AND TRIM(zip) != ""',
+                    'phone_number IS NOT NULL AND TRIM(phone_number) != ""',
+                    'country_id IS NOT NULL',
+                ])
+                ->order('updated_at DESC')->limit(1);
+            if (isset($selectedCountry)) {
+                $address->where(['country_id' => $selectedCountry->id]);
+            }
+            $address = $address->fetch();
             if ($address) {
-                $defaults['shipping_address'] = $address->toArray();
                 $defaults['contact']['phone_number'] = $address->phone_number;
+                $defaultShopAddressId = $address->id;
+                // set country from latest address (in case shipping_country wasn't set)
                 $selectedCountry = $address->country;
             }
 
+            // select pre-defined invoice address
             $address = $this->addressesRepository->address($user, 'invoice');
             if ($address) {
                 $defaults['billing_address'] = $address->toArray();
@@ -120,11 +153,19 @@ class CheckoutFormFactory
                     $defaults['contact']['phone_number'] = $address->phone_number;
                 }
             }
+
+            // get addresses for user to select from (only for preselected country)
+            $shopAddresses = $this->addressesSelectItemsBuilder->buildSimple(
+                $user,
+                AddressTypesSeeder::PRODUCTS_SHOP_ADDRESS_TYPE,
+                $selectedCountry,
+                requireFullAddress: true,
+            );
         }
 
-        $postShippingCountryIsoCode = $this->request->getPost('shipping_country');
-        if (!empty($postShippingCountryIsoCode)) {
-            $selectedCountry = $this->countriesRepository->findByIsoCode($postShippingCountryIsoCode);
+        // country not selected by POST or last used address; use system's default country
+        if ($selectedCountry === null) {
+            $selectedCountry = $this->countriesRepository->defaultCountry();
         }
 
         $products = $this->productsRepository->findByIds(array_keys($cart));
@@ -222,20 +263,35 @@ class CheckoutFormFactory
                 ->setRequired('products.frontend.shop.checkout.fields.choose_shipping_method')
                 ->setDefaultValue($this->postalFeeService->getDefaultPostalFee($selectedCountry->id, $options));
 
+            $addressIdSelect = $form->addSelect(
+                'address_id',
+                'products.frontend.shop.checkout.shipping_address_selector',
+                $shopAddresses,
+            )->setPrompt('products.frontend.shop.checkout.shipping_address_new');
+            if ($defaultShopAddressId) {
+                $addressIdSelect->setDefaultValue($defaultShopAddressId);
+            }
+            $addressIdSelect->addCondition($form::Blank)
+                ->toggle('shipping-address-fields');
+
             $shippingAddress = $form->addContainer('shipping_address');
+
             $shippingAddress->addText('first_name', 'products.frontend.shop.checkout.fields.first_name')
                 ->setHtmlAttribute('autocomplete', 'given-name')
                 ->addConditionOn($action, $form::NotEqual, 'login')
+                ->addConditionOn($addressIdSelect, $form::Blank)
                 ->addRule($form::Filled, 'products.frontend.shop.checkout.fields.first_name_required');
 
             $shippingAddress->addText('last_name', 'products.frontend.shop.checkout.fields.last_name')
                 ->setHtmlAttribute('autocomplete', 'family-name')
                 ->addConditionOn($action, $form::NotEqual, 'login')
+                ->addConditionOn($addressIdSelect, $form::Blank)
                 ->addRule($form::Filled, 'products.frontend.shop.checkout.fields.last_name_required');
 
             $shippingAddress->addText('street', 'products.frontend.shop.checkout.fields.street')
                 ->setHtmlAttribute('pattern', FormPatterns::STREET_NAME)
                 ->addConditionOn($action, $form::NotEqual, 'login')
+                ->addConditionOn($addressIdSelect, $form::Blank)
                 ->addRule($form::Filled, 'products.frontend.shop.checkout.fields.street_required')
                 ->addRule($form::Pattern, 'products.frontend.shop.checkout.fields.street_wrong_format', FormPatterns::STREET_NAME)
                 ->addRule($form::MinLength, 'products.frontend.shop.checkout.fields.street_min_length', 3);
@@ -243,20 +299,23 @@ class CheckoutFormFactory
             $shippingAddress->addText('number', 'products.frontend.shop.checkout.fields.number')
                 ->setHtmlAttribute('pattern', FormPatterns::STREET_NUMBER)
                 ->addConditionOn($action, $form::NotEqual, 'login')
+                ->addConditionOn($addressIdSelect, $form::Blank)
                 ->addRule($form::Filled, 'products.frontend.shop.checkout.fields.number_required')
                 ->addRule($form::Pattern, 'products.frontend.shop.checkout.fields.number_wrong_format', FormPatterns::STREET_NUMBER);
 
             $shippingAddress->addText('city', 'products.frontend.shop.checkout.fields.city')
                 ->addConditionOn($action, $form::NotEqual, 'login')
+                ->addConditionOn($addressIdSelect, $form::Blank)
                 ->addRule($form::Filled, 'products.frontend.shop.checkout.fields.city_required');
 
             $zip = $shippingAddress->addText('zip', 'products.frontend.shop.checkout.fields.zip_code')
                 ->setHtmlAttribute('autocomplete', 'postal-code')
-                ->setHtmlAttribute('pattern', FormPatterns::ZIP_CODE)
-                ->addConditionOn($action, $form::NotEqual, 'login')
+                ->setHtmlAttribute('pattern', FormPatterns::ZIP_CODE);
+            $zip->addConditionOn($action, $form::NotEqual, 'login')
+                ->addConditionOn($addressIdSelect, $form::Blank)
                 ->addRule($form::Filled, 'products.frontend.shop.checkout.fields.zip_code_required');
-
             $zip->addConditionOn($country, $form::IsIn, ['CZ', 'SK'])
+                ->addConditionOn($addressIdSelect, $form::Blank)
                 ->addRule($form::Pattern, 'products.frontend.shop.checkout.fields.zip_code_invalid', FormPatterns::ZIP_CODE);
         } elseif ($hasLicence) {
             $licenceAddress = $form->addContainer('licence_address');
@@ -553,7 +612,7 @@ class CheckoutFormFactory
 
         $shippingAddressId = $this->handleShippingAddress($user, $values);
         $licenceAddressId = $this->handleLicenceAddress($user, $values);
-        $billingAddressId = $this->handleBillingAddress($user, $values);
+        $billingAddressId = $this->handleBillingAddress($user, $values, $shippingAddressId);
 
         $this->ordersRepository->add($payment->id, $shippingAddressId, $licenceAddressId, $billingAddressId, $postalFee, $values['note'], $additionalColumns);
 
@@ -567,7 +626,7 @@ class CheckoutFormFactory
 
         $shippingAddressId = $this->handleShippingAddress($user, $values);
         $licenceAddressId = $this->handleLicenceAddress($user, $values);
-        $billingAddressId = $this->handleBillingAddress($user, $values);
+        $billingAddressId = $this->handleBillingAddress($user, $values, $shippingAddressId);
         $postalFee = $this->handlePostalFee($values);
 
         /** @var CheckoutFormDataProviderInterface[] $providers */
@@ -596,6 +655,28 @@ class CheckoutFormFactory
 
     private function handleShippingAddress($user, $values): ?int
     {
+        // user selected existing address
+        if (!empty($values['address_id'])) {
+            $existingAddress = $this->addressesRepository->all()
+                ->where([
+                    'id' => (int) $values['address_id'],
+                    'user_id' => $user->id,
+                    'type' => AddressTypesSeeder::PRODUCTS_SHOP_ADDRESS_TYPE,
+                ])
+                ->fetch();
+            if (!$existingAddress) {
+                Debugger::log(
+                    "Unable to load address ID [{$values['address_id']}]. "
+                    . "It doesn't exist, doesn't belong to user or it's not 'shop' type address.",
+                    Debugger::ERROR,
+                );
+                return null;
+            }
+            // update address to confirm it and mark it as "last used" for next purchase
+            $this->addressesRepository->update($existingAddress, []);
+            return $existingAddress->id;
+        }
+
         $shippingAddressId = null;
         if (isset($values['shipping_address'])) {
             $values['shipping_address']['phone_number'] = $values['contact']['phone_number'] ?? null;
@@ -656,31 +737,45 @@ class CheckoutFormFactory
         return $licenceAddressId;
     }
 
-    private function handleBillingAddress($user, $values): ?int
+    private function handleBillingAddress($user, $values, ?int $shippingAddressId = null): ?int
     {
         $billingAddressId = null;
         if ($values['invoice']['add_invoice']) {
-            $changeRequest = null;
             $billingAddress = $this->addressesRepository->address($user, 'invoice');
 
-            if (isset($values['shipping_address']) && isset($values['invoice']['same_shipping']) && $values['invoice']['same_shipping']) {
-                $shippingCountry = $this->countriesRepository->findByIsoCode($values['shipping_country']);
+            $useSameShipping = isset($values['invoice']['same_shipping']) && $values['invoice']['same_shipping'];
+            if ($shippingAddressId !== null && $useSameShipping) {
+                $existingShippingAddress = $this->addressesRepository->all()
+                    ->where([
+                        'id' => $shippingAddressId,
+                        'user_id' => $user->id,
+                        'type' => AddressTypesSeeder::PRODUCTS_SHOP_ADDRESS_TYPE,
+                    ])->fetch();
+
+                if ($existingShippingAddress === null) {
+                    Debugger::log(
+                        "Unable to create invoice address from address ID [{$shippingAddressId}]. "
+                        . "It doesn't exist, doesn't belong to user or it's not 'shop' type address.",
+                        Debugger::ERROR,
+                    );
+                    return null;
+                }
 
                 $changeRequest = $this->addressChangeRequestsRepository->add(
                     $user,
                     $billingAddress,
-                    $values['shipping_address']['first_name'],
-                    $values['shipping_address']['last_name'],
-                    $values['shipping_address']['first_name'] . ' ' . $values['shipping_address']['last_name'],
-                    $values['shipping_address']['street'],
-                    $values['shipping_address']['number'],
-                    $values['shipping_address']['city'],
-                    $values['shipping_address']['zip'],
-                    $shippingCountry->id,
+                    $existingShippingAddress->first_name,
+                    $existingShippingAddress->last_name,
+                    $existingShippingAddress->first_name . ' ' . $existingShippingAddress->last_name,
+                    $existingShippingAddress->street,
+                    $existingShippingAddress->number,
+                    $existingShippingAddress->city,
+                    $existingShippingAddress->zip,
+                    $existingShippingAddress->country_id,
                     null,
                     null,
                     null,
-                    $values['shipping_address']['phone_number'],
+                    $existingShippingAddress->phone_number,
                     'invoice',
                 );
                 if ($changeRequest) {

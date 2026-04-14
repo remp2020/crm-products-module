@@ -394,6 +394,8 @@ frontend:
             forgot_password: "zabudli ste heslo?"
             login: Prihlásiť
             shipping_address: Adresa doručenia
+            shipping_address_selector: Doručovacia adresa
+            shipping_address_new: "+ Zadať novú adresu"
             license_address: Licenčné údaje pre vašu e-knihu
             shipping_method: Spôsob dopravy
             billing_address: Fakturačná adresa

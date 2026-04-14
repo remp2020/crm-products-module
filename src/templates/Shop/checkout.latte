@@ -157,6 +157,13 @@
                     {ifset $control['checkoutForm']['shipping_address']}
                     <fieldset id="shipping-address" data-postalfeeformcode="shipping-address">
                         <legend>{_products.frontend.shop.checkout.shipping_address}</legend>
+
+                        <div n:if="count($control['checkoutForm']['address_id']->items) > 0" class="form-group login-hide">
+                            {label address_id /}
+                            {input address_id}
+                        </div>
+
+                        <div id="shipping-address-fields">
                         {formContainer shipping_address}
                             <div class="form-group">
                                 {label first_name /}
@@ -183,6 +190,7 @@
                                 {input zip}
                             </div>
                         {/formContainer}
+                        </div>
                     </fieldset>
                     {/ifset}
 
@@ -350,6 +358,7 @@
 
     <script>
         $(document).ready(function () {
+
             {ifset $form['user']['password']}
             if ($('#' + {$form['user']['password']->getHtmlId()}).hasClass('error')) {
                 $('#password').show();

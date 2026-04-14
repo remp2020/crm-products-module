@@ -36,6 +36,8 @@ frontend:
             contact_information: Elérhetőségek
             login: Bejelentkezés
             shipping_address: Kézbesítési cím
+            shipping_address_selector: Kézbesítési cím
+            shipping_address_new: "+ Új cím megadása"
             license_address: Licencadatok
             shipping_method: Kézbesítés módja
             billing_address: Számlázási cím

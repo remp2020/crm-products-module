@@ -391,6 +391,8 @@ frontend:
             forgot_password: "forgot your password?"
             login: Sign in
             shipping_address: Shipping address
+            shipping_address_selector: Delivery address
+            shipping_address_new: "+ Enter a new address"
             license_address: License address
             shipping_method: Shipping method
             billing_address: Billing address

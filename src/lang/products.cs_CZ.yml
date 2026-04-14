@@ -388,6 +388,8 @@ frontend:
             forgot_password: "zapomněli jste heslo?"
             login: Přihlásit
             shipping_address: Adresa doručení
+            shipping_address_selector: Doručovací adresa
+            shipping_address_new: "+ Zadat novou adresu"
             license_address: Licenční údaje
             shipping_method: Způsob dopravy
             billing_address: Fakturační adresa

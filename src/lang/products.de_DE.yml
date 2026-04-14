@@ -27,6 +27,8 @@ frontend:
             forgot_password: "Passwort vergessen?"
             login: Anmelden
             shipping_address: Lieferadresse
+            shipping_address_selector: Lieferadresse
+            shipping_address_new: "+ Neue Adresse eingeben"
             license_address: Lizenzadresse
             shipping_method: Liefermethode
             billing_address: Rechnungsadresse
