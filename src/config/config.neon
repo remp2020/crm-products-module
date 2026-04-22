@@ -20,6 +20,7 @@ services:
 
 	productsCalculateAveragesCommand: Crm\ProductsModule\Commands\CalculateAveragesCommand
 	- Crm\ProductsModule\Commands\ChangeVatCommand
+	- Crm\ProductsModule\Commands\CleanupDuplicateShopAddressesCommand
 
 	- Crm\ProductsModule\Components\ProductItemsListWidget\ProductItemsListWidget
 	- Crm\ProductsModule\Components\ProductStats\ProductStatsFactory

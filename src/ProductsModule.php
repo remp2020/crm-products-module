@@ -25,6 +25,7 @@ use Crm\PaymentsModule\DataProviders\PaymentItemVatDataProviderInterface;
 use Crm\PaymentsModule\Events\PaymentChangeStatusEvent;
 use Crm\ProductsModule\Commands\CalculateAveragesCommand;
 use Crm\ProductsModule\Commands\ChangeVatCommand;
+use Crm\ProductsModule\Commands\CleanupDuplicateShopAddressesCommand;
 use Crm\ProductsModule\Components\AvgProductsPaymentWidget\AvgProductsPaymentWidget;
 use Crm\ProductsModule\Components\FreeShippingProgressBarWidget\FreeShippingProgressBarWidget;
 use Crm\ProductsModule\Components\OrderStatusWidget\OrderStatusWidget;
@@ -152,6 +153,7 @@ class ProductsModule extends CrmModule
     {
         $commandsContainer->registerCommand($this->getInstance(CalculateAveragesCommand::class));
         $commandsContainer->registerCommand($this->getInstance(ChangeVatCommand::class));
+        $commandsContainer->registerCommand($this->getInstance(CleanupDuplicateShopAddressesCommand::class));
     }
 
     public function registerFrontendMenuItems(MenuContainerInterface $menuContainer)
