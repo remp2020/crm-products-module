@@ -66,8 +66,8 @@ class DashboardPresenter extends AdminPresenter
             ->setWhere("AND payments.id IN (SELECT id FROM payments WHERE status = 'paid')")
             ->setGroupBy('products.id')
             ->setJoin(
-                "LEFT JOIN payment_items ON payments.id = payment_items.payment_id AND payment_items.type = '" . ProductPaymentItem::TYPE . "' " .
-                'LEFT JOIN products ON product_id = products.id',
+                "INNER JOIN payment_items ON payments.id = payment_items.payment_id AND payment_items.type = '" . ProductPaymentItem::TYPE . "' " .
+                'INNER JOIN products ON payment_items.product_id = products.id',
             )
             ->setSeries('products.name')
             ->setValueField('SUM(payment_items.count)')
