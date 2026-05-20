@@ -347,6 +347,8 @@ admin:
         products_various_average_count:
             title: Average number of various products per order
             tooltip: E.g. 3pcs of one product counts as 1
+        product_filter:
+            label: Products
 
     scenarios:
         actual_order_status:

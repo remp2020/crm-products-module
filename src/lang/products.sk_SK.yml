@@ -350,6 +350,8 @@ admin:
         products_various_average_count:
             title: Priemerný počet rôznych produktov na jednu objednávku
             tooltip: Napr. objednané 3ks z jedného produktu sa ráta ako 1
+        product_filter:
+            label: Produkty
 
     scenarios:
         actual_order_status:

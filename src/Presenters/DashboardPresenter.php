@@ -10,6 +10,7 @@ use Crm\ApplicationModule\Models\Graphs\GraphDataItem;
 use Crm\ApplicationModule\UI\Form;
 use Crm\ProductsModule\Components\ProductStats\ProductStatsFactory;
 use Crm\ProductsModule\Models\PaymentItem\ProductPaymentItem;
+use Crm\ProductsModule\Repositories\ProductsRepository;
 use Nette\Application\Attributes\Persistent;
 use Nette\Utils\DateTime;
 use Tomaj\Form\Renderer\BootstrapInlineRenderer;
@@ -25,8 +26,13 @@ class DashboardPresenter extends AdminPresenter
     #[Persistent]
     public $productStatsMode;
 
-    public function __construct(private readonly ProductStatsFactory $productStatsFactory)
-    {
+    #[Persistent]
+    public array $productIds = [];
+
+    public function __construct(
+        private readonly ProductStatsFactory $productStatsFactory,
+        private readonly ProductsRepository $productsRepository,
+    ) {
         parent::__construct();
     }
 
@@ -48,12 +54,40 @@ class DashboardPresenter extends AdminPresenter
     public function createComponentDateFilterForm(DateFilterFormFactory $dateFilterFormFactory)
     {
         $form = $dateFilterFormFactory->create($this->dateFrom, $this->dateTo);
+
+        $products = $this->productsRepository->all()->fetchPairs('id', 'name');
+        $form[DateFilterFormFactory::OPTIONAL]->addMultiSelect(
+            'product_ids',
+            $this->translator->translate('products.admin.dashboard.product_filter.label'),
+            $products,
+        )->setHtmlAttribute('class', 'select2');
+
+        $form->setDefaults(['optional' => ['product_ids' => $this->productIds]]);
         $form->onSuccess[] = function ($form, $values) {
             $this->dateFrom = $values['date_from'];
             $this->dateTo = $values['date_to'];
+            $this->productIds = $values['optional']['product_ids'];
             $this->redirect($this->action);
         };
         return $form;
+    }
+
+    private function productIdsFilter(): string
+    {
+        if (empty($this->productIds)) {
+            return '';
+        }
+        $ids = implode(',', array_map('intval', $this->productIds));
+        return " AND payment_items.product_id IN ({$ids})";
+    }
+
+    private function productIdsOrdersFilter(): string
+    {
+        if (empty($this->productIds)) {
+            return '';
+        }
+        $ids = implode(',', array_map('intval', $this->productIds));
+        return " AND orders.payment_id IN (SELECT payment_id FROM payment_items WHERE type = '" . ProductPaymentItem::TYPE . "' AND product_id IN ({$ids}))";
     }
 
     public function createComponentGoogleProductsStatsGraph(GoogleBarGraphGroupControlFactoryInterface $factory)
@@ -63,7 +97,7 @@ class DashboardPresenter extends AdminPresenter
         $graphDataItem->setCriteria((new Criteria())
             ->setTableName('payments')
             ->setTimeField('paid_at')
-            ->setWhere("AND payments.id IN (SELECT id FROM payments WHERE status = 'paid')")
+            ->setWhere("AND payments.id IN (SELECT id FROM payments WHERE status = 'paid')" . $this->productIdsFilter())
             ->setGroupBy('products.id')
             ->setJoin(
                 "INNER JOIN payment_items ON payments.id = payment_items.payment_id AND payment_items.type = '" . ProductPaymentItem::TYPE . "' " .
@@ -91,7 +125,7 @@ class DashboardPresenter extends AdminPresenter
         $graphDataItem->setCriteria((new Criteria())
             ->setTableName('payments')
             ->setTimeField('paid_at')
-            ->setWhere("AND payments.id IN (SELECT id FROM payments WHERE status = 'paid')")
+            ->setWhere("AND payments.id IN (SELECT id FROM payments WHERE status = 'paid')" . $this->productIdsFilter())
             ->setGroupBy('product_tags.tag_id')
             ->setJoin(
                 "LEFT JOIN payment_items ON payments.id = payment_items.payment_id AND payment_items.type = '" . ProductPaymentItem::TYPE . "' " .
@@ -118,7 +152,7 @@ class DashboardPresenter extends AdminPresenter
     {
         $this->getSession()->close();
         $graphDataItem = new GraphDataItem();
-        $graphDataItem->setCriteria((new Criteria())
+        $ordersCriteria = (new Criteria())
             ->setTableName('orders')
             ->setJoin(
                 "INNER JOIN payments ON payments.id = orders.payment_id AND payments.status = 'paid'",
@@ -126,7 +160,14 @@ class DashboardPresenter extends AdminPresenter
             ->setTimeField('created_at')
             ->setValueField('COUNT(orders.id)')
             ->setStart($this->dateFrom)
-            ->setEnd($this->dateTo));
+            ->setEnd($this->dateTo);
+
+        $productFilter = $this->productIdsOrdersFilter();
+        if ($productFilter !== '') {
+            $ordersCriteria->setWhere($productFilter);
+        }
+
+        $graphDataItem->setCriteria($ordersCriteria);
         $graphDataItem->setName($this->translator->translate('products.admin.dashboard.orders_count.title'));
 
         $control = $factory->create();
@@ -146,7 +187,7 @@ class DashboardPresenter extends AdminPresenter
         $graphDataItem->setCriteria((new Criteria())
             ->setTableName('payments')
             ->setTimeField('paid_at')
-            ->setWhere("AND payments.status = 'paid'")
+            ->setWhere("AND payments.status = 'paid'" . $this->productIdsFilter())
             ->setJoin(
                 "INNER JOIN payment_items ON payments.id = payment_items.payment_id AND payment_items.type = '" . ProductPaymentItem::TYPE . "'",
             )
@@ -168,6 +209,7 @@ class DashboardPresenter extends AdminPresenter
     public function createComponentGoogleProductsAveragePaidSumGraph(GoogleBarGraphGroupControlFactoryInterface $factory)
     {
         $this->getSession()->close();
+        $productFilter = $this->productIdsFilter();
         $graphDataItem = new GraphDataItem();
         $graphDataItem->setCriteria((new Criteria())
             ->setTableName('payments')
@@ -176,7 +218,7 @@ class DashboardPresenter extends AdminPresenter
                 "INNER JOIN (
                     SELECT payments.id, SUM(payment_items.count * payment_items.amount) as sum FROM payments
                         INNER JOIN payment_items ON payments.id = payment_items.payment_id AND payment_items.type = '" . ProductPaymentItem::TYPE . "'
-                    WHERE status = 'paid'
+                    WHERE status = 'paid'" . $productFilter . "
                     GROUP BY payments.id
                 ) products_paid_amounts ON products_paid_amounts.id = payments.id",
             )
@@ -198,6 +240,7 @@ class DashboardPresenter extends AdminPresenter
     public function createComponentGoogleAverageProductsCountGraph(GoogleBarGraphGroupControlFactoryInterface $factory)
     {
         $this->getSession()->close();
+        $productFilter = $this->productIdsFilter();
         $graphDataItem = new GraphDataItem();
         $graphDataItem->setCriteria((new Criteria())
             ->setTableName('payments')
@@ -206,7 +249,7 @@ class DashboardPresenter extends AdminPresenter
                 "INNER JOIN (
                     SELECT payments.id, SUM(payment_items.count) as sum FROM payments
                         INNER JOIN payment_items ON payments.id = payment_items.payment_id AND payment_items.type = '" . ProductPaymentItem::TYPE . "'
-                    WHERE status = 'paid'
+                    WHERE status = 'paid'" . $productFilter . "
                     GROUP BY payments.id
                 ) products_count ON products_count.id = payments.id",
             )
@@ -228,6 +271,7 @@ class DashboardPresenter extends AdminPresenter
     public function createComponentGoogleAverageVariousProductsCountGraph(GoogleBarGraphGroupControlFactoryInterface $factory)
     {
         $this->getSession()->close();
+        $productFilter = $this->productIdsFilter();
         $graphDataItem = new GraphDataItem();
         $graphDataItem->setCriteria((new Criteria())
             ->setTableName('payments')
@@ -236,7 +280,7 @@ class DashboardPresenter extends AdminPresenter
                 "INNER JOIN (
                     SELECT payments.id, COUNT(payment_items.id) as count FROM payments
                         INNER JOIN payment_items ON payments.id = payment_items.payment_id AND payment_items.type = '" . ProductPaymentItem::TYPE . "'
-                    WHERE status = 'paid'
+                    WHERE status = 'paid'" . $productFilter . "
                     GROUP BY payments.id
                 ) products_various_count ON products_various_count.id = payments.id",
             )
