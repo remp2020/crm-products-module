@@ -41,8 +41,8 @@
             </li>
         </ul>
     </div>
-    {if (!empty($order->shipping_address_id))}
-      <div class="col-md-3">
+    <div class="col-md-4">
+      {if (!empty($order->shipping_address_id))}
         {var $shippingAddress = $order->ref('addresses', 'shipping_address_id')}
         <div class="panel panel-default">
           <div class="panel-heading">
@@ -54,8 +54,9 @@
           </div>
           <div class="panel-footer"><small class="text-muted">{_users.admin.show.address_last_change} {$shippingAddress->updated_at|userDate}</small></div>
         </div>
-      </div>
-    {/if}
+      {/if}
+      {control 'simpleWidget' 'admin.products.order.shipping_column', $order}
+    </div>
     {if (!empty($order->licence_address_id))}
     <div class="col-md-4">
         {var $licenceAddress = $order->ref('addresses', 'licence_address_id')}
