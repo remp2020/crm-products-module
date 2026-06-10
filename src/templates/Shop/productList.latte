@@ -16,6 +16,23 @@
   </style>
 {/block}
 
+{block scripts}
+  {if $shopUrl}
+    <script type="application/ld+json">
+      {
+        "@context": "http://schema.org",
+        "@type": "WebSite",
+        "url": "{$shopUrl}",
+        "potentialAction": {
+        "@type": "SearchAction",
+        "target": "{$shopUrl|noescape}search-results?q={l}search_term{r}",
+        "query-input": "required name=search_term"
+      }
+    }
+    </script>
+  {/if}
+{/block}
+
 {block #content}
 <div class="row filter">
   <div class="col-xs-12">

@@ -88,6 +88,7 @@ class ShopPresenter extends FrontendPresenter
 
     private function productListData()
     {
+        $this->template->shopUrl = $this->getHttpRequest()->getUrl()->getBaseUrl();
         $this->template->tags = $this->tagsRepository->all()->where(['visible' => true]);
         $counts = [];
         foreach ($this->tagsRepository->counts()->where(['shop' => true]) as $count) {
